@@ -1,0 +1,32 @@
+# Parameters for UC Botanical Garden Propagations portal
+#
+date			10/07/14
+revision			1.2
+title	Propagations
+#
+#
+server	http://localhost:8983/solr
+core	botgarden-propagations
+#
+#		Fields						row,column
+#
+header		Name	Label	SolrField	Searchable	Suggestions	Role	Search	Facet	bMapper	fullDisplay	listDisplay	gridDisplay	inCSV	placeholder
+field	1	id	id	id			id								x
+field	2	objid	objid	objid_s											x
+field	3	pcid	pcid	pcid_s											x
+field	4	objectnumber	object number	objectnumber_s	x	ob	objectno,accession,string	1,1				1	1	1	x
+field	5	propnumber	propagation number	propnumber_s	x		string	2,1			1	2	2	2	x
+field	6	order	order	order_s	x		string	3,1			2	3		3	x
+field	7	activitycomments	activity comments	activitycomments_s	x		keyword	4,1			3	4		4	x
+field	8	potsize	pot size	potsize_s	x		keyword	5,1	1		4	5		5	x
+field	9	chemicalapplied	chemical applied	chemicalapplied_s	x		keyword	6,1	2		5	6		6	x
+field	10	activitytype	activity type	activitytype_s	x		keyword	7,1	3		6	7		7	x
+field	11	medium	medium	medium_s	x		keyword	8,1			7	8		8	x
+field	12	numstarted	num started	numstarted_s	x		keyword	1,2			8	9		9	x
+field	13	extraseeds	extra seeds	extraseeds_s	x		dropdown	2,2	4		9			10	x
+field	14	spores	spores	spores_s	x		dropdown	3,2	5		10			11	x
+field	15	wounded	wounded	wounded_s	x		dropdown	4,2	6		11			12	x
+field	16	proptype	propagation type	proptype_s	x		dropdown	5,2	7		12			13	x
+field	17	propreason	propagation reason	propreason_s	x		keyword	6,2			13			14	x
+field	18	propdate	propagation date	propdate_s	x		keyword	7,2			14			15	x
+field	19	text	Keyword	text	x		keyword	8,2			15			16	x
