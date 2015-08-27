@@ -1,9 +1,9 @@
 #	Parameters for UC Botanical Garden INTERNAL portal														
 #															
-date	08/26/15														
-revision	1.12														
+date	05/31/15														
+revision	1.11														
 #															
-title	Plant Collection Information														
+title	Plant Collection Information: Internal Use Only														
 #															
 #															
 server	http://localhost:8983/solr														
@@ -48,7 +48,7 @@ field	33	reasonformove	Reason for Move	reasonformove_s			keyword				18			19	x
 field	34	conservationinfo	Conservation Information	conservationinfo_ss			keyword				22			21	
 field	35	conserveorg	Conservation Organization	conserveorg_ss			dropdown	7,2							x
 field	36	conservecat	Conservation Category	conservecat_ss			dropdown	8,2							x
-field	37	voucherlist	Vouchers	voucherlist_ss			keyword	12,2			20			22	x
+field	37	voucherlist	Vouchers	voucherlist_ss			keyword	11,2			20			22	x
 field	38	vouchers	Has Vouchers	vouchers_s			dropdown	9,2			19			20	x
 field	39	vouchercount	Voucher Count	vouchercount_s			keyword								x
 field	40	fruitingverbatim	Fruiting (verbatim)	fruitingverbatim_ss			keyword				24			25	x
@@ -69,5 +69,4 @@ field	53	rankMarker	Rank Marker	rankMarker_s			keyword	8,3			33			34	x
 field	54	scientificName	Scientific Name	scientificName_s			keyword				34			35	x
 field	55	specificEpithet	Specific Epithet	specificEpithet_s			keyword	9,3			35			36	x
 field	56	type	Type	type_s			dropdown				36			37	x
-field	56	accessrestrictions	Access Restrictions	accessrestrictions_s			dropdown	11,2			37			38	x
 field	57	blobs	Images	blob_ss			blob								x
