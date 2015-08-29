@@ -1,7 +1,7 @@
-#	Parameters for UC Botanical Garden INTERNAL portal														
+#	Parameters for UC Botanical Garden Public portal														
 #															
-date	08/26/15														
-revision	1.12														
+date	08/27/15														
+revision	1.13														
 #															
 title	Plant Collection Information														
 #															
@@ -69,5 +69,4 @@ field	53	rankMarker	Rank Marker	rankMarker_s			keyword	8,3			33			34	x
 field	54	scientificName	Scientific Name	scientificName_s			keyword				34			35	x
 field	55	specificEpithet	Specific Epithet	specificEpithet_s			keyword	9,3			35			36	x
 field	56	type	Type	type_s			dropdown				36			37	x
-field	56	accessrestrictions	Access Restrictions	accessrestrictions_s			dropdown	11,2			37			38	x
 field	57	blobs	Images	blob_ss			blob								x
