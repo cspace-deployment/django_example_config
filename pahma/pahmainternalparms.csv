@@ -1,7 +1,7 @@
 #	parameter specification spreadsheet for pahma internal portal														x
 #															x
-date	08/24/15														x
-revision	1.1														x
+date	08/30/15														x
+revision	1.2														x
 title	Collections (internal use only)														x
 #															x
 server	http://localhost:8983/solr														
@@ -22,14 +22,14 @@ field	9	countnote	Count Note	objcountnote_s			keyword					4		7	x
 field	10	dept	Department	objdept_s			keyword					5		3	x
 field	11	keelingser	Keeling Serial Number	objkeelingser_s			keyword					6		8	x
 field	12	fcp	Collection Place	objfcp_s	objfcptree_s	pl	keyword	1,2	6	3		7	1	28	x
-field	13	fcptree	Collection Place	objfcptree_s			keyword								x
-field	14	fcpverbatim	Collection Place (verbatim)	objfcpverbatim_s		pl	keyword					8		9	x
+field	13	fcptree	Collection Place (tree)	objfcptree_s			keyword								x
+field	14	fcpverbatim	Collection Place (vebatim)	objfcpverbatim_s		pl	keyword					8		9	x
 field	15	filecode	Ethnographic File Code	objfilecode_ss		fc	dropdown	7,2	3		4	9		12	x
 field	16	assoccult	Culture	objassoccult_ss	objculturetree_ss	cu	keyword	2,2	5	4	3	10	2	27	x
-field	17	culturetree	Culture	objculturetree_ss		cu	keyword								x
+field	17	culturetree	Culture (tree)	objculturetree_ss		cu	keyword								x
 field	18	inventory	Inventory	objinventory_s			keyword								x
 field	19	collector	Collector	objcollector_ss		pe	keyword	5,2			5	11		23	x
-field	20	descr	Description	objdescr_txt			keyword	6,1				12		14	x
+field	20	descr	Description	objdescr_ss			keyword	6,1				12		14	x
 field	21	contextuse	Context of Use	objcontextuse_s			keyword					13		15	x
 field	22	dimensions	Dimensions	objdimensions_ss			keyword					14	3	16	x
 field	23	materials	Materials	objmaterials_ss			keyword	3,2	4			15	4	17	x
@@ -46,12 +46,12 @@ field	33	accno	Accession Number	objaccno_ss			keyword	4,1				21		24	x
 field	34	accdate	Accession Date	objaccdate_ss			keyword	4,3				22		25	x
 field	35	acqdate	Acquisition Date	objacqdate_ss			keyword	3,3				23		26	x
 field	36	fcpgeoloc	LatLong	objfcpgeoloc_p			location							29	x
-field	37	fcpelevation	Collection Place Elevation	objfcpelevation_s			keyword					24		30	x
 field	37	location	Museum Location	currentlocation_s		lo	keyword	5,3	8			25		31	x
-field	38	crate	Container	computedcrate_s		cr	keyword	6,3				26		32	x
-field	39	exhibition	Exhibition Title	exhibitiontitle_ss			keyword	8,3				27		33	
-field	39	exhibition	Exhibition Number	exhibitionnumber_ss			keyword	8,2				28		34	
-field	40	group	Group	grouptitle_ss			keyword	10,3				29		35	
-field	41	locationdate	Location Date	locationdate_dt			date	7,3				30		36	x
-field	42	text	Keyword	text			keyword	1,1						37	x
-field	43	blobs	Blob	blob_ss			blob							38	x
+field	38	fcpelevation	Collection Place Elevation	objfcpelevation_s			keyword					26		30	x
+field	39	crate	Container	computedcrate_s		cr	keyword	6,3				27		32	x
+field	40	exhibition	Exhibition Title	exhibitiontitle_ss			keyword	8,3				28		33	
+field	41	exhibition	Exhibition Number	exhibitionnumber_ss			keyword	8,2				29		34	
+field	42	group	Group	grouptitle_ss			keyword	10,3				30		35	
+field	43	locationdate	Location Date	locationdate_dt			date	7,3				31		36	x
+field	44	text	Keyword	text			keyword	1,1						37	x
+field	45	blobs	Blob	blob_ss			blob							38	x

@@ -28,7 +28,7 @@
 <datumshift value="true"></datumshift>
 </settings>
 <recordlinkback>
-<linkback method="root" linkurl="https://webapps.cspace.berkeley.edu/ucjeps/publicsearch/?displayType=full&amp;maxresults=1" text="View Details" fieldname="Link Back" key1="accession" value1="darwin:catalognumbertext" />
+<linkback method="root" linkurl="https://webapps.cspace.berkeley.edu/ucjeps/publicsearch/publicsearch/?displayType=full&amp;maxresults=1" text="View Details" fieldname="Link Back" key1="accession" value1="darwin:catalognumbertext" />
 </recordlinkback>
 <concepts xmlns:darwin="http://digir.net/schema/conceptual/darwin/2003/1.0">
 <concept viewlist="1" datatype="darwin:institutioncode" alias="Institution Code" />
