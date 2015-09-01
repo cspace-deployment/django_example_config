@@ -1,0 +1,1 @@
+[{"fields": {"contentType": "HTML", "name": "Help", "slug": "help", "content": "This is the <b>Help</b> fixture for the Toolbox app.", "live": true, "order": 0}, "model": "toolbox.additionalinfo", "pk": 1}]

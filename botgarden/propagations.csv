@@ -1,15 +1,15 @@
-# Parameters for UC Botanical Garden Propagations portal
-#
-date			10/07/14
-revision			1.2
-title	Propagations
-#
-#
-server	http://localhost:8983/solr
-core	botgarden-propagations
-#
-#		Fields						row,column
-#
+# Parameters for UC Botanical Garden Propagations portal															
+#															
+date			10/07/14												
+revision			1.2												
+title	Propagations														
+#															
+#															
+server	http://localhost:8983/solr														
+core	botgarden-propagations														
+#															
+#		Fields						row,column							
+#															
 header		Name	Label	SolrField	Searchable	Suggestions	Role	Search	Facet	bMapper	fullDisplay	listDisplay	gridDisplay	inCSV	placeholder
 field	1	id	id	id			id								x
 field	2	objid	objid	objid_s											x
@@ -29,4 +29,4 @@ field	15	wounded	wounded	wounded_s	x		dropdown	4,2	6		11			12	x
 field	16	proptype	propagation type	proptype_s	x		dropdown	5,2	7		12			13	x
 field	17	propreason	propagation reason	propreason_s	x		keyword	6,2			13			14	x
 field	18	propdate	propagation date	propdate_s	x		keyword	7,2			14			15	x
-field	19	text	Keyword	text	x		keyword	8,2			15			16	x
+field	19	keyword	Keyword	text	x		keyword	8,2			15			16	x

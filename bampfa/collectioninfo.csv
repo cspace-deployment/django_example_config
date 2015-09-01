@@ -1,13 +1,13 @@
-#	Parameters for BAMPFA Internal Collections Browser
+#	Parameters for BAMPFA Internal Collections Browser														
 #															
-date		08/28/15
-revision		1.3
+date		08/28/15													
+revision		1.3													
 #															
-title	Art Collection Browser
+title	Art Collection Browser														
 #															
 #															
-server	http://localhost:8983/solr
-core	bampfa-internal
+server	http://localhost:8983/solr														
+core	bampfa-internal														
 #															
 #		Fields						row,column							
 #															
@@ -52,6 +52,6 @@ field	36	subjectfive	Subjectfive	subjectfive_s			keyword				30			32	x
 field	37	currentlocation	Current location	currentlocation_s			keyword				30			33	x
 field	38	currentcrate	Current crate	currentcrate_s		lo	keyword	11,1			31			34	x
 field	39	blobs	blobs	blob_ss			blob								x
-field	40	text	Keyword	text			keyword	10,1							x
+field	40	keyword	Keyword	text			keyword	10,1							x
 #	for now, we need a dummy location value in this file.														
 field	41	latlong	LatLong	latlong_p			location								x

@@ -52,7 +52,7 @@ field	37	voucherlist	Vouchers	voucherlist_ss			keyword	12,2			20			22	x
 field	38	vouchers	Has Vouchers	vouchers_s			dropdown	9,2			19			20	x
 field	39	vouchercount	Voucher Count	vouchercount_s			keyword								x
 field	40	fruitingverbatim	Fruiting (verbatim)	fruitingverbatim_ss			keyword				24			25	x
-field	40	text	Keyword	text			keyword	3,2							x
+field	40	keyword	Keyword	text			keyword	3,2							x
 field	41	floweringverbatim	Flowering (verbatim)	floweringverbatim_ss			keyword				23			23	x
 field	42	provenancetype	Provenance Type	provenancetype_s			keyword				21			24	x
 field	43	fruiting	Fruiting	fruiting_ss			array=[jan,feb,mar,apr,may,jun,jul,aug,sep,oct,nov,dec]	13,1							x

@@ -53,5 +53,5 @@ field	40	exhibition	Exhibition Title	exhibitiontitle_ss			keyword	8,3				28		33
 field	41	exhibition	Exhibition Number	exhibitionnumber_ss			keyword	8,2				29		34	
 field	42	group	Group	grouptitle_ss			keyword	10,3				30		35	
 field	43	locationdate	Location Date	locationdate_dt			date	7,3				31		36	x
-field	44	text	Keyword	text			keyword	1,1						37	x
+field	44	keyword	Keyword	text			keyword	1,1						37	x
 field	45	blobs	Blob	blob_ss			blob							38	x
