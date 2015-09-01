@@ -3,7 +3,7 @@
 date	08/26/15														
 revision	1.12														
 #															
-title	Plant Collection Information														
+title	Plant Collection Information (internal use only!)
 #															
 #															
 server	http://localhost:8983/solr														
