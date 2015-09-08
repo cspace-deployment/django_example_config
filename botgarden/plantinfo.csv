@@ -7,7 +7,7 @@ title	Plant Collection Information															x
 #																x
 #																x
 server	http://localhost:8983/solr															x
-core	botgarden-internal															x
+core	botgarden-public															x
 #																x
 #		Fields						row,column								x
 #																x
