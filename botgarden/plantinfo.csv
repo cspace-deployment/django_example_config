@@ -23,8 +23,8 @@ field	8	earlycollectiondate	Early Collection Date	earlycollectiondate_s			keywor
 field	9	latecollectiondate	Late Collection Date	latecollectiondate_s			keyword									x
 field	10	fcpverbatim	Field Place Name	fcpverbatim_s			keyword	6,2			5				6	x
 field	11	collcounty	County	collcounty_ss			dropdown	8,1	3		6				7	x
-field	12	collstate	State	collstate_ss			dropdown	10,1	4		7				8	x
-field	13	collcountry	Country	collcountry_ss			dropdown	9,1	5		8	5	5		9	x
+field	12	collstate	State	collstate_ss			dropdown	9,1	4		7				8	x
+field	13	collcountry	Country	collcountry_ss			dropdown	10,1	5		8	5	5		9	x
 field	14	elevation	Elevation	elevation_s			keyword	1,2			9				10	x
 field	15	minelevation	Min elevation	minelevation_s			keyword									x
 field	16	maxelevation	Max elevation	maxelevation_s			keyword									x
