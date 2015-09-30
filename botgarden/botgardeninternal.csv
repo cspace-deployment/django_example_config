@@ -21,7 +21,7 @@ field	6	collectornumber	Collector Number	collectornumber_s			keyword	2,2	2		1	7	
 field	7	collectiondate	Collection Date	collectiondate_s			keyword	3,2			2				5	x
 field	8	earlycollectiondate	Early Collection Date	earlycollectiondate_s			keyword				3					x
 field	9	latecollectiondate	Late Colleciton Date	latecollectiondate_s			keyword									x
-field	10	fcpverbatim	Field Place Name	fcpverbatim_s			keyword	4,1			4				6	x
+field	10	fcpverbatim	Field Place Name	fcpverbatim_s			keyword	4,1			4					x
 field	11	collcounty	County	collcounty_ss			dropdown	5,1	3		5				7	x
 field	12	collstate	State	collstate_ss			dropdown	6,1	4		6				8	x
 field	13	collcountry	Country	collcountry_ss			dropdown	7,1	5		7		4		9	x
@@ -72,3 +72,4 @@ field	56	type	Type	type_s			dropdown				36				37	x
 field	56	accessrestrictions	Access Restrictions	accessrestrictions_s			dropdown	11,3			37				38	x
 field	57	commonname	Common Name	commonname_s			keyword	2,1			1				39	x
 field	58	blobs	Images	blob_ss			blob									x
+field	59	accessionnotes	Accession Notes	accessionnotes_s			keyword								6	x
