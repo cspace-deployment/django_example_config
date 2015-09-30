@@ -1,7 +1,7 @@
 #	Parameters for UC Botanical Garden Public portal															x
 #																x
-date	09/24/15															x
-revision	1.16															x
+date	09/29/15															x
+revision	1.17															x
 #																x
 title	Plant Collection Information															x
 #																x
@@ -16,57 +16,58 @@ field	1	id	id	id			id									x
 field	2	csid	CSID	csid_s			csid									x
 field	3	accessionnumber	Accession Number	accessionnumber_s		ob	objectno,accession,string,sortkey	7,3		1		1	1		1	x
 field	4	determination	Scientific Name	determination_s		ta	keyword,mainentry	1,1		2		2			2	x
-field	5	collector	Collector	collector_s		pe	keyword	1,2	1			3	2		3	x
-field	6	collectornumber	Collector Number	collectornumber_s			keyword	2,2	2		2	4	3		4	x
-field	7	collectiondate	Collection Date	collectiondate_s			keyword	3,2			3				5	x
-field	8	earlycollectiondate	Early Collection Date	earlycollectiondate_s			keyword				4					x
+field	5	collector	Collector	collector_s		pe	keyword	2,2	1			6	2		3	x
+field	6	collectornumber	Collector Number	collectornumber_s			keyword	3,2	2		2	7	3		4	x
+field	7	collectiondate	Collection Date	collectiondate_s			keyword	4,2			3				5	x
+field	8	earlycollectiondate	Early Collection Date	earlycollectiondate_s			keyword									x
 field	9	latecollectiondate	Late Collection Date	latecollectiondate_s			keyword									x
-field	10	fcpverbatim	Field Place Name	fcpverbatim_s			keyword	7,2			5				6	x
-field	11	collcounty	County	collcounty_ss			dropdown	5,1	3		6				7	x
-field	12	collstate	State	collstate_ss			dropdown	6,1	4		7				8	x
-field	13	collcountry	Country	collcountry_ss			dropdown	7,1	5		8	5	4		9	x
-field	14	elevation	Elevation	elevation_s			keyword				9				10	x
+field	10	fcpverbatim	Field Place Name	fcpverbatim_s			keyword	7,2								x
+field	11	collcounty	County	collcounty_ss			dropdown	5,1	3		4				6	x
+field	12	collstate	State	collstate_ss			dropdown	6,1	4		5				7	x
+field	13	collcountry	Country	collcountry_ss			dropdown	7,1	5		6		4		8	x
+field	14	elevation	Elevation	elevation_s			keyword				7				9	x
 field	15	minelevation	Min elevation	minelevation_s			keyword									x
 field	16	maxelevation	Max elevation	maxelevation_s			keyword									x
 field	17	elevationunit	Elevation unit	elevationunit_s			keyword									x
-field	18	habitat	Habitat	habitat_s			keyword				10				11	x
-field	19	latlong	LatLong	latlong_p			location				37				12	x
+field	18	habitat	Habitat	habitat_s			keyword				8				10	x
+field	19	latlong	LatLong	latlong_p			location				18				11	x
 field	20	trscoordinates	TRS coordinates	trscoordinates_s			keyword							1		x
 field	21	datum	Datum	datum_s			dropdown							2		x
 field	22	coordinatesource	Coordinate source	coordinatesource_s			keyword							3		x
 field	23	coordinateuncertainty	Coordinate uncertainty	coordinateuncertainty_s			keyword							4		x
 field	24	coordinateuncertaintyunit	Coordinate uncertainty unit	coordinateuncertaintyunit_s			keyword							5		x
-field	25	family	Family	family_s			dropdown	3,1	6		11	6	5		13	x
-field	26	gardenlocation	Garden Location	gardenlocation_s			keyword	5,2	7		12	7	6		14	x
-field	27	dataquality	Data Quality	dataquality_s			keyword				13					x
-field	28	locality	Geographic Place Name	locality_s		pl	keyword	6,2			14				15	x
-field	29	rare	Rare?	rare_s			dropdown	1,3	8		15	8	7		16	x
-field	30	deadflag	Dead?	deadflag_s			dropdown	8,1	9		16	9	8		17	x
-field	31	flowercolor	Flower Color	flowercolor_s			keyword	2,3	10		17	10	9		18	x
-field	32	determinationnoauth	Determination	determinationnoauth_s			keyword				18					x
-field	33	reasonformove	Reason for Move	reasonformove_s			keyword				19					x
-field	34	conservationinfo	Conservation Information	conservationinfo_ss			keyword				23				19	x
-field	35	conserveorg	Conservation Organization	conserveorg_ss			dropdown	8,2								x
+field	25	family	Family	family_s			dropdown	3,1	6		9	3	5		12	x
+field	26	gardenlocation	Garden Location	gardenlocation_s			keyword	5,2	7		10	4	6		13	x
+field	27	dataquality	Data Quality	dataquality_s			keyword									x
+field	28	locality	Geographic Place Name	locality_s		pl	keyword	6,2			11	5			14	x
+field	29	rare	Rare?	rare_s			dropdown	1,3	8		12	8	7		15	x
+field	30	deadflag	Dead?	deadflag_s			dropdown	8,1	9		13	9	8		16	x
+field	31	flowercolor	Flower Color	flowercolor_s			keyword	2,3	10		14	10	9		17	x
+field	32	determinationnoauth	Determination	determinationnoauth_s			keyword				15					x
+field	33	reasonformove	Reason for Move	reasonformove_s			keyword									x
+field	34	conservationinfo	Conservation Information	conservationinfo_ss			keyword								18	x
+field	35	conserveorg	Conservation Organization	conserveorg_ss			dropdown	8,2	11							x
 field	36	conservecat	Conservation Category	conservecat_ss			dropdown	9,2								x
-field	37	voucherlist	Vouchers	voucherlist_ss			keyword	6,3			21				20	x
-field	38	vouchers	Has Vouchers	vouchers_s			dropdown	5,3			20				21	x
+field	37	voucherlist	Voucher Institution	voucherlist_ss			keyword	6,3			17				19	x
+field	38	vouchers	Has Vouchers	vouchers_s			dropdown	5,3			16				20	x
 field	39	vouchercount	Voucher Count	vouchercount_s			keyword									x
-field	40	keyword	Keyword	text			keyword	4,2								x
-field	40	fruitingverbatim	Fruiting (verbatim)	fruitingverbatim_ss			"colors= {""f"":""lightgray"",""t"":""orange""}"				25				22	x
-field	41	floweringverbatim	Flowering (verbatim)	floweringverbatim_ss			"colors= {""No"":""lightgray"",""Some"":""pink"",""Many"":""red""}"				24				23	x
-field	42	provenancetype	Provenance Type	provenancetype_s			keyword				22				24	x
+field	40	keyword	Keyword	text			keyword	1,2								x
+field	40	fruitingverbatim	Fruiting (verbatim)	fruitingverbatim_ss			"colors= {""f"":""lightgray"",""t"":""orange""}"								21	x
+field	41	floweringverbatim	Flowering (verbatim)	floweringverbatim_ss			"colors= {""No"":""lightgray"",""Some"":""pink"",""Many"":""red""}"								22	x
+field	42	provenancetype	Provenance Type	provenancetype_s			keyword				19				23	x
 field	43	fruiting	Fruiting (months)	fruiting_ss			keyword	4,3								x
 field	44	flowering	Flowering (months)	flowering_ss			keyword	3,3								x
-field	45	authorsParsed	Authors (parsed)	authorsParsed_s			keyword				26					x
-field	46	authorship	Authorship	authorship_s			keyword				27					x
-field	47	bracketAuthorship	Bracket Authorship	bracketAuthorship_s			keyword				28					x
-field	48	canonicalName	Canonical Name	canonicalName_s			keyword				29					x
-field	49	canonicalNameComplete	Canonical Name Complete	canonicalNameComplete_s			keyword				30					x
-field	50	canonicalNameWithMarker	Canonical Name With Marker	canonicalNameWithMarker_s			keyword				31				25	x
-field	51	genusOrAbove	Genus or above	genusOrAbove_s			keyword	4,1			32				26	x
-field	52	infraSpecificEpithet	Infraspecific Epithet	infraSpecificEpithet_s			keyword				33				28	x
-field	53	rankMarker	Rank Marker	rankMarker_s			keyword				34				29	x
-field	54	scientificName	Scientific Name	scientificName_s			keyword				35					x
-field	55	specificEpithet	Specific Epithet	specificEpithet_s			keyword				36				27	x
-field	56	type	Type	type_s			dropdown				38					x
-field	57	commonname	Common Name	commonname_s			keyword	2,1			1				30	x
+field	45	authorsParsed	Authors (parsed)	authorsParsed_s			keyword									x
+field	46	authorship	Authorship	authorship_s			keyword									x
+field	47	bracketAuthorship	Bracket Authorship	bracketAuthorship_s			keyword									x
+field	48	canonicalName	Canonical Name	canonicalName_s			keyword									x
+field	49	canonicalNameComplete	Canonical Name Complete	canonicalNameComplete_s			keyword									x
+field	50	canonicalNameWithMarker	Canonical Name With Marker	canonicalNameWithMarker_s			keyword								24	x
+field	51	genusOrAbove	Genus or above	genusOrAbove_s			keyword	4,1							25	x
+field	52	infraSpecificEpithet	Infraspecific Epithet	infraSpecificEpithet_s			keyword								27	x
+field	53	rankMarker	Rank Marker	rankMarker_s			keyword								28	x
+field	54	scientificName	Scientific Name	scientificName_s			keyword									x
+field	55	specificEpithet	Specific Epithet	specificEpithet_s			keyword								26	x
+field	56	type	Type	type_s			dropdown									x
+field	57	commonname	Common Name	commonname_s			keyword	2,1			1				29	x
+field	58	accessionnotes	Accession Notes	accessionnotes_s			keyword									x
