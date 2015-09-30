@@ -1,7 +1,7 @@
 #	Parameters for UC Botanical Garden INTERNAL portal															x
 #																x
 date	09/29/15															x
-revision	1.15															x
+revision	1.16															x
 #																x
 title	Plant Collection Information (internal use only!)															x
 #																x
@@ -71,5 +71,5 @@ field	55	specificEpithet	Specific Epithet	specificEpithet_s			keyword	9,3			35		
 field	56	type	Type	type_s			dropdown				36				37	x
 field	56	accessrestrictions	Access Restrictions	accessrestrictions_s			dropdown	11,3			37				38	x
 field	57	commonname	Common Name	commonname_s			keyword	2,1			1				39	x
-field	58	blobs	Images	blob_ss			blob									x
-field	59	accessionnotes	Accession Notes	accessionnotes_s			keyword								6	x
+field	58	accessionnotes	Accession Notes	accessionnotes_s			keyword								6	x
+field	59	blobs	Images	blob_ss			blob									x

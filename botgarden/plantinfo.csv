@@ -1,7 +1,7 @@
 #	Parameters for UC Botanical Garden Public portal															x
 #																x
 date	09/29/15															x
-revision	1.17															x
+revision	1.18															x
 #																x
 title	Plant Collection Information															x
 #																x
@@ -71,3 +71,4 @@ field	55	specificEpithet	Specific Epithet	specificEpithet_s			keyword								26	
 field	56	type	Type	type_s			dropdown									x
 field	57	commonname	Common Name	commonname_s			keyword	2,1			1				29	x
 field	58	accessionnotes	Accession Notes	accessionnotes_s			keyword									x
+field	59	blobs	Images	blob_ss			blob									x
