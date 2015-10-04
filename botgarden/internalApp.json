@@ -8,7 +8,7 @@
             "order": 3, 
             "slug": "about"
         }, 
-        "model": "search.additionalinfo", 
+        "model": "internal.additionalinfo", 
         "pk": 1
     }, 
     {
@@ -20,7 +20,7 @@
             "order": 1, 
             "slug": "help"
         }, 
-        "model": "search.additionalinfo", 
+        "model": "internal.additionalinfo", 
         "pk": 2
     }, 
     {
@@ -32,7 +32,7 @@
             "order": 2, 
             "slug": "terms"
         }, 
-        "model": "search.additionalinfo", 
+        "model": "internal.additionalinfo", 
         "pk": 3
     }, 
     {
@@ -44,7 +44,7 @@
             "order": 3, 
             "slug": "credits"
         }, 
-        "model": "search.additionalinfo", 
+        "model": "internal.additionalinfo", 
         "pk": 4
     }
 ]
