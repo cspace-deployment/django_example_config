@@ -29,7 +29,7 @@ field	16	assoccult	Culture	objassoccult_ss	objculturetree_ss	cu	keyword	2,2	5	4	
 field	17	culturetree	Culture (tree)	objculturetree_ss		cu	keyword									x
 field	18	inventory	Inventory	objinventory_s			keyword									x
 field	19	collector	Collector	objcollector_ss		pe	keyword	5,2			5	11			23	x
-field	20	descr	Description	objdescr_ss			keyword	6,1				12			14	x
+field	20	descr	Description	objdescr_s			keyword	6,1				12			14	x
 field	21	contextuse	Context of Use	objcontextuse_s			keyword					13			15	x
 field	22	dimensions	Dimensions	objdimensions_ss			keyword					14	3		16	x
 field	23	materials	Materials	objmaterials_ss			keyword	3,2	4			15	4		17	x
