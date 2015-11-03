@@ -1,0 +1,58 @@
+#	Parameters for BAMPFA Internal Collections Browser															x
+#																x
+date		11/03/15														x
+revision		1.5														x
+#																x
+title	Art Collection Browser (internal use only!)															x
+#																x
+#																x
+server	http://localhost:8983/solr															x
+core	bampfa-internal															x
+#																x
+#		Fields						row,column								x
+#																x
+header		Name	Label	SolrField	SearchTarget	Suggestions	Role	Search	Facet	bMapper	fullDisplay	listDisplay	gridDisplay	mapDisplay	inCSV	placeholder
+field	1	id	ID	id			id,csid								21	x
+field	2	idnumber	ID Number	idnumber_s		ob	objectno,accession,string	2,1				1			22	x
+field	3	sortobjectnumber	sortobject Number	sortobjectnumber_s			string,sortkey									x
+field	4	othernumber	Other Number	othernumber_s			keyword	3,1							23	x
+field	5	itemclass	Classification	itemclass_s			dropdown	4,1	1		1	4	1		1	x
+field	6	artistcalc	Artist	artistcalc_s			keyword	1,2	2		2	2	2		2	x
+field	7	artistorigin	Country	artistorigin_s			keyword	2,2	3		3		3		3	x
+field	8	artistbirthdate	Artist birth Date	artistbirthdate_s			date				4				4	x
+field	9	artistdeathdate	Artist death Date	artistdeathdate_s			date				5				5	x
+field	10	datesactive	Dates Active	datesactive_s			date				6				6	x
+field	11	title	Title	title_s			keyword,mainentry	3,2				3			24	x
+field	12	initialvalue	Initial value	initialvalue_s			keyword									x
+field	13	currentvalue	Current value	currentvalue_s			keyword									x
+field	14	currentvaluesource	Current value source	currentvaluesource_s			keyword									x
+field	15	currentvaluedate	Current value Date	currentvaluedate_s			date									x
+field	16	creditline	Credit line	creditline_s			keyword	4,2								x
+field	17	fullbampfacreditline	Full BAMPFA credit line	fullbampfacreditline_s			keyword				10				10	x
+field	18	permissiontoreproduce	Permission to reproduce	permissiontoreproduce_s			keyword									x
+field	19	copyrightcredit	Copyright credit	copyrightcredit_s			keyword				11				11	x
+field	20	photocredit	Photo credit	photocredit_s			keyword				12				12	x
+field	21	datemade	Date Made	datemade_s			date		5		7		4		7	x
+field	22	measurement	Dimensions	measurement_s			keyword	1,3	4		8	5	5		8	x
+field	23	materials	Materials	materials_s			keyword	2,3			9		6		9	x
+field	24	dateacquired	Date Acquired	dateacquired_s			date									x
+field	25	acquisitionsource	Acquisition source	acquisitionsource_s			keyword	3,3								x
+field	26	provenance	Provenance	provenance_s			keyword									x
+field	27	signature	Signature	signature_s			keyword									x
+field	28	notescomments	Notes comments	notescomments_s			keyword									x
+field	29	cataloger	Cataloger	cataloger_s			keyword									x
+field	30	catalognote	Catalog note	catalognote_s			keyword									x
+field	30	catalogdate	Catalog Date	catalogdate_s			date									x
+field	31	site	Site	site_s			keyword									x
+field	32	subjectone	Subjectone	subjectone_s			keyword				14				14	x
+field	33	subjecttwo	Subjecttwo	subjecttwo_s			keyword				15				15	x
+field	34	subjectthree	Subjectthree	subjectthree_s			keyword				16				16	x
+field	35	subjectfour	Subjectfour	subjectfour_s			keyword				17				17	x
+field	36	subjectfive	Subjectfive	subjectfive_s			keyword				18				18	x
+field	37	currentlocation	Current location	currentlocation_s			keyword				19				19	x
+field	38	currentcrate	Current crate	currentcrate_s		lo	keyword				20				20	x
+field	39	blobs	blobs	blob_ss			blob									x
+field	40	keyword	Keyword	text			keyword	1,1								x
+field	41	status	Status	status_s			dropdown	4,3			13				13	x
+#	for now, we need a dummy location value in this file.															x
+field	42	latlong	LatLong	latlong_p			location									x
