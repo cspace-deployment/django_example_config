@@ -7,7 +7,7 @@
     <logo img="http://botanicalgarden.berkeley.edu/wp-content/uploads/2015/06/UCBG-rhodo-logotype.jpg" url="http://botanical.berkeley.edu/" />
   </metadata>
   <recordlinkback>
-    <linkback method="root" linkurl="https://webapps.cspace.berkeley.edu/botgarden/search/search/?displayType=full&amp;maxresults=1&amp;start=0" text="View Details" fieldname="Full Record" key1="musno" value1="char120:1" />
+    <linkback method="root" linkurl="https://webapps.cspace.berkeley.edu/botgarden/search/search/?displayType=full&amp;maxresults=1&amp;start=0" text="View Details" fieldname="Full Record" key1="accessionnumber" value1="char120:1" />
   </recordlinkback>
   <concepts xlmns:darwin="http://digir.net/schema/conceptual/darwin/2003/1.0">
     <concept viewlist="1" colorlist="0" datatype="char120:1" alias="Museum Number" />
@@ -15,5 +15,4 @@
     <concept viewlist="0" colorlist="0" datatype="darwin:decimallatitude" alias="DecimalLatitude" />
     <concept viewlist="0" colorlist="0" datatype="darwin:decimallongitude" alias="DecimalLongitude" />
   </concepts>
-  <colors method="dynamicfield" fieldname="char120:3" label="Culture"/>
 </berkeleymapper>
