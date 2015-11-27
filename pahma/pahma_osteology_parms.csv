@@ -17,18 +17,18 @@ field	4	inventoryanalyst	Analyst	inventoryanalyst_s			keyword					39			39		1	4
 field	5	inventorydate   	Inventory Date	inventorydate_dt			date											
 field	6	inventoryiscomplete	Inventory Complete?	inventoryiscomplete_b			dropdown		1		2	3	1		3		5	1
 field	7	osteoageestimateverbatim	Age Estimate (verbatim)	osteoageestimateverbatim_s			keyword	1,3	2		3	4	3		4		1	2
-field	8	osteoageestimateupper   	Age Estimate (upper)	osteoageestimateupper_f				2,3			4							
-field	9	osteoageestimatelower   	Age Estimate (lower)	osteoageestimatelower_f				3,3			5							
+field	8	osteoageestimateupper   	Age Estimate (upper)	osteoageestimateupper_f			string	2,3			4							
+field	9	osteoageestimatelower   	Age Estimate (lower)	osteoageestimatelower_f			string	3,3			5							
 field	9	sexdetermination	Sex Determination	sexdetermination_s			keyword	4,3	3		6	5	4		5		2	2
 field	10	osteoageestimatenote	Age Estimate Note	osteoageestimatenote_s			keyword					7	2		7		1	3
 field	11	sexdeterminationnote	Sex Determination Note	sexdeterminationnote_s			keyword					8	5		8		2	3
 field	12	aggregate	Skeletal Data	aggregate_ss			keyword	5,3	4			6	6		6		3	2
-field	13	notes_postcranialpathology	Postcranial Pathology	notes_postcranialpathology_s				1,4				40						
-field	13	notes_cranialpathology    	Cranial Pathology	notes_cranialpathology_s				2,4				41						
-field	13	notes_dentalpathology     	Dental Pathology	notes_dentalpathology_s				3,4				42						
-field	13	notes_nhtaphonomicalterations	NH taphonomical alterations	notes_nhtaphonomicalterations_s				4,4				43						
-field	13	notes_curatorialsuffixing 	Curatorial Suffixing	notes_curatorialsuffixing_s				5,4				44						
-field	13	notes_culturalmodifications	Cultural Modifications	notes_culturalmodifications_s				6,4				45						
+field	13	notes_postcranialpathology	Postcranial Pathology	notes_postcranialpathology_s			keyword	1,4				40						
+field	13	notes_cranialpathology    	Cranial Pathology	notes_cranialpathology_s			keyword	2,4				41						
+field	13	notes_dentalpathology     	Dental Pathology	notes_dentalpathology_s			keyword	3,4				42						
+field	13	notes_nhtaphonomicalterations	NH taphonomical alterations	notes_nhtaphonomicalterations_s			keyword	4,4				43						
+field	13	notes_curatorialsuffixing 	Curatorial Suffixing	notes_curatorialsuffixing_s			keyword	5,4				44						
+field	13	notes_culturalmodifications	Cultural Modifications	notes_culturalmodifications_s			keyword	6,4				45						
 field	12	musno	Museum Number	objmusno_s			objectno,accession	1,1		1	1				43	x	2	1
 field	13	sortnum	Sortable Museum Number	objsortnum_s			string,sortkey								1	x		
 field	14	name	Object Name	objname_s		na	keyword,mainentry			2					40	x	4	1
