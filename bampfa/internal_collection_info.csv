@@ -3,7 +3,7 @@
 date		11/9/15														x
 revision		1.7														x
 #																x
-title	Art Collection Browser (For internal staff use only!)															x
+title	Art Collection (internal use only!)															x
 #																x
 server	http://localhost:8983/solr															x
 core	bampfa-internal															x
