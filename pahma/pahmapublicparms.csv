@@ -20,7 +20,7 @@ field	7	type	Object Type	objtype_s			dropdown	6,2	1			2			4	x
 field	8	count	Object Count	objcount_s			string					3			5	x
 field	9	countnote	Count Note	objcountnote_s			keyword					4			7	x
 field	10	dept	Department	objdept_s			keyword					5			3	x
-field	11	keelingser	Keeling Serial Number	objkeelingser_s			keyword					6			8	x
+field	11	keelingser	Keeling Series Number	objkeelingser_s			keyword					6			8	x
 field	12	fcp	Collection Place	objfcp_s	objfcptree_s	pl	keyword	1,2	6	3		7	1		28	x
 field	13	fcptree	Collection Place (tree)	objfcptree_s			keyword									x
 field	14	fcpverbatim	Collection Place (vebatim)	objfcpverbatim_s		pl	keyword					8			9	x
