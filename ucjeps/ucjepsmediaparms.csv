@@ -2,8 +2,8 @@
 #																x
 title	Search															x
 #																x
-revision	1.0															x
-date	02/03/16															x
+revision	1.1															x
+date	02/07/16															x
 #																x
 server	http://localhost:8983/solr															x
 core	ucjeps-media															x
@@ -12,17 +12,27 @@ core	ucjeps-media															x
 #																x
 header		Name	Label	SolrField	SearchTarget	Suggestions	Role	Search	Facet	bMapper	listDisplay	fullDisplay	gridDisplay	mapDisplay	inCSV	x
 field	1	id	ID	id			id									x
-field	2	csid	csid	objectid_s			csid			1					10	x
+field	2	csid	csid	objectid_s			csid			1					19	x
 field	3	specimenid	Specimen ID	objectnumber_s			objectno,string	1,1		2	1	1	1		1	x
-field	4	identificationnumber	Media ID number	identificationnumber_s			string,accession,sortkey	2,1			2		2		2	
-field	5	Name	Media File Name	name_s			mainentry,string	3,1	1	3	3		3		3	x
-field	6	creator	Creator	creator_s			keyword	1,2	4		4	2	4		4	x
-field	7	creatorrefname	creatorrefname	creatorrefname_s			string									x
-field	8	rightsholder	Rights holder	rightsholder_s			keyword	2,2	3		5	3			5	x
-field	9	rightsholderrefname	Rights holder refname	rightsholderrefname_s			string									x
-field	10	contributor	Contributor	contributor_s			keyword	3,2	2		6	4			6	x
-field	11	contributorrefname	Contributor refname	contributorrefname_s			string									x
-field	12	copyrightstatement	Copyright statement	copyrightstatement_s			keyword								9	x
-field	13	latlong	LatLong	latlong_p			location									x
-field	14	description	description	description_s			keyword	4,1				5			7	x
-field	15	blobs	Images	blob_ss			blob								8	x
+field	4	identificationnumber	Media ID number	identificationnumber_s			string,accession,sortkey	2,1	6						2	
+field	5	scientifictaxonomy	Scientific Name	scientifictaxonomy_s			mainentry,keyword	1,3	1		2	2	2		9	x
+field	6	name	Media File Name	name_s			string	3,1		3	3		3		3	x
+field	7	photographer	Photographer	creator_s			keyword	1,2	7		4	2	4		4	x
+field	8	creatorrefname	creatorrefname	creatorrefname_s			string									x
+field	9	rightsholder	Rights Holder	rightsholder_s			keyword	2,2			5	3			5	x
+field	10	rightsholderrefname	Rights holder refname	rightsholderrefname_s			string									x
+field	11	contributor	Contributor	contributor_s			keyword	3,2			6	4			6	x
+field	12	contributorrefname	Contributor refname	contributorrefname_s			string									x
+field	13	copyrightstatement	Copyright statement	copyrightstatement_s			keyword					11			9	x
+field	14	latlong	LatLong	latlong_p			location									x
+field	15	description	Description	description_s			keyword	4,1				5			7	x
+field	16	blobs	Images	blob_ss			blob								8	x
+field	17	family	Family	family_s			dropdown	2,3	2			3			10	x
+field	18	majorgroup	Major Group	majorgroup_s			dropdown	3,3	3			4			11	x
+field	19	majorcategory	Morphology Category	majorcategory_s			dropdown	4,3	4			5			12	x
+field	20	typeofmedia	Types of Media	typeofmedia_s			dropdown	5,3	5			6			13	x
+field	21	locality	Locality	locality_s			keyword	6,3				7			14	x
+field	22	mediadate	Date	mediadate_s			date	7,3				8			15	x
+field	23	posttopublic	Post to Public	posttopublic_s			dropdown								16	x
+field	24	handwritten	Handwritten?	handwritten_s			dropdown					9			17	x
+field	25	collector	Collector	collector_s			keyword					10			18	x
