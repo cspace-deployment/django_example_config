@@ -2,8 +2,8 @@
 #																x
 title	Search															x
 #																x
-revision	1.1															x
-date	02/07/16															x
+revision	1.2															x
+date	02/08/16															x
 #																x
 server	http://localhost:8983/solr															x
 core	ucjeps-media															x
@@ -27,12 +27,13 @@ field	13	copyrightstatement	Copyright statement	copyrightstatement_s			keyword		
 field	14	latlong	LatLong	latlong_p			location									x
 field	15	description	Description	description_s			keyword	4,1				5			7	x
 field	16	blobs	Images	blob_ss			blob								8	x
-field	17	family	Family	family_s			dropdown	2,3	2			3			10	x
+field	17	family	Family	family_s			string	2,3	2			3			10	x
 field	18	majorgroup	Major Group	majorgroup_s			dropdown	3,3	3			4			11	x
-field	19	majorcategory	Morphology Category	majorcategory_s			dropdown	4,3	4			5			12	x
-field	20	typeofmedia	Types of Media	typeofmedia_s			dropdown	5,3	5			6			13	x
-field	21	locality	Locality	locality_s			keyword	6,3				7			14	x
-field	22	mediadate	Date	mediadate_s			date	7,3				8			15	x
-field	23	posttopublic	Post to Public	posttopublic_s			dropdown								16	x
-field	24	handwritten	Handwritten?	handwritten_s			dropdown					9			17	x
-field	25	collector	Collector	collector_s			keyword					10			18	x
+field	19	morphologycategory	Morphology Category	morphologycategory_s			dropdown	4,3	4			5			12	x
+field	20	morphologycategoryrefname	Morphology Category	morphologycategoryrefname_s			dropdown									x
+field	21	typeofmedia	Types of Media	typeofmedia_s			dropdown	4,2	5			6			13	x
+field	22	locality	Locality	locality_s			keyword	5,3				7			14	x
+field	23	mediadate	Date	mediadate_s			date	6,3				8			15	x
+field	24	posttopublic	Post to Public	posttopublic_s			dropdown								16	x
+field	25	handwritten	Handwritten?	handwritten_s			dropdown					9			17	x
+field	26	collector	Collector	collector_s			keyword					10			18	x
