@@ -1,7 +1,7 @@
 #	parameter specification spreadsheet for pahma internal portal															x
 #																x
-date	09/01/15															x
-revision	1.3															x
+date	12/03/15															x
+revision	1.5															x
 title	Collections (internal use only)															x
 #																x
 server	http://localhost:8983/solr															x
@@ -20,7 +20,7 @@ field	7	type	Object Type	objtype_s			dropdown	6,2	1			2			4	x
 field	8	count	Object Count	objcount_s			string					3			5	x
 field	9	countnote	Count Note	objcountnote_s			keyword					4			7	x
 field	10	dept	Department	objdept_s			keyword					5			3	x
-field	11	keelingser	Keeling Serial Number	objkeelingser_s			keyword					6			8	x
+field	11	keelingser	Keeling Series Number	objkeelingser_s			keyword	7,1				6			8	x
 field	12	fcp	Collection Place	objfcp_s	objfcptree_s	pl	keyword	1,2	6	3		7	1		28	x
 field	13	fcptree	Collection Place (tree)	objfcptree_s			keyword									x
 field	14	fcpverbatim	Collection Place (vebatim)	objfcpverbatim_s		pl	keyword					8			9	x
@@ -51,7 +51,8 @@ field	38	fcpelevation	Collection Place Elevation	objfcpelevation_s			keyword				
 field	39	crate	Container	computedcrate_s		cr	keyword	6,3				27			32	x
 field	40	exhibition	Exhibition Title	exhibitiontitle_ss			keyword	8,3				28			33	x
 field	41	exhibition	Exhibition Number	exhibitionnumber_ss			keyword	8,2				29			34	x
-field	42	group	Group	grouptitle_ss			keyword	10,3				30			35	x
+field	42	group	Group	grouptitle_ss			keyword	9,3				30			35	x
 field	43	locationdate	Location Date	locationdate_dt			date	7,3				31			36	x
 field	44	keyword	Keyword	text			keyword	1,1							37	x
 field	45	blobs	Blob	blob_ss			blob								38	x
+field	46	photos	Has Photos?	blob_ss			radio={"No":"Null","Yes":"*"}	9,2							38	x

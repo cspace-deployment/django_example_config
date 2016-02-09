@@ -1,1 +1,26 @@
-[]
+[
+    {
+        "fields": {
+            "content": "This is the <b>Help</b> fixture for the Tricoder Upload app.", 
+            "contentType": "HTML", 
+            "live": true, 
+            "name": "Help", 
+            "order": 0, 
+            "slug": "help"
+        }, 
+        "model": "uploadtricoder.additionalinfo", 
+        "pk": 1
+    }, 
+    {
+        "fields": {
+            "content": "<p>\r\n    This webapp is the result of a long collaboration between several institutions at UC Berkeley and beyond. Only a\r\n    few of the contributors are listed here.\r\n</p>\r\n\r\n<p>\r\n    For questions about the content, and to access content beyond what is provided here, please contact Michael Black,\r\n    mtblack@berkeley.edu.\r\n</p>\r\n\r\n<p>\r\n    This program was written and and is maintained by John Lowe (jblowe@berkeley.edu) at RIT/IS&T.\r\n</p>\r\n\r\n<p>\r\n    Comments, suggestions, bug reports, and so on are most welcome.\r\n</p>\r\n\r\n<p>\r\n    This program is written in <a href=\"http://www.python.org/\">Python</a> using\r\n    <a href=\"https://www.djangoproject.com/\">Django</a>,\r\n    <a href=\"http://jquery.com/\">jQuery</a>, and accessing a\r\n    <a href=\"http://lucene.apache.org/solr/\">Solr4</a> datasource.\r\n    The data is extracted and updated nightly from the PAHMA <a href=\"http://www.collectionspace.org/\">CollectionSpace</a> system.\r\n</p>\r\n", 
+            "contentType": "HTML", 
+            "live": true, 
+            "name": "Credits", 
+            "order": 1, 
+            "slug": "credits"
+        }, 
+        "model": "uploadtricoder.additionalinfo", 
+        "pk": 2
+    }
+]

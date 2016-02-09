@@ -3,7 +3,7 @@
 date		11/9/15														x
 revision		1.7														x
 #																x
-title	BAMPFA Art Collection															x
+title	Art Collection															x
 #																x
 #																x
 server	http://localhost:8983/solr															x
@@ -32,7 +32,7 @@ field	17	fullbampfacreditline	Full BAMPFA credit line	fullbampfacreditline_s			k
 field	18	permissiontoreproduce	Permission to reproduce	permissiontoreproduce_s			keyword									x
 field	19	copyrightcredit	Copyright credit	copyrightcredit_s			keyword				11				12	x
 field	20	photocredit	Photo credit	photocredit_s			keyword									x
-field	21	datemade	Date Made	datemade_s			date		4		7		4		8	x
+field	21	datemade	Date Made	datemade_s			keyword	2,3	4		7		4		8	x
 field	22	measurement	Dimensions	measurement_s			keyword		6		8	5	5		9	x
 field	23	materials	Materials	materials_s			keyword	2,2	5		9	6	6		10	x
 field	24	dateacquired	Date Acquired	dateacquired_s			date									x
@@ -53,6 +53,6 @@ field	37	currentlocation	Current location	currentlocation_s			keyword									x
 field	38	currentcrate	Current crate	currentcrate_s		lo	keyword									x
 field	39	blobs	blobs	blob_ss			blob									x
 field	40	keyword	Keyword	text			keyword	1,1								x
-field	41	status	Status	status_s			dropdown									x
+field	41	status	Status	status_s			dropdown	3,3								x
 #	for now, we need a dummy location value in this file.															x
 field	42	latlong	LatLong	latlong_p			location									x
