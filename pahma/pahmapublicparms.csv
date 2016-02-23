@@ -1,7 +1,7 @@
 #	parameter specification spreadsheet for a django portal app															x
 #																x
-date	09/01/15															x
-revision	1.12															x
+date	01/21/16															x
+revision	1.13															x
 title	Collections															x
 #																x
 server	http://localhost:8983/solr															x
@@ -49,3 +49,7 @@ field	36	fcpgeoloc	LatLong	objfcpgeoloc_p			location								29	x
 field	37	fcpelevation	Collection Place Elevation	objfcpelevation_s			keyword					24			30	x
 field	38	keyword	Keyword	text			keyword	1,1								x
 field	39	blobs	Blob	blob_ss			blob									x
+field	40	cards	Card	card_ss			card									x
+field	41	primaryimage	Primary Image	primaryimage_s			primaryimage									x
+field	42	imagetypes	Image Type	imagetype_ss			dropdown	5,3								x
+field	43	hasimage	Has image?	hasimages_s			dropdown	6,3								x
