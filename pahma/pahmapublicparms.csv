@@ -1,6 +1,6 @@
 #	parameter specification spreadsheet for a django portal app															x
 #																x
-date	03/03/16															x
+date	03/18/16															x
 revision	1.14															x
 title	Collections															x
 #																x
@@ -51,6 +51,6 @@ field	38	keyword	Keyword	text			keyword	1,1								x
 field	39	blobs	Blob	blob_ss			blob									x
 field	40	cards	Card	card_ss			card									x
 field	41	primaryimage	Primary Image	primaryimage_s			primaryimage									x
-#	42	imagetypes	Image Type	imagetype_ss			dropdown	5,3								x
-#	43	hasimage	Has image?	hasimages_s			dropdown	6,3								x
-#	50	hascoords	Has coordinates?	hascoordinates_s			dropdown	7,3								x
+field	42	imagetypes	Image Type	imagetype_ss			dropdown	5,3								x
+field	43	hasimage	Has image(s)?	hasimages_s			dropdown	6,3								x
+field	44	hascoords	Has coordinates?	hascoords_s			dropdown	7,3								x
