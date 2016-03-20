@@ -51,10 +51,10 @@ field	36	conservecat	Conservation Category	conservecat_ss			dropdown	9,2			16			
 field	37	voucherlist	Voucher Institution	voucherlist_ss			keyword	6,3			19				19	x
 field	38	vouchers	Has Vouchers	vouchers_s			dropdown	5,3			18				20	x
 field	39	vouchercount	Voucher Count	vouchercount_s			keyword									x
-field	40	keyword	Keyword	text			keyword	1,2								x
-field	40	fruitingverbatim	Fruiting (verbatim)	fruitingverbatim_ss			"colors= {""f"":""lightgray"",""t"":""orange""}"								21	x
-field	41	floweringverbatim	Flowering (verbatim)	floweringverbatim_ss			"colors= {""No"":""lightgray"",""Some"":""pink"",""Many"":""red""}"								22	x
-field	42	provenancetype	Provenance Type	provenancetype_s			keyword				20				23	x
+field	40	fruitingverbatim	Fruiting months (orange = fruiting)	fruitingverbatim_ss			"colors= {""f"":""lightgray"",""t"":""orange""}"				24				25	x
+field	41	keyword	Keyword	text			keyword	4,2								x
+field	42	floweringverbatim	Flowering months (pink = some, red = many)	floweringverbatim_ss			"colors= {""No"":""lightgray"",""Some"":""pink"",""Many"":""red""}"				23				23	x
+field	43	provenancetype	Provenance Type	provenancetype_s			keyword				21				24	x
 field	43	fruiting	Fruiting (months)	fruiting_ss			keyword	4,3								x
 field	44	flowering	Flowering (months)	flowering_ss			keyword	3,3								x
 field	45	authorsParsed	Authors (parsed)	authorsParsed_s			keyword									x

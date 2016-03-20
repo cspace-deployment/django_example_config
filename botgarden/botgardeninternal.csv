@@ -51,25 +51,25 @@ field	36	conservecat	Conservation Category	conservecat_ss			dropdown	10,2							
 field	37	voucherlist	Voucher Institution	voucherlist_ss			keyword	12,2			20				20	x
 field	38	vouchers	Has Vouchers	vouchers_s			dropdown	11,2			19				21	x
 field	39	vouchercount	Voucher Count	vouchercount_s			keyword									x
-field	40	fruitingverbatim	Fruiting (verbatim)	fruitingverbatim_ss			"colors= {""f"":""lightgray"",""t"":""orange""}"				24				25	x
-field	40	keyword	Keyword	text			keyword	4,2								x
-field	41	floweringverbatim	Flowering (verbatim)	floweringverbatim_ss			"colors= {""No"":""lightgray"",""Some"":""pink"",""Many"":""red""}"				23				23	x
-field	42	provenancetype	Provenance Type	provenancetype_s			keyword				21				24	x
-field	43	fruiting	Fruiting (months)	fruiting_ss			keyword	10,1								x
-field	44	flowering	Flowering (months)	flowering_ss			keyword	9,1								x
-field	45	authorsParsed	Authors (parsed)	authorsParsed_s			keyword	1,3			25				26	x
-field	46	authorship	Authorship	authorship_s			keyword	2,3			26				27	x
-field	47	bracketAuthorship	Bracket Authorship	bracketAuthorship_s			keyword	3,3			27				28	x
-field	48	canonicalName	Canonical Name	canonicalName_s			keyword	4,3			28				29	x
-field	49	canonicalNameComplete	Canonical Name Complete	canonicalNameComplete_s			keyword	5,3			29				30	x
-field	50	canonicalNameWithMarker	Canonical Name With Marker	canonicalNameWithMarker_s			keyword				30				31	x
-field	51	genusOrAbove	Genus or above	genusOrAbove_s			keyword	6,3			31				32	x
-field	52	infraSpecificEpithet	Infraspecific Epithet	infraSpecificEpithet_s			keyword	7,3			32				34	x
-field	53	rankMarker	Rank Marker	rankMarker_s			keyword	8,3			33				35	x
-field	54	scientificName	Scientific Name	scientificName_s			keyword				34				36	x
-field	55	specificEpithet	Specific Epithet	specificEpithet_s			keyword	9,3			35				33	x
+field	40	fruitingverbatim	Fruiting months (orange = fruiting)	fruitingverbatim_ss			"colors= {""f"":""lightgray"",""t"":""orange""}"				24				25	x
+field	41	keyword	Keyword	text			keyword	4,2								x
+field	42	floweringverbatim	Flowering months (pink = some, red = many)	floweringverbatim_ss			"colors= {""No"":""lightgray"",""Some"":""pink"",""Many"":""red""}"				23				23	x
+field	43	provenancetype	Provenance Type	provenancetype_s			keyword				21				24	x
+field	44	fruiting	Fruiting (months)	fruiting_ss			keyword	10,1								x
+field	45	flowering	Flowering (months)	flowering_ss			keyword	9,1								x
+field	46	authorsParsed	Authors (parsed)	authorsParsed_s			keyword	1,3			25				26	x
+field	47	authorship	Authorship	authorship_s			keyword	2,3			26				27	x
+field	48	bracketAuthorship	Bracket Authorship	bracketAuthorship_s			keyword	3,3			27				28	x
+field	49	canonicalName	Canonical Name	canonicalName_s			keyword	4,3			28				29	x
+field	50	canonicalNameComplete	Canonical Name Complete	canonicalNameComplete_s			keyword	5,3			29				30	x
+field	51	canonicalNameWithMarker	Canonical Name With Marker	canonicalNameWithMarker_s			keyword				30				31	x
+field	52	genusOrAbove	Genus or above	genusOrAbove_s			keyword	6,3			31				32	x
+field	53	infraSpecificEpithet	Infraspecific Epithet	infraSpecificEpithet_s			keyword	7,3			32				34	x
+field	54	rankMarker	Rank Marker	rankMarker_s			keyword	8,3			33				35	x
+field	55	scientificName	Scientific Name	scientificName_s			keyword				34				36	x
+field	56	specificEpithet	Specific Epithet	specificEpithet_s			keyword	9,3			35				33	x
 field	56	type	Type	type_s			dropdown				36				37	x
-field	56	accessrestrictions	Access Restrictions	accessrestrictions_s			dropdown	11,3			37				38	x
-field	57	commonname	Common Name	commonname_s			keyword	2,1			1				39	x
-field	58	accessionnotes	Accession Notes	accessionnotes_s			keyword								6	x
-field	59	blobs	Images	blob_ss			blob									x
+field	57	accessrestrictions	Access Restrictions	accessrestrictions_s			dropdown	11,3			37				38	x
+field	58	commonname	Common Name	commonname_s			keyword	2,1			1				39	x
+field	59	accessionnotes	Accession Notes	accessionnotes_s			keyword								6	x
+field	60	blobs	Images	blob_ss			blob									x
