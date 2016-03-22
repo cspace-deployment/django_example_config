@@ -60,3 +60,4 @@ field	47	primaryimage	Primary Image	primaryimage_s			primaryimage								40	x
 field	48	imagetypes	Image Type	imagetype_ss			dropdown	9,2							41	x
 field	49	hasimage	Has image(s)?	hasimages_s			dropdown	8,1								x
 field	50	hascoords	Has coordinates?	hascoords_s			dropdown	9,1								x
+field	50	hasrestrictions	Has restrictions?	restrictions_ss			dropdown	10,1								x
