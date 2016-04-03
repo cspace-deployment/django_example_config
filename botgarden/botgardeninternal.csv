@@ -1,7 +1,7 @@
 #	Parameters for UC Botanical Garden INTERNAL portal															x
 #																x
-date	11/30/15															x
-revision	1.17															x
+date	4/3/16															x
+revision	1.18															x
 #																x
 title	Plant Collection Information (internal use only!)															x
 #																x
@@ -14,9 +14,9 @@ core	botgarden-internal															x
 header		Name	Label	SolrField	SearchTarget	Suggestions	Role	Search	Facet	bMapper	fullDisplay	listDisplay	gridDisplay	mapDisplay	inCSV	placeholder
 field	1	id	id	id			id									x
 field	2	csid	CSID	csid_s			csid									x
-field	3	accessionnumber	Accession Number	accessionnumber_s		ob	objectno,accession,string,sortkey	10,3		1		1	1		1	x
+field	3	accessionnumber	Accession Number	accessionnumber_s		ob	objectno,accession,string,sortkey	12,3		1		1	1		1	x
 field	4	determination	Scientific Name	determination_s		ta	keyword,mainentry	1,1		2		2			2	x
-field	5	collector	Collector	collector_s		pe	keyword	1,2	1			6	2		3	x
+field	5	collector	Collector	collector_s		pe	keyword	4,2	1			6	2		3	x
 field	6	collectornumber	Collector Number	collectornumber_s			keyword	2,2	2		1	7	3		4	x
 field	7	collectiondate	Collection Date	collectiondate_s			keyword	3,2			2				5	x
 field	8	earlycollectiondate	Early Collection Date	earlycollectiondate_s			keyword				3					x
@@ -30,7 +30,7 @@ field	15	minelevation	Min elevation	minelevation_s			keyword									x
 field	16	maxelevation	Max elevation	maxelevation_s			keyword									x
 field	17	elevationunit	Elevation unit	elevationunit_s			keyword									x
 field	18	habitat	Habitat	habitat_s			keyword	6,2			9				11	x
-field	19	latlong	LatLong	latlong_p			location				36				12	x
+field	19	latlong	LatLong	latlong_p			location								12	x
 field	20	trscoordinates	TRS coordinates	trscoordinates_s			keyword							1		x
 field	21	datum	Datum	datum_s			dropdown							2		x
 field	22	coordinatesource	Coordinate source	coordinatesource_s			keyword							3		x
@@ -64,12 +64,13 @@ field	49	canonicalName	Canonical Name	canonicalName_s			keyword	4,3			28				29	x
 field	50	canonicalNameComplete	Canonical Name Complete	canonicalNameComplete_s			keyword	5,3			29				30	x
 field	51	canonicalNameWithMarker	Canonical Name With Marker	canonicalNameWithMarker_s			keyword				30				31	x
 field	52	genusOrAbove	Genus or above	genusOrAbove_s			keyword	6,3			31				32	x
-field	53	infraSpecificEpithet	Infraspecific Epithet	infraSpecificEpithet_s			keyword	7,3			32				34	x
-field	54	rankMarker	Rank Marker	rankMarker_s			keyword	8,3			33				35	x
-field	55	scientificName	Scientific Name	scientificName_s			keyword				34				36	x
+field	53	infraSpecificEpithet	Infraspecific Epithet	infraSpecificEpithet_s			keyword	7,3			32				35	x
+field	54	rankMarker	Rank Marker	rankMarker_s			keyword	8,3			33				36	x
+field	55	scientificName	Scientific Name	scientificName_s			keyword				34				37	x
 field	56	specificEpithet	Specific Epithet	specificEpithet_s			keyword	9,3			35				33	x
-field	56	type	Type	type_s			dropdown				36				37	x
-field	57	accessrestrictions	Access Restrictions	accessrestrictions_s			dropdown	11,3			37				38	x
-field	58	commonname	Common Name	commonname_s			keyword	2,1			1				39	x
-field	59	accessionnotes	Accession Notes	accessionnotes_s			keyword								6	x
-field	60	blobs	Images	blob_ss			blob									x
+field	57	cultivarEpithet	Cultivar Epithet	cultivarEpithet_s			keyword	10,3			36				34	x
+field	58	type	Type	type_s			dropdown				37				38	x
+field	59	accessrestrictions	Access Restrictions	accessrestrictions_s			dropdown	11,3			38				39	x
+field	60	commonname	Common Name	commonname_s			keyword	2,1			1				40	x
+field	61	accessionnotes	Accession Notes	accessionnotes_s			keyword				39				6	x
+field	62	blobs	Images	blob_ss			blob								41	x
