@@ -7,7 +7,7 @@ title	Art Collection															x
 #																x
 #																x
 server	http://localhost:8983/solr															x
-core	bampfa-internal															x
+core	bampfa-public															x
 #																x
 #		Fields						row,column								x
 #																x
