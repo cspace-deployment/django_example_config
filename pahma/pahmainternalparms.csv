@@ -12,7 +12,7 @@ core	pahma-internal															x
 header		Name	Label	SolrField	SearchTarget	Suggestions	Role	Search	Facet	bMapper	listDisplay	fullDisplay	gridDisplay	mapDisplay	inCSV	x
 field	1	id	id	id			id									x
 field	2	csid	Object CSID	csid_s			csid								31	x
-field	3	musno	Museum Number	objmusno_s			objectno,accession	2,1		1	1				2	x
+field	3	musno	Museum Number	objmusno_s			objectno,accession,string	2,1		1	1				2	x
 field	4	sortnum	Sortable Museum Number	objsortnum_s			string,sortkey								1	x
 field	5	name	Object Name	objname_s		na	keyword,mainentry	5,1	2	2	2				10	x
 field	6	altnum	Alternate Number	objaltnum_ss			keyword	3,1				1			11	x

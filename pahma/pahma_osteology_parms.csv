@@ -29,7 +29,7 @@ field	13	notes_dentalpathology     	Dental Pathology	notes_dentalpathology_s			k
 field	13	notes_nhtaphonomicalterations	NH taphonomical alterations	notes_nhtaphonomicalterations_s			keyword					31			36	x
 field	13	notes_curatorialsuffixing 	Curatorial Suffixing	notes_curatorialsuffixing_s			keyword					33			38	x
 field	13	notes_culturalmodifications	Cultural Modifications	notes_culturalmodifications_s			keyword					32			37	x
-field	12	musno	Museum Number	objmusno_s			objectno,accession	2,1		1	1		1		1	x
+field	12	musno	Museum Number	objmusno_s			objectno,accession,string	2,1		1	1		1		1	x
 field	13	sortnum	Sortable Museum Number	objsortnum_s			string,sortkey								2	x
 field	14	name	Object Name	objname_s		na	keyword,mainentry			2					11	x
 field	15	altnum	Alternate Number	objaltnum_ss			keyword	3,1				8			12	x
