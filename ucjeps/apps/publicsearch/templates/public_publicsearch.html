@@ -1,0 +1,107 @@
+{% extends "cspace_django_site/base_site.html" %}
+{% load i18n admin_static %}
+{% load staticfiles %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/tablesorter.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "cspace_django_site/css/smoothness/jquery-ui-1.10.3.custom.min.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/ucjeps.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/dropdownmenu.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/PublicSearch.css" %}"/>
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-1.10.0.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-ui-1.10.3.custom.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "publicsearch/js/public_search.js" %}"></script>
+    <script type="text/javascript" src="{% static "publicsearch/js/jquery.tablesorter.js" %}"></script>
+    <script type="text/javascript" src="{% static "publicsearch/js/menu_ucjeps_home.js" %}"></script>
+{% endblock %}
+
+<!-- Overwrite default placement of login button, included below in branding block -->
+{% block loginBtn %}{% endblock %}
+
+{% block branding %}
+{#    <h4 class="bannerLeft"></h4>#}
+{#    <h4 class="bannerRight"></h4>#}
+{#    <h1 class="bannerTitle" id="site-name">{{ apptitle }}</h1>#}
+     {% include "header.html" %}
+     {% include "globalnav.html" %}
+
+    <span style="float:left"><h2>University and Jepson Herbaria Specimen Portal</h2></span>
+
+    <!-- div class="user-tools" -->
+    <div class="unit" style="float:right;">
+        {% include "cspace_django_site/loginBtn.html" with loginBtnNext="search/" %}
+    </div>
+    <div style="float:right; margin-top: 6px;" class="unit">
+            <!-- a href="#" id="about">About</a -->
+            <a href="#" id="help" style="margin-left: 20px;">Help</a>
+            <a href="#" id="samples" style="margin-left: 20px;">Sample Searches</a>
+            <a href="#" id="advanced" style="margin-left: 20px;">Advanced Searching</a>
+            <a href="http://ucjeps.berkeley.edu/useterms.html" style="margin-left: 20px;" target="terms">Terms</a>
+            <a href="#" id="credits" style="margin-left: 20px;">Credits</a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <hr style="margin-top: 34px;"/>
+    <div id="content-main">
+        <div class="toggled">
+            <div id="aboutTarget" style="display:none">
+                {% include "public_about.html" %}
+             </div>
+            <div id="samplesTarget" style="display:none">
+                {% include "public_samples.html" %}
+             </div>
+            <div id="advancedTarget" style="display:none">
+                {% include "public_advanced.html" %}
+             </div>
+            <div id="helpTarget" style="display:none">
+                {% include "public_help.html" %}
+            </div>
+            <div id="creditsTarget" style="display:none">
+                {% include "public_credits.html" %}
+            </div>
+        </div>
+        <div class="searchPanel">
+            {% if resultsOnly %}
+                {% include "public_showfields.html" %}
+            {% else %}
+                <form class="searchForm" id="search">
+                    {% csrf_token %}
+                    <div>
+                        {% include "public_fields.html" %}
+                        {% include "public_buttons.html" %}
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+        <div  id="waitingImage" style="display: none">
+            <img src="{% static "cspace_django_site/images/timer-animated.gif" %}" alt="Searching..."/>
+        </div>
+        <div id="resultsPanel">
+            {% if items %}
+                {% include "public_searchResults.html" %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    <div id="footer-main">
+        <div class="footerBorder">
+            <img src="{% static "publicsearch/images/common_spacer.gif" %}" alt="" width="1" height="1" border="0">
+        </div>
+        <div class="footerText">
+            <div class="copyrightText"><a href="http://ucjeps.berkeley.edu/main/copyright.html" alt="copyright">Copyright</a> © 2014-2016 Regents of the University of California</div>
+            <div class="time-rev">Current time: {{ timestamp }}.</div>
+            <div class="poweredByCS">
+                <!-- Must be separate divs for text to valign middle -->
+                <!-- Both divs float right; image appears first in HTML, but rightmost on screen -->
+                <div class=CSImage><img src="{% static "cspace_django_site/images/header-logo-cspace.png" %}" height="30px"></div>
+                <div class="poweredByText">powered by </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

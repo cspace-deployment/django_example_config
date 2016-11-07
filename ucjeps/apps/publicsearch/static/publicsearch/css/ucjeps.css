@@ -1,0 +1,185 @@
+body {
+    background-color: #F4FAFF;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    margin: 2px;
+    padding: 3px;
+    width: 100%;
+}
+#container {
+    width: 100%;
+    background-color: #FFFFFF;
+}
+#branding {
+    width: 100%;
+    margin-top: 0;
+}
+#branding .banner {
+	background-color: #3366CC;
+    width: 99.5%;
+    margin-left: -14px;
+}
+#branding .banner td {
+    border-bottom: 0;
+    padding: 0;
+}
+#branding .banner .bannerBottomBorder {
+    background-color: #CCFF99;
+    height: 3px;
+}
+#branding .banner .bannerBottomEdge {
+    background-color: #3366CC;
+    height: 1px;
+}
+#branding .banner a.bannerTagLine {
+	color: #FF9933;
+	letter-spacing:.4em;
+	line-height:18px;
+	font-size: 13px;
+	font-weight: bold;
+}
+#branding .banner a.bannerTagLine:hover {
+    text-decoration: underline;
+}
+#branding .banner .bannerTitle {
+	font-family: "Times New Roman", Times, serif;
+	color: #FFFF00;
+	font-weight: bold;
+	/*font-style: italic;*/
+	font-size: 36px;
+	letter-spacing: 0.3em;
+}
+#branding .banner a.logoText {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color: #FFFF44;
+	font-weight: bold;
+	font-style: normal;
+	font-size: 10px;
+	letter-spacing: 0.1em;
+}
+#branding .banner a.logoText:hover {
+    text-decoration: underline;
+}
+#branding .horizMenu {
+	background-color: #C0DFFD;
+	width: 99.5%;
+    font-size: 13px;
+    margin-bottom: 2px;
+    margin-left: -14px;
+    padding:0;
+}
+#branding .horizMenu a {
+    vertical-align: bottom;
+}
+#branding .horizMenu td {
+    padding: 0;
+    border-bottom: 0;
+}
+#branding .horizMenu a.horizMenuImg {
+    padding-bottom: 0;
+    vertical-align: bottom;
+}
+#branding .horizMenuInactive {
+	color: #7F9FEF;
+	font-weight: bold;
+    vertical-align: bottom;
+    padding-right: 28px;
+}
+#branding a.horizMenuActive {
+	color: #CC6600;
+	font-weight: bold;
+    padding-right: 28px;
+}
+#branding .user-tools {
+    width: 99.5%;
+    /* height: 20px; */
+    background-color: #FFFFFF;
+    margin-right: 24px;
+    margin-bottom: 4px;
+    padding-top: 10px;
+}
+#branding .user-tools a {
+    margin-top: 10px;
+    margin-right: 15px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+.cspaceLink {
+    height: 13px;
+    padding-left: 10px;
+    padding-right: 4px;
+    position: relative;
+    bottom: -2px;
+}
+.smallheader { background-color: darkgray; color: #FFFFFF; font-size: 12px; font-weight: bold; }
+
+a:link, a:visited { color: #5b80b2; text-decoration: none; margin-left: 5px; }
+a:hover { color: #036; }
+a { color: #5b80b2; text-decoration: none; }
+
+.info { padding: 10px ; margin-bottom: 10px; margin-top: -4px; background-color: #ffffcf; font-size: 14px; line-height: 1.4em}
+
+#content {
+    margin-left: 15px;
+    margin-right: 10px;
+}
+#footer-main {
+    margin-top: 5px;
+}
+#footer-main .footerBorder {
+    width: 99.50%;
+    height: 14px;
+	background-color: #3366CC;
+}
+#footer-main .footerText {
+    width: 100%;
+    height: 33px;
+    background-color: #FFFFFF;
+    margin: 3px 5px 0 6px;
+}
+#footer-main .footerText .copyrightText {
+    float: left;
+    width: 30%;
+    margin-top: 3px;
+    margin-left: 3px;
+    line-height: 18px;
+    font-size: 11px;
+    text-decoration: none;
+    vertical-align: middle;
+;
+}
+#footer-main .footerText .copyrightText a {
+    color: #CC6600;
+    text-decoration: none;
+}
+#footer-main .footerText .copyrightText a:hover {
+    color: #003366;
+    text-decoration: underline;
+}
+#footer-main .footerText .time-rev {
+    float: left;
+    width: 40%;
+    margin-top: 3px;
+    line-height: 18px;
+    font-size: 11px;
+    vertical-align: middle;
+    text-align: center;
+}
+#footer-main .footerText .poweredByCS {
+    float: right;
+    width: 28%;
+    margin-right: 12px;
+}
+#footer-main .footerText .poweredByCS .poweredByText {
+    float: right;
+    margin-top: 3px;
+    line-height: 18px;
+    font-size: 11px;
+    text-align: right;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+#footer-main .footerText .poweredByCS .CSImage {
+    float: right;
+    width: 150px;
+}

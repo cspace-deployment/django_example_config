@@ -1,0 +1,59 @@
+{% extends "cspace_django_site/base_site.html" %}
+{% load i18n admin_static %}
+{% load staticfiles %}
+
+{% block branding %}{% endblock %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/tablesorter.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "cspace_django_site/css/smoothness/jquery-ui-1.10.3.custom.min.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/ucjeps.css" %}"/>
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-1.10.0.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-ui-1.10.3.custom.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "publicsearch/js/public_search.js" %}"></script>
+    <script type="text/javascript" src="{% static "publicsearch/js/jquery.tablesorter.js" %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div id="content-main">
+        <div class="searchPanel">
+            {% if resultsOnly %}
+                {% include "public_showfields.html" %}
+            {% else %}
+                <form class="searchForm" id="search">
+                    {% csrf_token %}
+                    <div>
+                        {% include "public_fields.html" %}
+                        {% include "public_buttons.html" %}
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+        <div  id="waitingImage" style="display: none">
+            <img src="{% static "cspace_django_site/images/timer-animated.gif" %}" alt="Searching..."/>
+        </div>
+        <div id="resultsPanel">
+            {% if items %}
+                {% include "public_searchResults.html" %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    <div id="footer-main">
+        <div class="footerText">
+            <div class="copyrightText"><a href="http://ucjeps.berkeley.edu/main/copyright.html" alt="copyright">Copyright</a> © 2014-2016 Regents of the University of California</div>
+            <div class="time-rev">Current time: {{ timestamp }}. This is rev10.</div>
+            <div class="poweredByCS">
+                <!-- Must be separate divs for text to valign middle -->
+                <!-- Both divs float right; image appears first in HTML, but rightmost on screen -->
+                <div class=CSImage><img src="{% static "cspace_django_site/images/header-logo-cspace.png" %}" height="30px"></div>
+                <div class="poweredByText">powered by </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

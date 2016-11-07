@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document name="taxon">
+  <ns2:taxon_common xmlns:ns2="http://collectionspace.org/services/taxonomy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <taxonTermGroupList>
+      <taxonTermGroup>
+        <termName>Perideridia americana</termName>
+        <termSource>Kartesz Checklist</termSource>
+        <termSourceID>37245</termSourceID>
+        <taxonomicStatus>accepted</taxonomicStatus>
+        <termPrefForLang>true</termPrefForLang>
+        <termDisplayName>Perideridia americana (Nutt. ex DC.) Rchb.</termDisplayName>
+        <termType>descriptor</termType>
+        <termStatus>accepted</termStatus>
+        <termFormattedDisplayName>&lt;i&gt;Perideridia americana&lt;/i&gt; (Nutt. ex DC.) Rchb.</termFormattedDisplayName>
+      </taxonTermGroup>
+    </taxonTermGroupList>
+    <taxonCurrency>current</taxonCurrency>
+    <commonNameGroupList>
+      <commonNameGroup>
+        <commonName>urn:cspace:ucjeps.cspace.berkeley.edu:taxonomyauthority:name(common):item:name(1772)'Eastern Yampah'</commonName>
+        <commonNameLanguage/>
+        <commonNameSource/>
+        <commonNameSourceDetail/>
+      </commonNameGroup>
+    </commonNameGroupList>
+    <inAuthority>87036424-e55f-4e39-bd12</inAuthority>
+    <taxonIsNamedHybrid>false</taxonIsNamedHybrid>
+    <taxonNote/>
+    <taxonRank>species</taxonRank>
+  </ns2:taxon_common>
+  <ns2:taxon_naturalhistory xmlns:ns2="http://collectionspace.org/services/taxon/domain/naturalhistory" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <plantAttributesGroupList/>
+    <naturalHistoryCommonNameGroupList/>
+    <taxonBasionym/>
+    <family>urn:cspace:ucjeps.cspace.berkeley.edu:taxonomyauthority:name(taxon):item:name(49)'Apiaceae'</family>
+    <relatedTermGroupList/>
+  </ns2:taxon_naturalhistory>
+  <ns2:taxon_ucjeps xmlns:ns2="http://collectionspace.org/services/taxon/local/ucjeps" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <taxonMajorGroup>Spermatophytes</taxonMajorGroup>
+  </ns2:taxon_ucjeps>
+</document>

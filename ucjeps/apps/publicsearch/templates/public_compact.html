@@ -1,0 +1,194 @@
+{% load staticfiles %}
+
+{% for item in items %}
+    <div style="min-height:250px;">
+        <div style="float:right;">
+            {% if item.blobs %}
+                {% for t in item.blobs %}
+                    <a target="image"
+                       href="{{ imageserver }}/blobs/{{ t }}/derivatives/OriginalJpeg/content"><img height="250px" src="{{ imageserver }}/blobs/{{ t }}/derivatives/Medium/content"/>
+                    </a>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="result-title">
+            <h5 style="padding-bottom: 10px;">
+                <input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked>
+                <b><a href="?maxresults=1&displayType=full&accession={{ item.accession }}">{{ item.accession }}</a></b>
+            </h5>
+            {% if user.is_active and user.is_staff %}
+                <a target="cspace" href="http://ucjeps.cspace.berkeley.edu/collectionspace/ui/ucjeps/html/cataloging.html?csid={{ item.csid }}"><img src="{% static "publicsearch/images/open_cspace.png" %}" class="cspaceLink">Open in CSpace</a>
+            {% endif %}
+        </div>
+        <div>
+            {% if item.labelheader %}
+                <h4><b>{{ labels.labelheader }}: {{ item.labelheader }}</b></h4>{% endif %}
+            {% if item.family %}
+                <div>{{ labels.family }}: {{ item.family }}</div>{% endif %}
+            {% if item.majorgroup %}
+                <div>{{ labels.majorgroup }}: <a class="facet-item" data-facetType="majorgroup">{{ item.majorgroup }}</a></div>
+            {% endif %}
+            <h2>
+                {% if item.determinationqualifier %}
+                {{ item.determinationqualifier }}{% endif %}
+                <a class="facet-item" data-facetType="determination">{{ item.termformatteddisplayname|safe }}</a>
+            </h2>
+            {% if item.determinationdetails %}
+                <div>{{ labels.determinationdetails }}: {{ item.determinationdetails }}</div>{% endif %}
+            {% if item.previousdeterminations %}
+                <h4>{{ labels.previousdeterminations }}</h4>
+                {% for t in item.previousdeterminations %}
+                    <li>{{ t }}</li>
+                {% endfor %}
+            {% endif %}
+            {% if item.localname %}
+                <div>{{ labels.localname }}: {{ item.localname }}</div>{% endif %}
+            {% if item.collectorverbatim %}
+                <div>{{ labels.collectorverbatim }}: {{ item.collectorverbatim }}</div>{% endif %}
+            {% if item.collector %}
+                <div><h4>{{ labels.collector }}</h4>
+                {% for t in item.collector %}
+                    <li><a class="facet-item" data-facetType="collector">{{ t }}</a></li>
+                {% endfor %}
+                </div>{% endif %}
+            {% if item.collectionnumber %}
+                <div>{{ labels.collectionnumber }}: <a class="facet-item" data-facetType="collectionnumber">{{ item.collectionnumber }}</a>
+                </div>{% endif %}
+            {% if item.locality %}
+                <div>{{ labels.locality }}: <a class="facet-item" data-facetType="locality">{{ item.locality }}</a>
+                </div>{% endif %}
+            {% if item.county and item.state and item.country %}
+                <div>
+                    <a class="facet-item" data-facetType="county">{{ item.county }}</a> /
+                    <a class="facet-item" data-facetType="state">{{ item.state }}</a> /
+                    <a class="facet-item" data-facetType="country">{{ item.country }}</a>
+                </div>
+            {% elif item.county and item.state %}
+                <div>
+                    <a class="facet-item" data-facetType="county">{{ item.county }}</a> /
+                    <a class="facet-item" data-facetType="state">{{ item.state }}</a>
+                </div>
+            {% elif item.county and item.country %}
+                <div>
+                    <a class="facet-item" data-facetType="county">{{ item.county }}</a> /
+                    <a class="facet-item" data-facetType="country">{{ item.country }}</a>
+                </div>
+            {% elif item.state and item.country %}
+                <div>
+                    <a class="facet-item" data-facetType="state">{{ item.state }}</a> /
+                    <a class="facet-item" data-facetType="country">{{ item.country }}</a>
+                </div>
+            {% elif item.county %}
+                <div>
+                    <a class="facet-item" data-facetType="county">{{ item.county }}</a>
+                </div>
+            {% elif item.state %}
+                <div>
+                    <a class="facet-item" data-facetType="state">{{ item.state }}</a>
+                </div>
+            {% elif item.country %}
+                <div>
+                    <a class="facet-item" data-facetType="country">{{ item.country }}</a>
+                </div>
+            {% endif %}
+            {% if item.L1 and item.L2 %}
+                <div>LatLong: {{ item.L1 }} {{ item.L2 }}
+                    {% if item.marker %}
+                        <a class="map-item">[click for map]</a>
+                        <div data-marker="{{ item.marker }}" class="small-map" style="display:none; margin-bottom:10px;">
+                            <div class="map-replace"></div>
+                            {% if item.datum %}
+                                <div>{{ labels.datum }}: <a class="facet-item" data-facetType="datum">{{ item.datum }}</a>
+                                </div>{% endif %}
+                            {% if item.coordinatesource %}
+                                <div>{{ labels.coordinatesource }}: <a class="facet-item" data-facetType="coordinatesource">{{ item.coordinatesource }}</a>
+                                </div>{% endif %}
+                            {% if item.coordinateuncertainty %}
+                                <div>{{ labels.coordinateuncertainty }}: {{ item.coordinateuncertainty }} {{ item.coordinateuncertaintyunit }}
+                                </div>{% endif %}
+                            {% if item.localitynote %}
+                                <div>{{ labels.localitynote }}: {{ item.localitynote }}
+                                </div>{% endif %}
+                            {% if item.localitysource %}
+                                <div>{{ labels.localitysource }}: {{ item.localitysource }}
+                                </div>{% endif %}
+                            {% if item.localitysourcedetail %}
+                                <div>{{ labels.localitysourcedetail }}: {{ item.localitysourcedetail }}
+                                </div>{% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+            {% if item.collectiondate %}
+                <div>{{ labels.collectiondate }}: <a class="facet-item" data-facetType="collectiondate">{{ item.collectiondate }}</a>
+                </div>{% endif %}
+            {% if item.otherlocalities %}
+                <div><h4>{{ labels.otherlocalities }}</h4>
+                {% for t in item.otherlocalities %}
+                    <li><a class="facet-item" data-facetType="otherlocalities">{{ t }}</a></li>
+                {% endfor %}
+                </div>{% endif %}
+            {% if item.habitat %}
+                <div>{{ labels.habitat }}: <a class="facet-item" data-facetType="habitat">{{ item.habitat }}</a>
+                </div>{% endif %}
+            {% if item.elevation %}
+                <div>{{ labels.elevation }}: {{ item.elevation }} {{ item.elevationunit }}</div>{% endif %}
+            {% if item.depth %}
+                <div>{{ labels.depth }}: {{ item.depth }} {{ item.depthunit }}</div>{% endif %}
+            {% if item.briefdescription %}
+                <div>{{ labels.briefdescription }}: {{ item.briefdescription }}</div>{% endif %}
+            {% if item.associatedtaxa %}
+                <h4>{{ labels.associatedtaxa }}</h4>
+                {% for t in item.associatedtaxa %}
+                    <li>{{ t }}</li>
+                {% endfor %}
+            {% endif %}
+            {% if item.typeassertions %}
+                <h4>{{ labels.typeassertions }}</h4>
+                {% for t in item.typeassertions %}
+                    <li>{{ t }}</li>
+                {% endfor %}
+            {% endif %}
+            {% if item.cultivated %}
+                {% if item.cultivated == "true" %}
+                <div>{{ labels.cultivated }}</div>{% endif %}{% endif %}
+            {% if item.sex or item.phase %}
+                <div>
+                    {% if item.sex %}
+                        {{ labels.sex }}: <a class="facet-item" data-facetType="sex">{{ item.sex }}</a> / {% endif %}
+                    {% if item.phase %}
+                        {{ labels.phase }}: <a class="facet-item" data-facetType="phase">{{ item.phase }}</a>{% endif %}
+                </div>{% endif %}
+            {% if item.othernumber %}
+                <h4>{{ labels.othernumber }}</h4>
+                {% for t in item.othernumber %}
+                    <li>{{ t }}</li>
+                {% endfor %}
+            {% endif %}
+            {% if item.ucbgaccessionnumber %}
+                <div><a target="ucbg"
+                       href="https://webapps.cspace.berkeley.edu/botgarden/search/search/?accessionnumber={{ item.ucbgaccessionnumber }}&displayType=full&maxresults=100&start=1">
+                        <img src="{% static "publicsearch/images/open_cspace.png" %}" class="cspaceLink"> Open {{ item.ucbgaccessionnumber }}
+                        in UCBG portal
+                    </a>
+                </div>{% endif %}
+            {% if item.comments %}
+                <div><h4>{{ labels.comments }}</h4>
+                {% for t in item.comments %}
+                    <li>{{ t }}</li>
+                {% endfor %}
+                </div>{% endif %}
+            {% if item.loanstatus %}
+                <div><span style="color:red;"><b>{{ labels.loanstatus }}: {{ item.loanstatus }} ({{ item.loannumber }})</b></span>
+                <a href="mailto:ucjepscomments@lists.berkeley.edu?Subject=Loan of {{ item.accession }}, ({{ item.loannumber }})">email a request for this item</a>
+                </div>
+            {% endif %}
+            {% if item.labelfooter %}
+                <h4><b>{{ labels.labelfooter }}: {{ item.labelfooter }}</b></h4>{% endif %}
+            {% if item.updatedat %}
+                <div>{{ labels.updatedat }}: {{ item.updatedat }}</div>{% endif %}
+            <p/><a href="mailto:ucjepscomments@lists.berkeley.edu?Subject={{ item.accession }}">email a comment about this record</a>
+        </div>
+    </div>
+    <hr/>
+{% endfor %}

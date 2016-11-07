@@ -1,0 +1,19 @@
+{% include "public_searchstats.html" %}
+{% if errormsg %}
+   <span style="color: red">{{ errormsg }}</span>
+{% endif %}
+<form method="post" class="searchForm" id="selectedItems" action="../csv/">
+    {% csrf_token %}
+    {% if count > 0 %}
+        <div id="tabs">
+            <ul>
+                <li><a href="#results">Results</a></li>
+                <li><a href="#facets">Facets</a></li>
+                <li><a href="#maps">Maps</a></li>
+            </ul>
+            {% include "public_results.html" %}
+            {% include "public_facets.html" %}
+            {% include "public_maps.html" %}
+        </div>
+    {% endif %}
+</form>

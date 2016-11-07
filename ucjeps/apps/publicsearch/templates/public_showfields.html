@@ -1,0 +1,16 @@
+<h2>Search terms</h2>
+</h2><table width="100%">
+    <tr>
+        {% if searchValues.keyword %}<td><label>Keyword</label></td><td>{{ searchValues.keyword }}</td>{% endif %}
+        {% if searchValues.accession %}<td><label>Specimen ID</label></td><td>{{ searchValues.accession }}</td>{% endif %}
+        {% if searchValues.collectionnumber %}<td><label>Collection Number</label></td><td>{{ searchValues.collectionnumber }}</td>{% endif %}
+        {% if searchValues.determination %}<td><label>Determination</label></td><td>{{ searchValues.determination }}</td>{% endif %}
+        {% if searchValues.majorgroup %}<td><label>Major Group</label></td><td>{{ searchValues.majorgroup }}</td>{% endif %}
+        {% if searchValues.collectiondate %}<td><label>Year Collected</label></td><td>{{ searchValues.collectiondate }}</td>{% endif %}
+        {% if searchValues.collector %}<td><label>Collector</label></td><td>{{ searchValues.collector }}</td>{% endif %}
+        {% if searchValues.locality %}<td><label>Locality</label></td><td>{{ searchValues.locality }}</td>{% endif %}
+        {% if searchValues.county %}<td><label>County</label></td><td>{{ searchValues.county }}</td>{% endif %}
+        {% if searchValues.state %}<td><label>State</label></td><td>{{ searchValues.state }}</td>{% endif %}
+        {% if searchValues.country %}<td><label>Country</label></td><td>{{ searchValues.country }}</td>{% endif %}
+    </tr>
+</table>

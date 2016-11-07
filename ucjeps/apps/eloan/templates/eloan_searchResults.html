@@ -1,0 +1,21 @@
+<div> {% include "eloan_searchstats.html" %} </div>
+<form method="post" class="searchForm" id="selectedItems" action="../csv/"> {#  Needs trailing slash #}
+    {% csrf_token %}
+    {% if count > 0 %}
+        <div id="tabs">
+            <ul>
+                <li><a href="#results">Results</a></li>
+{#                No facets or maps options in eLoan results#}
+            </ul>
+            {% include "eloan_results.html" %}
+        </div>
+    {% elif displayType == 'empty' %}
+        <div id="results">
+            <span style="color: green" id="emptyMsg">{{ results }}</span>
+        </div>
+    {% elif displayType == 'error' %}
+        <div id="results">
+            <span style="color: red" id="errorMsg">{{ results }}</span>
+        </div>
+    {%  endif %}
+</form>

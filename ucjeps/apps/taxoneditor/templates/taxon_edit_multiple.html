@@ -1,0 +1,44 @@
+{% spaceless %}
+    <hr/>
+    <h2>Edit / Create Multiple Taxon Records</h2>
+    <form>
+        <table width="100%">
+            <tr>
+                {% for field in fields %}
+                    {% if 'dropdown' in field.fieldtype %}
+                        <td {% if field.style %} style="{{ field.style }}"{% endif %}>
+                            <label>{{ field.label }}</label>
+                        </td>
+                        <td>
+                            <select id="{{ field.name }}" name="{{ field.name }}">
+                                <option value="">Please select</option>
+                                {% for value in field.dropdowns %}
+                                    <option value="{{ value.0 }}"{% if value.0 == field.value %}
+                                            selected{% endif %}>{{ value.0|slice:":40" }} ({{ value.1 }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    {% elif 'string' in field.fieldtype or 'date' in field.fieldtype %}
+                        <td {% if field.style %} style="{{ field.style }}"{% endif %}>
+                            <label>{{ field.label }}</label>
+                        </td>
+                        <td>
+                            <input type="{{ field.type }}" id="{{ field.name }}" name="{{ field.name }}"
+                                   source="{{ suggestsource }}" value="{{ field.value }}"/>
+                        </td>
+                    {% elif 'ignore' in field.fieldtype %}
+                    {% else %}
+                        <td {% if field.style %} style="{{ field.style }}"{% endif %}>
+                            <label>{{ field.label }}</label>
+                        </td>
+                        <td>
+                            <input type="{{ field.type }}" id="{{ field.name }}" name="{{ field.name }}"
+                                   value="{{ field.value }}"/>
+                        </td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        </table>
+    </form>
+{% endspaceless %}

@@ -1,0 +1,31 @@
+<div class="results">
+    <table>
+        {% for source,results in results.items %}
+            {% if results|length > 0 %}
+                <tr>
+                    <td colspan="3"><h2>{{ source }}</h2></td>
+                </tr>
+                <tr>
+                    {% for label in labels %}
+                        <th scope="row">{{ label }}</th>
+                    {% endfor %}
+                </tr>
+                {% for row in results %}
+                    <tr>
+                        {% if source == "CollectionSpace" %}
+                            <td/>
+                        {% else %}
+                            <td><button id="taxon-item">X</button></td>
+                        {% endif %}
+                        <!-- a target="cspace" href="{{ row.0 }}">{{ row.0 }}</a></td -->
+                        {% for cell in row %}
+                            <td class="{{ cell.0 }}">{{ cell.1 }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <p style="color: red">No results found for {{ source }}</p>
+            {% endif %}
+        {% endfor %}
+    </table>
+</div>

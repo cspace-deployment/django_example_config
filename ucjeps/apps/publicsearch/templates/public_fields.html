@@ -1,0 +1,142 @@
+<table width="100%">
+    <tr>
+        <td>
+            <label>Scientific Name</label>
+        </td>
+        <td>
+        <select id="determination_qualifier" name="determination_qualifier">
+                {% for option in qualifiers %}
+                    <option value="{{option}}"{% if option == searchValues.determination_qualifier %} selected{% endif %}>{{option}}</option>
+                {% endfor %}
+        </select>
+        </td>
+        <td>
+            <input type="text" id="determination" name="determination"
+                   value="{{ searchValues.determination }}"/>
+        </td>
+        <td>
+            <label>Major Group</label>
+        </td>
+        <td/>
+        <td>
+            <select id="majorgroup" name="majorgroup">
+                <option value="">Please select</option>
+                {% for option in dropdowns.majorgroup %}
+                    <option value="{{option.0}}"{% if option.0 == searchValues.majorgroup %} selected{% endif %}>{{option.0}}</option>
+                {% endfor %}
+            </select>
+            <!-- <input type="text" id="majorgroup" name="majorgroup"
+                   value="{{ searchValues.majorgroup }}"/> -->
+        </td>
+        <td>
+            <label>Keyword</label></td>
+        <td>
+            <input type="text" id="keyword" name="keyword" value="{{ searchValues.keyword }}"/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>Collector</label>
+        </td>
+        <td>
+        <select id="collector_qualifier" name="collector_qualifier">
+                {% for option in qualifiers %}
+                    <option value="{{option}}"{% if option == searchValues.collector_qualifier %} selected{% endif %}>{{option}}</option>
+                {% endfor %}
+        </select>
+        </td>
+        <td>
+            <input type="text" id="collector" name="collector"
+                   value="{{ searchValues.collector }}"/>
+        </td>
+        <td>
+            <label>Date Collected</label></td>
+        <td/>
+        <td>
+            <input type="text" id="collectiondate" name="collectiondate"
+                   value="{{ searchValues.collectiondate }}"/>
+        </td>
+        <td>
+            <label>Collection Number</label>
+        </td>
+        <td>
+            <input type="text" id="collectionnumber" name="collectionnumber"
+                   value="{{ searchValues.collectionnumber }}"/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>Localities</label>
+        </td>
+        <td>
+        <select id="alllocalities_qualifier" name="alllocalities_qualifier">
+                {% for option in qualifiers %}
+                    <option value="{{option}}"{% if option == searchValues.alllocalities_qualifier %} selected{% endif %}>{{option}}</option>
+                {% endfor %}
+        </select>
+        </td>
+        <td>
+            <input type="text" id="alllocalities" name="alllocalities" value="{{ searchValues.alllocalities }}"/>
+        </td>
+        <td>
+            <label>Associated Taxa</label>
+        </td>
+        <td>
+            <select id="associatedtaxa_qualifier" name="associatedtaxa_qualifier">
+                {% for option in qualifiers %}
+                    <option value="{{option}}"{% if option == searchValues.associatedtaxa_qualifier %} selected{% endif %}>{{option}}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <input type="text" id="associatedtaxa" name="associatedtaxa"
+                   value="{{ searchValues.associatedtaxa }}"/>
+        </td>
+        <td>
+            <label>Specimen ID</label>
+        </td>
+        <td>
+            <input type="text" id="accession" name="accession"
+                   value="{{ searchValues.accession }}"/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label>County</label>
+        </td>
+        <td colspan="2">
+            <select id="county" name="county">
+                <option value="">Please select</option>
+                {% for option in dropdowns.county %}
+                    <option value="{{option.0}}"{% if option.0 == searchValues.county %} selected{% endif %}>{{option.0}}</option>
+                {% endfor %}
+            </select>
+            <!-- <input type="text" id="county" name="county" value="{{ searchValues.county }}"/> -->
+        </td>
+        <td>
+            <label>State</label>
+        </td>
+        <td/>
+        <td>
+            <select id="state" name="state">
+                <option value="">Please select</option>
+                {% for option in dropdowns.state %}
+                    <option value="{{option.0}}"{% if option.0 == searchValues.state %} selected{% endif %}>{{option.0}}</option>
+                {% endfor %}
+            </select>
+            <!-- <input type="text" id="state" name="state" value="{{ searchValues.state }}"/> -->
+        </td>
+        <td>
+            <label>Country</label>
+        </td>
+        <td>
+            <select id="country" name="country">
+                <option value="">Please select</option>
+                {% for option in dropdowns.country %}
+                    <option value="{{option.0}}"{% if option.0 == searchValues.country %} selected{% endif %}>{{option.0}}</option>
+                {% endfor %}
+            </select>
+            <!-- <input type="text" id="country" name="country" value="{{ searchValues.country }}"/> -->
+        </td>
+    </tr>
+</table>

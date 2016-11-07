@@ -1,0 +1,56 @@
+<div class="info">
+  <h2>Advanced Searching</h2>
+
+	<h3>Wildcards</h3>
+	<p>Wildcard symbols (* and ?) may be used in keyword searches to match any character(s) within a search term.
+	  '*' denotes zero or more characters at a given place within a search term. Each '?' denotes zero or one character;
+	  it may be used more than once in a row to match a desired number of characters. Remember to set
+	  the search type option to "Keyword".</p>
+
+    <div id="wildcard" style="margin-left: 25px; margin-right: 25px;">
+
+    <li><strong>Beginning wildcard</strong>: This will return records where the search term you've entered is
+        <i>preceded</i> by zero or more characters (e.g. searching for locality <tt>*Pine</tt> will retrieve
+        records where the locality description includes <i>Collection des Plantes Alpines</i> or
+        <i>subalpine slopes of Magee Peak</i>, as well as places such as <i>Pine Creek</i>, <i>Pine Flat</i>
+        or <i>Lone Pine</i>). Note that the search finds records with either an uppercase "P" or a lowercase "p".
+    </li>
+    <li><strong>Internal wildcard</strong>: Returned records will include
+        zero or more characters <i>internally</i> at the position of the wildcard (e.g. searching for locality
+        <tt>Cham*s</tt> will retrieve records where the locality description includes <i>Chambers</i> or <i>Champs</i>).
+    </li>
+    <li><strong>Wildcard at end</strong>: This will return records where the search term you've entered is
+        <i>followed</i> by zero or more characters (e.g. searching for locality <tt>Cham*</tt> will retrieve
+        records where the locality description includes <i>Chambers</i>, <i>Chamonix</i> or <i>Champs</i>).
+    </li>
+    <li><strong>Multiple wildcards</strong>: You can use more than one wildcard in a search term. For example, searching for
+        Specimen ID <tt>*2*5</tt> will return records such as <i>GOD125</i>, <i>GOD205</i>,
+        <i>GOD215</i>, <i>JEPS100025</i>, <i>JEPS100205</i>, <i>UC125</i> and <i>UC1205</i>. <tt>???2*5</tt> will match
+        <i>GOD205</i>, <i>GOD215</i>, <i>UC205</i> and <i>UC2125</i>, but not <i>JEPS205</i> because there must be only
+        three characters maximum to the left of the '2'. Use <tt>U*2*5</tt> to find UC1001275: the 'U' will eliminate
+        specimens in the GOD and JEPS collections. Remember that a maximum of 2000 records will be
+        returned. Be careful to make your search narrow enough to return the values you seek.
+    </li>
+
+  </div>
+<p>&nbsp;</p>
+  <h3>Boolean Logic Within a Field</h3>
+<div id="wildcard" style="margin-left: 25px; margin-right: 25px;">
+
+    <li><strong>This AND That</strong>: Enter both terms and search using the <i>keyword</i> option (e.g. searching
+    for collector <tt>Jepson Setchell</tt> will only retrieve records where the Collector is
+    <i>W. L. Jepson and W. A. Setchell</i> or <i>W. A. Setchell and W. L. Jepson</i>, etc,).
+    </li>
+    <li><strong>This OR That</strong>: Enter both terms separated by <tt>OR</tt> (e.g. searching for collector
+    <tt>Jepson OR Setchell</tt> will retrieve records of specimens collected by Jepson, by Setchell, or both).
+	</li>
+    <li><strong>This NOT That</strong>: Enter  wanted terms normally and unwanted terms preceded by <tt>-</tt>
+    (e.g. searching for  <tt>Jepson -Setchell -Hall</tt> will retrieve records for all specimens collected by
+    Jepson except those he collected with Setchell or Hall
+    </li>
+    <li><strong>Empty fields</strong>: To search for records where a field is empty (e.g. find all specimens where
+     the collector is unknown), enter <tt>Null</tt> in the corresponding box and search.
+    </li>
+</div>
+<p>&nbsp;</p>
+</div>

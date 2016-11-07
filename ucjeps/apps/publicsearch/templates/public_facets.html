@@ -1,0 +1,18 @@
+<div id="facets">
+    <table width="100%">
+        <tr>
+            {% for f in fields %}
+                <th>{{ f }}</th>
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for facet in facetflds %}
+                <td style="max-width: 220px;">
+                    {% for f in facet.1 %}
+                        <li class="facet"><a href="#" class="facet-item" data-facetType={{ facet.0 }}>{{ f.0 }}</a> {{ f.1 }}</li>
+                    {% endfor %}
+                </td>
+            {% endfor %}
+        </tr>
+    </table>
+</div>

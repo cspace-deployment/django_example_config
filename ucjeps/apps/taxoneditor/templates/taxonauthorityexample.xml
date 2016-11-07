@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document name="taxon">
+  <ns2:collectionspace_core xmlns:ns2="http://collectionspace.org/collectionspace_core/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <tenantId>20</tenantId>
+    <updatedAt>2012-05-29T18:40:10Z</updatedAt>
+    <workflowState>project</workflowState>
+    <createdAt>2012-05-29T18:40:10Z</createdAt>
+    <refName>urn:cspace:ucjeps.cspace.berkeley.edu:taxonomyauthority:name(taxon):item:name(37245)'Perideridia americana (Nutt. ex DC.) Rchb.'</refName>
+    <uri>/taxonomyauthority/87036424-e55f-4e39-bd12/items/759f53bc-8779-4505-9a25-d05260b6511c</uri>
+  </ns2:collectionspace_core>
+  <ns2:taxon_common xmlns:ns2="http://collectionspace.org/services/taxonomy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <taxonTermGroupList>
+      <taxonTermGroup>
+        <termName>Perideridia americana</termName>
+        <termSource>Kartesz Checklist</termSource>
+        <termSourceID>37245</termSourceID>
+        <taxonomicStatus>accepted</taxonomicStatus>
+        <termSourceNote/>
+        <termLanguage/>
+        <termPrefForLang>true</termPrefForLang>
+        <termDisplayName>Perideridia americana (Nutt. ex DC.) Rchb.</termDisplayName>
+        <termType>descriptor</termType>
+        <termStatus>accepted</termStatus>
+        <termFormattedDisplayName>&lt;i&gt;Perideridia americana&lt;/i&gt; (Nutt. ex DC.) Rchb.</termFormattedDisplayName>
+        <termQualifier/>
+        <termSourceDetail/>
+      </taxonTermGroup>
+    </taxonTermGroupList>
+    <taxonCurrency>current</taxonCurrency>
+    <csid>759f53bc-8779-4505-9a25-d05260b6511c</csid>
+    <taxonCitationList>
+      <taxonCitation/>
+    </taxonCitationList>
+    <shortIdentifier>37245</shortIdentifier>
+    <commonNameGroupList>
+      <commonNameGroup>
+        <commonName>urn:cspace:ucjeps.cspace.berkeley.edu:taxonomyauthority:name(common):item:name(1772)'Eastern Yampah'</commonName>
+        <commonNameLanguage/>
+        <commonNameSource/>
+        <commonNameSourceDetail/>
+      </commonNameGroup>
+    </commonNameGroupList>
+    <inAuthority>87036424-e55f-4e39-bd12</inAuthority>
+    <taxonIsNamedHybrid>false</taxonIsNamedHybrid>
+    <refName>urn:cspace:ucjeps.cspace.berkeley.edu:taxonomyauthority:name(taxon):item:name(37245)'Perideridia americana (Nutt. ex DC.) Rchb.'</refName>
+    <taxonNote/>
+    <taxonAuthorGroupList>
+      <taxonAuthorGroup>
+        <taxonAuthor>urn:cspace:ucjeps.cspace.berkeley.edu:orgauthorities:name(nomenclature):item:name(495)'Rchb.'</taxonAuthor>
+        <taxonAuthorType>author</taxonAuthorType>
+      </taxonAuthorGroup>
+      <taxonAuthorGroup>
+        <taxonAuthor>urn:cspace:ucjeps.cspace.berkeley.edu:orgauthorities:name(nomenclature):item:name(6)'DC.'</taxonAuthor>
+        <taxonAuthorType>parenthetical author</taxonAuthorType>
+      </taxonAuthorGroup>
+      <taxonAuthorGroup>
+        <taxonAuthor>urn:cspace:ucjeps.cspace.berkeley.edu:orgauthorities:name(nomenclature):item:name(141)'Nutt.'</taxonAuthor>
+        <taxonAuthorType>parenthetical ascribed author</taxonAuthorType>
+      </taxonAuthorGroup>
+    </taxonAuthorGroupList>
+    <taxonRank>species</taxonRank>
+  </ns2:taxon_common>
+  <ns2:taxon_naturalhistory xmlns:ns2="http://collectionspace.org/services/taxon/domain/naturalhistory" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <plantAttributesGroupList/>
+    <naturalHistoryCommonNameGroupList/>
+    <taxonBasionym/>
+    <family>urn:cspace:ucjeps.cspace.berkeley.edu:taxonomyauthority:name(taxon):item:name(49)'Apiaceae'</family>
+    <relatedTermGroupList/>
+  </ns2:taxon_naturalhistory>
+  <ns2:taxon_ucjeps xmlns:ns2="http://collectionspace.org/services/taxon/local/ucjeps" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <taxonMajorGroup>Spermatophytes</taxonMajorGroup>
+  </ns2:taxon_ucjeps>
+  <ns2:account_permission xmlns:ns2="http://collectionspace.org/services/authorization">
+    <account>
+      <accountId>45b7f2d2-0474-4e01-8b8d-dca1ce465d9c</accountId>
+      <screenName>Administrator</screenName>
+      <userId>admin@ucjeps.cspace.berkeley.edu</userId>
+      <tenantId>20</tenantId>
+    </account>
+  </ns2:account_permission>
+</document>

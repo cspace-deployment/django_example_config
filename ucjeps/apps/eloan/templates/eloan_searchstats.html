@@ -1,0 +1,14 @@
+<div style="height: 55px; padding-top: 5px; margin-bottom: 15px;">
+    {% if time %}
+        {{ time }} seconds;
+        {% if count > 0 %}
+            {{ count }} items found.
+            {% if recordlimit %}{{ recordlimit }}{% endif %}
+        {% else %}no items found.
+        {% endif %}
+{#        <br/>#}
+{#        <br/>#}
+{#        {% if querystring %}#}
+{#        solr query: <i>{{ querystring }}{% endif %}</i>#}
+    {% endif %}
+</div>

@@ -1,0 +1,6 @@
+<div id="results">
+    <!-- Only return full ("compact") form of results -->
+    {% if results.displayType == 'full' %}
+        {% include "public_compact.html" %}
+    {% endif %}
+</div>

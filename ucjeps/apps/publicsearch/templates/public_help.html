@@ -1,0 +1,117 @@
+
+<div class="info">
+   <p>The portal includes type specimens and images when present and searches can
+        be restricted to major taxa. Default search returns are in a grid view but
+        clicking on the full search view allows all captured fields to be viewed
+        (phenology, label headers, depth etc.).</p>
+
+    <h2>Searching</h2>
+
+    <p>You can enter search criteria by typing into the text boxes or selecting
+        an option from a pick list. You may also click one of the "Display options" to choose
+        the format of your results ("List" is the default) or to limit the number and type of results
+        you wish to receive. Any combination of fields may be used.</p>
+
+    <p>Some fields have an option of searching as either "keyword", "phrase", or
+        "exact".</p>
+
+    <div id="match" style="margin-left: 25px; margin-right: 25px;">
+    <p>
+    <li><strong>Exact</strong>: This will only return records where the field value is <i>exactly</i> what
+        you input (e.g. searching for locality <tt>Livermore Valley</tt> will only retrieve
+        records where the locality is exactly <i>Livermore Valley</i>)
+    </li>
+    <li><strong>Phrase</strong>: Returned records will contain exactly what you input, but may have
+        more text before or after it (e.g. searching <tt>Livermore Valley</tt> will also
+        return <i>eastern Livermore Valley</i>, <i>4 mi west of Livermore Valley</i>, etc.)
+    </li>
+    <li><strong>Keyword</strong>: This will return all records that contain all of the words
+        entered in that field, in any order (e.g. searching <tt>Livermore Valley</tt> will
+        also return <i>Arroyo Mocho Valley s of Livermore</i>, etc.)
+    </li>
+    </p>
+    </div>
+
+    <p>Wildcard symbols (* and ?) may be used in keyword searches to match any character(s) within a search term.
+        '*' denotes zero or more characters at a given place within a search term. Each '?' denotes zero or one character;
+        it may be used more than once in a row to match a deisred number of characters. Remember to set
+        the search type option to "Keyword".</p>
+
+    <div id="wildcard" style="margin-left: 25px; margin-right: 25px;">
+    <p>
+    <li><strong>Beginning wildcard</strong>: This will return records where the search term you've entered is
+        <i>preceded</i> by zero or more characters (e.g. searching for locality <tt>*Pine</tt> will retrieve
+        records where the locality description includes <i>Collection des Plantes Alpines</i> or
+        <i>subalpine slopes of Magee Peak</i>, as well as places such as <i>Pine Creek</i>, <i>Pine Flat</i>
+        or <i>Lone Pine</i>). Note that the search finds records with either an uppercase "P" or a lowercase "p".
+    </li>
+    <li><strong>Internal wildcard</strong>: Returned records will include
+        zero or more characters <i>internally</i> at the position of the wildcard (e.g. searching for locality
+        <tt>Cham*s</tt> will retrieve records where the locality description includes <i>Chambers</i> or <i>Champs</i>.
+    </li>
+    <li><strong>Wildcard at end</strong>: This will return records where the search term you've entered is
+        <i>followed</i> by zero or more characters (e.g. searching for locality <tt>Cham*</tt> will retrieve
+        records where the locality description includes <i>Chambers</i>, <i>Chamonix</i> or <i>Champs</i>.
+    </li>
+    <li><strong>Multiple wildcards</strong>: You can use more than one wildcard in a search term. For example, searching for
+        Specimen ID <tt>*2*5</tt> will return records such as <i>GOD125</i>, <i>GOD205</i>,
+        <i>GOD215</i>, <i>JEPS100025</i>, <i>JEPS100205</i>, <i>UC125</i> and <i>UC1205</i>. <tt>???2*5</tt> will match
+        <i>GOD205</i>, <i>GOD215</i>, <i>UC205</i> and <i>UC2125</i>, but not <i>JEPS205</i> because there must be only
+        three characters maximum to the left of the '2'. Use <tt>U*2*5</tt> to find UC1001275: the 'U' will eliminate
+        specimens in the GOD and JEPS collections. Remember that a maximum of 2000 records will be
+        returned. Be careful to make your search narrow enough to return the values you seek.
+    </li>
+    </p>
+    </div>
+
+    <p>You may also search for records where the value for the field is empty by entering <tt>Null</tt> in the field.</p>
+
+    <p>Run the search by clicking one of the display formats or pressing the return key
+        when any field is highlighted.</p>
+
+    <h2>Displaying Search Results</h2>
+
+    <p>If your search has one or more results, you'll see three panes presented -- Results, Facets, and Maps.</p>
+
+    <h3>Results</h3>
+
+    <p>There are three options for display.
+    <li>List is ideal for seeing summaries of
+        many records at once.
+    </li>
+    <li>Full shows the full details of each record, including
+        images.
+    </li>
+    <li>Grid is ideal for viewing many specimens at once while also
+        displaying images. Clicking the specimen ID number in any view will bring
+        you to the Full view of that specimen. Clicking an image will open the full
+        resolution image in a new tab.
+    </li>
+    </p>
+
+    <h3>Facets</h3>
+
+    <p>After performing a search, clicking the "Facets" tab will show you a list, in descending frequency order,
+        of values which appear the records returned by your search. For
+        example, if you search for collector <a href="https://ucjeps.cspace.berkeley.edu/ucjeps_project/public/publicsearch/?collector=W.%20L.%20Jepson&displayType=list&maxresults=1000">W. L. Jepson (exact)</a>, you will see
+        under County <i>San Bernardino 1650</i>, <i>Solano 1385</i> etc., meaning there are
+        1650 Jepson specimens collected in San Bernardino Co., 1385 specimens from Solano Co.
+        etc. Clicking on the name of a facet will refine your search, returning
+        only the results matching that value.</p>
+
+    <p>For most fields, the sum of the facet counts will equal the total number of records. The exception
+        is the collector field. Since there can be multiple collectors for a single specimen, the collector
+        counts can exceed the total number of records. For example, search for collector
+        <a href="https://ucjeps.cspace.berkeley.edu/ucjeps_project/public/publicsearch/?collector=Setchell&displayType=list&maxresults=1000">Setchell</a>
+        and view the facets tab.</p>
+
+    <h3>Maps</h3>
+
+    <p>You may choose two different mapping options for your result set:
+        <li>
+    <p><strong>Berkeley Mapper</strong>: your results will be passed to Berkeley Mapper and plotted there.</li>
+    <li><p><strong>Google Static Maps</strong>: up to 65 of your results will be plotted on the spot using Google Maps.
+    </li>
+    Note that only records which have coordinates will be plotted!
+    </p>
+</div>
