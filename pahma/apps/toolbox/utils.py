@@ -72,6 +72,8 @@ def setconstants(request, context, appname):
     context['version'] = VERSION
     context['additionalInfo'] = AdditionalInfo.objects.filter(live=True)
     context['device'] = devicetype(request)
+    # insert a nav bar item to enable user to switch to a different tool
+    context['extra_nav'] = {'href': './', 'id': 'switchtool', 'name': 'Switch Tool'}
 
     return context
 

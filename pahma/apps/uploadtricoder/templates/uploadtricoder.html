@@ -2,32 +2,6 @@
 {% load i18n admin_static %}
 {% load staticfiles %}
 
-{% block scripts %}
-    <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-1.10.0.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-ui-1.10.3.custom.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "search/js/jquery.tablesorter.min.js" %}"></script>
-{% endblock %}
-
-<!-- Overwrite default placement of login button, included below in branding block -->
-{% block loginBtn %}{% endblock %}
-
-{% block branding %}
-    <h4 class="bannerLeft"></h4>
-    <h4 class="bannerRight"></h4>
-    <h1 class="bannerTitle" id="site-name">{{ apptitle }}</h1>
-
-    <!-- div class="user-tools" -->
-    <div class="unitnav">
-        {% include "cspace_django_site/loginBtn.html" with loginBtnNext="search/" %}
-    </div>
-    <div class="unitnav">
-        {% for info in additionalInfo %}
-            <a href="#" id="{{ info.slug }}" class="expandInfo">{{ info.name }}</a>
-        {% endfor %}
-    </div>
-{% endblock %}
-
-
 {% block content %}
     <div id="content-main">
         <ol>
@@ -44,7 +18,7 @@
                     <input type="checkbox" name="validateonly"> Validate content and filenames only, do not process.
                     <hr/>
                     <input type="submit" name="uploadtricoder"
-                           value="Upload to CSpace and Queue for Ingestion"></td>
+                           value="Upload to CSpace and Queue for Ingestion">
                     <!-- <input type="submit" name="deletetricoder"
                                    value="DELETE CSpace Blob and Media records associated with these images">
                     -->
@@ -71,19 +45,4 @@
             <pre>{{ filecontent }}</pre>
         {% endif %}
     </div>
-{% endblock %}
-
-{% block footer %}
-    <table width="100%">
-        <tbody>
-        <tr>
-            <td style="vertical-align: middle">Current time: {{ timestamp }}. This is the <span
-                    style="color:{{ serverinfo.serverlabelcolor }}">{{ serverinfo.serverlabel }}</span> deployment of version <i>{{ version }}</i>.
-            </td>
-            <td style="vertical-align: middle;width: 70px;">powered by</td>
-            <td style="text-align: right; width: 160px;"><img
-                    src="{% static "cspace_django_site/images/header-logo-cspace.png" %}" height="30px"></td>
-        </tr>
-        </tbody>
-    </table>
 {% endblock %}

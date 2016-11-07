@@ -10,14 +10,8 @@
     <link rel="stylesheet" type="text/css" href="{% static "search/css/dropdownmenu.css" %}"/>
 {% endblock %}
 
-{% block scripts %}
-    <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-1.10.0.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-ui-1.10.3.custom.min.js" %}"></script>
+{% block extrascripts %}
     <script type="text/javascript" src="{% static "common/js/PublicSearch.js" %}"></script>
-    <script type="text/javascript">
-        var googleAnalytics = {{ googleAnalytics }};
-    </script>
-    <script type="text/javascript" src="{% static "cspace_django_site/js/jquery.tablesorter.min.js" %}"></script>
     <script type="text/javascript" src="{% static "search/js/menu_ucjeps_home.js" %}"></script>
     <script type="text/javascript" src="{% static "search/js/AC_RunActiveContent.js" %}"></script>
 {% endblock %}
@@ -26,18 +20,25 @@
 {% block loginBtn %}{% endblock %}
 
 {% block branding %}
+{#    <h4 class="bannerLeft"></h4>#}
+{#    <h4 class="bannerRight"></h4>#}
+{#    <h1 class="bannerTitle" id="site-name">{{ apptitle }}</h1>#}
      {% include "header.html" %}
      {% include "globalnav.html" %}
 
-    <span style="float:left"><h2>e-Loans</h2></span>
+    <span style="float:left"><h2>University and Jepson Herbaria e-Loans</h2></span>
+
     <!-- div class="user-tools" -->
     <div class="unit" style="float:right;">
         {% include "cspace_django_site/loginBtn.html" with loginBtnNext="search/" %}
     </div>
     <div style="float:right; margin-top: 6px;" class="unit">
-        {% for info in additionalInfo %}
-            <a href="#" id="{{ info.slug }}" class="expandInfo">{{ info.name }}</a>
-        {% endfor %}
+            <!-- a href="#" id="about">About</a -->
+            <a href="#" id="help" style="margin-left: 20px;">Help</a>
+            <a href="#" id="samples" style="margin-left: 20px;">Sample Searches</a>
+            <a href="#" id="advanced" style="margin-left: 20px;">Advanced Searching</a>
+            <a href="http://ucjeps.berkeley.edu/useterms.html" style="margin-left: 20px;" target="terms">Terms</a>
+            <a href="#" id="credits" style="margin-left: 20px;">Credits</a>
     </div>
 {% endblock %}
 
@@ -95,17 +96,4 @@
 
         </div>
     </div>
-{% endblock %}
-
-
-{% block footer %}
-    <table width="100%">
-        <tbody>
-        <tr>
-            <td style="vertical-align: middle">Current time: {{ timestamp }}.</td>
-            <td style="vertical-align: middle;width: 70px;">powered by</td>
-            <td style="text-align: right; width: 160px;"><img src="{% static "cspace_django_site/images/header-logo-cspace.png" %}" height="30px"></td>
-        </tr>
-        </tbody>
-    </table>
 {% endblock %}

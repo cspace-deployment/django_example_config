@@ -9,15 +9,7 @@
             $(".datepicker").datepicker({dateFormat: "yy-mm-dd"});
         });
     </script>
-    <script type="text/javascript" src="{% static "cspace_django_site/js/d3.min.js" %}" charset="utf-8"></script>
-{% endblock extrascript %}
-
-{% block branding %}
-    {{ block.super }}
-    <div class="right" style="padding-top: 3px;">
-    <a href="./">Switch Tool</a><span class="expandInfo">||</span>
-    </div>
-{% endblock %}
+ % endblock extrascript %}
 
 {% block content %}
     <div id="content-main">
