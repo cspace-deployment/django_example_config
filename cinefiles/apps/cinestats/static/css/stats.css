@@ -1,0 +1,122 @@
+body {
+   background: ivory;
+}
+
+#branding {
+   position: absolute;
+   top: 30px;
+   left: 35px;
+}
+
+.headerwithimage {
+   postition: relative;
+   top: 150px;
+   left: 125px;
+}
+
+.headerwithimage img {
+   float: left;
+   width: 260px;
+   height: 45px;
+}
+
+#header {
+    /* background: #fff; */
+    color: #000;
+    overflow: hidden;
+}
+
+
+.divider {
+   position: relative;
+   top: 1px;
+   left: 33px;
+}
+
+#site-label {
+   position: relative;
+   font-family: Arial, Helvetica, sans-serif;
+   font-weight: bold;
+   font-size: 250%;
+   color: #405525;
+   top: 5px;
+   left: 50px;
+}
+
+#counts-list {
+   position: absolute;
+   top: 125px;
+   left: 100px;
+}
+
+#countstable {
+   position: relative;
+   top: 10px;
+}
+
+#accesstable {
+   position: relative;
+   top: 20px;
+}
+
+tr {
+   height: 25px;
+}
+
+th.thlabel {
+   font-weight: bold;
+   font-size: large;
+}
+
+#countstable th.thlabel {
+   height: 25px;
+   text-align: right;
+   vertical-align: top;
+}
+
+td.tdlabel  {
+   color: black;
+   font-weight: bold;
+   font-size: large;
+   text-align: left;
+}
+
+#countstable td.tdlabel {
+   color: #203000;
+   width: 175px;
+}
+
+#accesstable td.tdlabel {
+   color: #102000;
+   width: 175px;
+}
+
+td.tdnumeric {
+   color: blue;
+   font-size: 1.35em;
+   text-align: right;
+}
+
+
+#accesstable td.columnheader {
+   color: black;
+   font-weight: bold;
+   font-size: large;
+   width: 150px;
+   text-align: right;
+}
+
+#countstable td.tdnumeric {
+   width: 145px;
+}
+
+#accesstable td.tdnumeric {
+   width: 145px;
+}
+
+#accesstable td.tdnumeric1 {
+   text-align: right;
+   color: blue;
+   font-size: 1.35em;
+   width: 95px;
+}

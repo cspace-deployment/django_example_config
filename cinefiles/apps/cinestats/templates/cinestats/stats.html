@@ -1,0 +1,107 @@
+{% extends "cspace_django_site/base_site.html" %}
+{% block title %}Statistics Report{% endblock %}
+{% load i18n admin_static %}
+{% load staticfiles %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" type="text/css" href="{% static "css/tablesorter.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "css/stats.css" %}"/>
+{% endblock %}
+
+
+{% block branding %}
+<div class="headerwithimage">
+   <img src="{% static "images/cine-header-logo.png" %}" />
+   <span id="site-label">Collection Statistics</span>
+</div>
+<p><img class="divider" src="{% static "images/line.png" %}" /></p>
+{% endblock %}
+
+{% block content %}
+<div id=counts-list>
+
+<h2>Summary Statistics</h2>
+<table id="countstable">
+   <tr><th class="thlabel"></th>
+       <th class="thlabel">Total Count</th>
+       <th class="thlabel">Year to Date</th>
+   </tr>
+
+   {% if allnames_count %}
+      <tr><td class="tdlabel">All Names:</td>
+          <td class="tdnumeric">{{allnames_count}}</td>
+          <td class="tdnumeric">{{allnames_ytd}}</td>
+      </tr>
+   {% endif %}
+
+   {% if person_count %}
+      <tr><td class="tdlabel">Personal Names:</td>
+          <td class="tdnumeric">{{person_count}}</td>
+          <td class="tdnumeric">{{person_ytd}}</td>
+      </tr>
+   {% endif %}
+
+   {% if org_count %}
+      <tr><td class="tdlabel">Corporate Names:</td>
+          <td class="tdnumeric">{{org_count}}</td>
+          <td class="tdnumeric">{{org_ytd}}</td>
+      </tr>
+   {% endif %}
+
+   {% if committee_count %}
+      <tr><td class="tdlabel">Committee Names:</td>
+          <td class="tdnumeric">{{committee_count}}</td>
+          <td class="tdnumeric">{{committee_ytd}}</td>
+      </tr>
+   {% endif %}
+   {% if film_count %}
+      <tr><td class="tdlabel">Film Titles:</td>
+          <td class="tdnumeric">{{film_count}}</td>
+          <td class="tdnumeric">{{film_ytd}}</td>
+      </tr>
+   {% endif %}
+
+   {% if doc_count %}
+      <tr><td class="tdlabel">Document Titles:</td>
+          <td class="tdnumeric">{{doc_count}}</td>
+          <td class="tdnumeric">{{doc_ytd}}</td>
+      </tr>
+   {% endif %}
+
+   {% if page_count %}
+      <tr><td class="tdlabel">Document Pages:</td>
+          <td class="tdnumeric">{{page_count}}</td>
+          <td class="tdnumeric">{{page_ytd}}</td>
+      </tr>
+   {% endif %}
+
+   {% if subject_count %}
+      <tr><td class="tdlabel">Subject Records:</td>
+          <td class="tdnumeric">{{subject_count}}</td>
+          <td class="tdnumeric">{{subject_ytd}}</td>
+      </tr>
+   {% endif %}
+</table>
+
+<p style="padding: 2em"/>
+<h2>Access Granted</h2>
+<table id="accesstable">
+
+      <tr><td class="tdlabel"></td>
+          <td class="columnheader">Pages</td>
+          <td class="columnheader">Documents</td>
+          <td class="columnheader">Publishers</td>
+      </tr>
+
+    {% for a in accesscounts %}
+         pass
+      <tr><td class="tdlabel">{{a.0}}</td>
+          <td class="tdnumeric1">{{a.1}}</td>
+          <td class="tdnumeric1">{{a.2}}</td>
+          <td class="tdnumeric1">{{a.3}}</td>
+      </tr>
+   {% endfor %}
+
+</table>
+</div>
+{% endblock %}
