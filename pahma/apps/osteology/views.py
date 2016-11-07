@@ -40,8 +40,7 @@ def direct(request):
 def search(request):
     if request.method == 'GET' and request.GET != {}:
         context = {'searchValues': dict(request.GET.iteritems())}
-        context = doSearch(context, prmz)
-
+        context = doSearch(context, prmz, request)
     else:
         context = setConstants({}, prmz, request)
 
@@ -53,8 +52,7 @@ def search(request):
 def skeleton(request):
     if request.method == 'GET' and request.GET != {}:
         context = {'searchValues': dict(request.GET.iteritems())}
-        context = doSearch(context, prmz)
-
+        context = doSearch(context, prmz, request)
     else:
         context = setConstants({}, prmz, request)
 
@@ -71,7 +69,7 @@ def retrieveResults(request):
 
         if form.is_valid():
             context = {'searchValues': requestObject}
-            context = doSearch(context, prmz)
+            context = doSearch(context, prmz, request)
 
         loginfo(logger, 'results.%s' % context['displayType'], context, request)
         return render(request, 'searchResults.html', context)
