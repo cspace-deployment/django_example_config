@@ -72,3 +72,5 @@ field	56	type	Type	type_s			dropdown									x
 field	57	commonname	Common Name	commonname_s			keyword	2,1			1				29	x
 field	58	accessionnotes	Accession Notes	accessionnotes_s			keyword									x
 field	59	blobs	Images	blob_ss			blob									x
+field	60	hasimage	Has image(s)?	blob_ss			present	8,3								x
+field	61	hascoords	Has coordinates?	latlong_p			present	9,3								x

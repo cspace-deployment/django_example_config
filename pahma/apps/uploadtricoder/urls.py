@@ -1,0 +1,14 @@
+__author__ = 'jblowe'
+
+from django.conf.urls import patterns, url
+from uploadtricoder import views
+
+urlpatterns = patterns('',
+                       url(r'^/?$', views.uploadfiles),
+                       url(r'^uploadfiles', views.uploadfiles, name='uploadfiles'),
+                       url(r'^rest/(?P<action>[\w\-\.]+)$', views.rest, name='rest'),
+                       url(r'^checkfilename', views.checkfilename, name='checkfilename'),
+                       url(r'^showqueue', views.showqueue, name='showqueue'),
+                       url(r'^showresults', views.showresults, name='showresults'),
+                       #url(r'createtricoder', views.createtricoder, name='createtricoder'),
+                       )

@@ -1,0 +1,19 @@
+Very terse deployment instructions for this webapp.
+
+Upload Tricoder replaces the "legacy" CGI webapp that uploads files to temporary directory where the
+batch system can get to them.
+
+It is a knock-off the webapp portion of the Bulk Media Uploader.
+
+To deploy it on an IS&T server (RHEL VM):
+
+* Clone this repo (pahma_project) and install and configure the Django
+  webapp "as usual".
+
+* Ensure that the "batch_code" directory is present and set in uploadtricoder.cfg.
+  (i.e. usually it is /home/app_webapps/batch_barcode, SELinux tags=???,
+  permissions=writable by Apache user, on UCB webapps, app_webapps)
+
+* Alas, there is no way to test this webapp except to upload some files.
+
+* Typically every hour, a cron job runs the batch process (not described here)

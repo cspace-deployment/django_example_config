@@ -1,0 +1,32 @@
+{% if numProblems > 0 %}
+    <h2><span style="color:red">{{ numProblems }} problem{{ numProblems|pluralize }} found! Some files not uploaded!</span></h2>
+{% endif %}
+
+{% if count %}
+    {% if validateonly %}
+        <h2><span style="color:red">Validation only! {{ count }} file{{ count|pluralize }} examined!</span></h2>
+    {% else %}
+        <h3>{{ count }} file{{ count|pluralize }} processed.</h3>
+    {% endif %}
+{% endif %}
+
+<table cellspace="1" id="resultsListing" class="tablesorter">
+        <thead>
+        <tr>
+            <th>File Name</th>
+            {% for h in stats %}
+            <th style="width: 50px; text-align: right">{{ h }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for tuf in tricoder_upload_files %}
+            <tr>
+                <td><a href="showresults/?filename={{ tuf.name }}&directory={{ directory }}">{{ tuf.name }}</a></td>
+                <td>{{ tuf.status }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </tbody>
+</table>
