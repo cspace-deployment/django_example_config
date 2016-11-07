@@ -42,10 +42,10 @@ def direct(request):
 def search(request):
     if request.method == 'GET' and request.GET != {}:
         context = {'searchValues': dict(request.GET.iteritems())}
-        context = doSearch(context, prmz)
+        context = doSearch(context, prmz, request)
 
     else:
-        context = setConstants({}, prmz)
+        context = setConstants({}, prmz, request)
 
     loginfo(logger, 'start search', context, request)
     context['additionalInfo'] = AdditionalInfo.objects.filter(live=True)
@@ -59,7 +59,7 @@ def retrieveResults(request):
 
         if form.is_valid():
             context = {'searchValues': requestObject}
-            context = doSearch(context, prmz)
+            context = doSearch(context, prmz, request)
 
         loginfo(logger, 'results.%s' % context['displayType'], context, request)
         return render(request, 'searchResults.html', context)
@@ -158,6 +158,6 @@ def statistics(request):
 def loadNewFields(request, fieldfile, prmz):
     loadFields(fieldfile + '.csv', prmz)
 
-    context = setConstants({}, prmz)
+    context = setConstants({}, prmz, request)
     loginfo(logger, 'loaded fields', context, request)
     return render(request, 'ucjeps_searchmedia.html', context)
