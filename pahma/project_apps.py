@@ -1,3 +1,4 @@
+# these are the webapps available for PAHMA
 
 INSTALLED_APPS = (
     'django.contrib.auth',
