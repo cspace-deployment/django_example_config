@@ -43,7 +43,7 @@ def search(request):
         context = doSearch(context, prmz)
 
     else:
-        context = setConstants({}, prmz)
+        context = setConstants({}, prmz, request)
 
     loginfo(logger, 'start search', context, request)
     context['additionalInfo'] = AdditionalInfo.objects.filter(live=True)
@@ -56,7 +56,7 @@ def skeleton(request):
         context = doSearch(context, prmz)
 
     else:
-        context = setConstants({}, prmz)
+        context = setConstants({}, prmz, request)
 
     loginfo(logger, 'start search', context, request)
     context['additionalInfo'] = AdditionalInfo.objects.filter(live=True)
@@ -149,6 +149,6 @@ def statistics(request):
 def loadNewFields(request, fieldfile, prmz):
     loadFields(fieldfile + '.csv', prmz)
 
-    context = setConstants({}, prmz)
+    context = setConstants({}, prmz, request)
     loginfo(logger, 'loaded fields', context, request)
     return render(request, 'search.html', context)
