@@ -1,0 +1,26 @@
+[
+    {
+        "fields": {
+            "content": "<p>This site includes both digitized and born-digital photographs from the University and Jepson Herbaria collections. These collections have been curated by Herbaria staff since the 1940s and contain material donated from a variety of sources. These images are provided online for personal, educational, and other non-commercial purposes.</p>\r\n\r\n<p>We endeavor to provide information about the copyright status for this content; rights information for the images in this collection can be found by viewing the metadata for each image. However, we can offer no guarantee or assurance that all pertinent information is provided or that the information is correct in each circumstance. To use these images, please determine what permission(s) are needed and, if necessary, obtain such permission.</p>\r\n\r\n\r\n<p>For certain images donated prior to 2009, the University and Jepson Herbaria have been unable to determine the copyright holder, and would appreciate receiving any information about copyright ownership for appropriate acknowledgement. If you have any complaints or objections to content posted on the University and Jepson Herbaria website, please <a href=\"mailto:ucjepscomments@lists.berkeley.edu?subject=Image%20Collection%20Text\">contact us. </a></p>\r\n\r\n", 
+            "contentType": "HTML", 
+            "live": true, 
+            "name": "Access Policy", 
+            "order": 0, 
+            "slug": "access-policy"
+        }, 
+        "model": "searchmedia.additionalinfo", 
+        "pk": 1
+    }, 
+    {
+        "fields": {
+            "content": "<h2>Searching</h2>\r\n\r\n<p>You can enter search criteria by typing into the text boxes or selecting an option from a pick list. You may also click one of the \"Display options\" to choose the format of your results (\"List\" is the default. \"Grid\" will display a gallery of images) or to limit the number and type of results you wish to receive. Any combination of fields may be used.</p>\r\n\r\n<p>Some fields have an option of searching as either \"keyword\", \"phrase\", or \"exact\".</p>\r\n<ul>\r\n<li><b>Exact:</b> This will only return records where the field value is exactly what you input (e.g. searching for locality Livermore Valley will only retrieve records where the locality is exactly Livermore Valley)</li>\r\n<li><b>Phrase: </b>Returned records will contain exactly what you input, but may have more text before or after it (e.g. searching Livermore Valley will also return eastern Livermore Valley, 4 mi west of Livermore Valley, etc.)</li>\r\n<li><b>Keyword:</b>This will return all records that contain all of the words entered in that field, in any order (e.g. searching Livermore Valley will also return Arroyo Mocho Valley s of Livermore, etc.)</li>\r\n</ul>\r\n<br >\r\n<p>Wildcard symbols (* and ?) may be used in keyword searches to match any character(s) within a search term. '*' denotes zero or more characters at a given place within a search term. Each '?' denotes zero or one character; it may be used more than once in a row to match a desired number of characters. Remember to set the search type option to \"Keyword\".</p>\r\n<ul>\r\n<li><b>Beginning wildcard:</b> This will return records where the search term you've entered is preceded by zero or more characters (e.g. searching for locality *Pine will retrieve records where the locality description includes Collection des Plantes Alpines or subalpine slopes of Magee Peak, as well as places such as Pine Creek, Pine Flat or Lone Pine). Note that the search finds records with either an uppercase \"P\" or a lowercase \"p\".</li>\r\n<li><b>Internal wildcard:</b>Returned records will include zero or more characters internally at the position of the wildcard (e.g. searching for locality Cham*s will retrieve records where the locality description includes Chambers or Champs.</li>\r\n<li><b>Wildcard at end:</b> This will return records where the search term you've entered is followed by zero or more characters (e.g. searching for locality Cham* will retrieve records where the locality description includes Chambers, Chamonix or Champs. </li>\r\n<li><b>Multiple wildcards:</b> You can use more than one wildcard in a search term. For example, searching for Specimen ID *2*5 will return records such as GOD125, GOD205, GOD215, JEPS100025, JEPS100205, UC125 and UC1205. ???2*5 will match GOD205, GOD215, UC205 and UC2125, but not JEPS205 because there must be only three characters maximum to the left of the '2'. Use U*2*5 to find UC1001275: the 'U' will eliminate specimens in the GOD and JEPS collections. Remember that a maximum of 2000 records will be returned. Be careful to make your search narrow enough to return the values you seek. </li>\r\n</ul>\r\n<br >\r\n<p>You may also search for records where the value for the field is empty by entering Null in the field.</p>\r\n\r\n\r\n", 
+            "contentType": "HTML", 
+            "live": true, 
+            "name": "Search Help", 
+            "order": 1, 
+            "slug": "search-help"
+        }, 
+        "model": "searchmedia.additionalinfo", 
+        "pk": 2
+    }
+]

@@ -13,7 +13,6 @@
 {% block extrascripts %}
     <script type="text/javascript" src="{% static "common/js/PublicSearch.js" %}"></script>
     <script type="text/javascript" src="{% static "search/js/menu_ucjeps_home.js" %}"></script>
-    <script type="text/javascript" src="{% static "search/js/AC_RunActiveContent.js" %}"></script>
 {% endblock %}
 
 <!-- Overwrite default placement of login button, included below in branding block -->
@@ -30,15 +29,17 @@
 
     <!-- div class="user-tools" -->
     <div class="unit" style="float:right;">
+        {% if additionalInfo %}
+            {% for info in additionalInfo %}
+                <a href="#" id="{{ info.slug }}" class="expandInfo">{{ info.name }}</a>
+            {% endfor %}
+            <span class="expandInfo">||</span>
+        {% endif %}
+        {% if extra_nav %}
+          <a href="{{ extra_nav.href }}" id="{{ extra_nav.id }}" class="expandInfo">{{ extra_nav.name }}</a>
+          <span class="expandInfo">||</span>
+        {% endif %}
         {% include "cspace_django_site/loginBtn.html" with loginBtnNext="search/" %}
-    </div>
-    <div style="float:right; margin-top: 6px;" class="unit">
-            <!-- a href="#" id="about">About</a -->
-            <a href="#" id="help" style="margin-left: 20px;">Help</a>
-            <a href="#" id="samples" style="margin-left: 20px;">Sample Searches</a>
-            <a href="#" id="advanced" style="margin-left: 20px;">Advanced Searching</a>
-            <a href="http://ucjeps.berkeley.edu/useterms.html" style="margin-left: 20px;" target="terms">Terms</a>
-            <a href="#" id="credits" style="margin-left: 20px;">Credits</a>
     </div>
 {% endblock %}
 
