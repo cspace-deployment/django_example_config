@@ -32,7 +32,7 @@ INSTALLED_APPS = (
     'landing',
     'search',
     #'taxonomyeditor',
-    #'toolbox',
+    'toolbox',
     #'simplesearch',
     'uploadmedia',
 )
