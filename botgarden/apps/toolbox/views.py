@@ -9,7 +9,7 @@ import json
 
 from utils import loginfo, dispatch, appLayout, setconstants, APPS
 
-@login_required()
+#@login_required()
 def index(request):
     # APPS is a dict of configured webapps, show the list sorted by "app title"
     sorted_apps = sorted(APPS.items(), key=operator.itemgetter(1))
@@ -17,7 +17,7 @@ def index(request):
     return render(request, 'toolbox.html', context)
 
 
-@login_required()
+#@login_required()
 def tool(request, appname):
     # if we are here, we have been given a particular appname, e.g. "keyinfo", as part of the url
     context = {'applayout': appLayout[appname]}
