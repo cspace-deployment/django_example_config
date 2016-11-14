@@ -18,22 +18,33 @@ logger.info('%s :: %s :: %s' % ('toolbox startup', '-', '-'))
 
 
 def getdropdown(dropdown):
-
     form = {'institution': institution}
-    if dropdown == 'tricoderusers': return constants.tricoderUsers()
-    elif dropdown == 'handlers': return constants.getHandlers(form)
-    elif dropdown == 'reasons': return constants.getReasons(form)
-    elif dropdown == 'printers': return constants.getPrinters(form)
-    elif dropdown == 'fieldset': return constants.getFieldset(form)
-    elif dropdown == 'hierarchies': return constants.getHierarchies(form)
-    elif dropdown == 'altnumtypes': return constants.getAltNumTypes(form)
-    elif dropdown == 'objtype': return constants.getObjType(form)
-    elif dropdown == 'collman': return constants.getCollMan(form)
-    elif dropdown == 'agencies': return constants.getAgencies(form)
-    elif dropdown == 'activities': return constants.getActivities(form)
-    elif dropdown == 'periods': return constants.getPeriods(form)
+    if dropdown == 'tricoderusers':
+        return constants.tricoderUsers()
+    elif dropdown == 'handlers':
+        return constants.getHandlers(form)
+    elif dropdown == 'reasons':
+        return constants.getReasons(form)
+    elif dropdown == 'printers':
+        return constants.getPrinters(form)
+    elif dropdown == 'fieldset':
+        return constants.getFieldset(form)
+    elif dropdown == 'hierarchies':
+        return constants.getHierarchies(form)
+    elif dropdown == 'altnumtypes':
+        return constants.getAltNumTypes(form)
+    elif dropdown == 'objtype':
+        return constants.getObjType(form)
+    elif dropdown == 'collman':
+        return constants.getCollMan(form)
+    elif dropdown == 'agencies':
+        return constants.getAgencies(form)
+    elif dropdown == 'activities':
+        return constants.getActivities(form)
+    elif dropdown == 'periods':
+        return constants.getPeriods(form)
 
-    return '',''
+    return '', ''
 
 
 def convert2int(s):
@@ -61,7 +72,7 @@ def loginfo(infotype, context, request):
     logger.info('%s :: %s :: %s :: %s' % (infotype, count, username, logdata))
 
 
-def setconstants(request, context, appname):
+def setconstants(context, appname):
     context['timestamp'] = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
     context['searchrows'] = range(1, 4)
     context['searchcolumns'] = range(1, 4)
@@ -71,7 +82,8 @@ def setconstants(request, context, appname):
     context['institution'] = institution
     context['version'] = VERSION
     context['additionalInfo'] = AdditionalInfo.objects.filter(live=True)
-    context['device'] = devicetype(request)
+    # context['device'] = devicetype(request)
+    context['device'] = 'other'
     # insert a nav bar item to enable user to switch to a different tool
     context['extra_nav'] = {'href': './', 'id': 'switchtool', 'name': 'Switch Tool'}
 
@@ -87,7 +99,6 @@ def getfromXML(element, xpath):
 
 
 def dispatch(context, request, appname):
-
     # data requests are special (render json, not html)
     if appname == 'data':
         context = heavylifting.getData(context, request)
@@ -109,7 +120,35 @@ def dispatch(context, request, appname):
         elif 'activity' in request.POST:
             context = heavylifting.doActivity(context, request)
 
+            # if not 'items' in context:
+            #     context['error'] = 'no items'
+            # else:
+            #     context['items'] =context['items']
+            #     context['labels'] = context['labels']
+
     return context
+
+
+def handleJSONrequest(context, request):
+    try:
+        state = request['state']
+        appname = request['appname']
+        x = appLayout
+        context = {'applayout': appLayout[appname][state]}
+        context['appname'] = request['appname']
+        # context['nextstate'] = appLayout[app][state]['nextstate']
+    except:
+        context['error'] = 'no app or state for these values'
+    return context
+
+
+def computenextstate(state):
+    if state in 'start review enumerate move end':
+        return state['start']['parameter']
+    elif 'start' in state:
+        return state['start']['parameter']
+    if 'start' in state:
+        return state['start']['parameter']
 
 
 def getapplist(myappdir, thisInstitution, thisDeployment):
@@ -145,7 +184,7 @@ def getapplist(myappdir, thisInstitution, thisDeployment):
 
 
 def definefields(parmFile, suggestions):
-    columns = "id app name label type parameter autocomplete row column".split(" ")
+    columns = "id app name label role type parameter autocomplete row column".split(" ")
 
     try:
         f = open(parmFile, 'rb')
@@ -162,19 +201,26 @@ def definefields(parmFile, suggestions):
         for row in csvfile:
             if row[0] == '': continue
             if row[0][0] == '#': continue
+            if row[1][0] == '#': continue
             app = row[1]
-            if suggestions == 'postgres' and row[6] != '':
-                varname = '%s.%s' % (row[6], row[2])
+            role = row[4]
+            if suggestions == 'postgres' and row[7] != '':
+                varname = '%s.%s' % (row[7], row[2])
             else:
                 varname = row[2]
             if not app in appLayout:
                 appLayout[app] = {}
-            if not varname in appLayout[app]:
-                appLayout[app][varname] = {}
-            for r, v in enumerate(row):
-                appLayout[app][varname][columns[r]] = convert2int(row[r])
-            if row[4] == 'dropdown':
-                appLayout[app][varname][columns[5]] = getdropdown(row[5])
+            if not role in appLayout[app]:
+                appLayout[app][role] = {}
+            if not varname in appLayout[app][role]:
+                appLayout[app][role][varname] = {}
+            for r, v in enumerate(columns):
+                if columns[r] in "id label type parameter autocomplete row column".split(" "):
+                    appLayout[app][role][varname][columns[r]] = convert2int(row[r])
+            if varname in 'start review enumerate move movecheck end'.split(' '):
+                appLayout[app][role]['nextstate'] = row[6]
+            if row[5] == 'dropdown':
+                appLayout[app][role][varname]['dropdown'] = getdropdown(row[6])
 
         f.close()
 
@@ -194,6 +240,7 @@ APPDIR = os.path.join(settings.BASE_PARENT_DIR, 'toolbox', config.get('info', 'a
 institution = config.get('info', 'institution')
 deployment = config.get('info', 'serverlabel')
 APPS = getapplist(APPDIR, institution, deployment)
+APPS['json'] = ['JSON']
 try:
     suggestions = config.get('connect', 'suggestions')
 except:
