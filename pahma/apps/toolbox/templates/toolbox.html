@@ -38,7 +38,7 @@
             <img src="{% static "cspace_django_site/images/timer-animated.gif" %}" alt="Searching..."/>
         </div>
         <div id="checkPanel">
-            <form class="reviewForm" id="review" method="POST">
+            <form class="reviewForm" id="check" method="POST">
                 {% csrf_token %}
                 {% if checkitems %}
                     <table>
@@ -54,8 +54,10 @@
         <div id="reviewPanel">
             <form class="reviewForm" id="review" method="POST">
                 {% csrf_token %}
-                {% if reviewitems %}
+                {% if appname == "activityviewer" %}
                     {% include "toolbox_activity_graphs.html" %}
+                {% endif %}
+                {% if reviewitems %}
                     {% render_table reviewitems %}
                     <hr/>
                     {{ numberofitems }} items listed.
