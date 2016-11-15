@@ -35,7 +35,7 @@
             {% endif %}
         </div>
         <div id="waitingImage" style="display: none">
-            <img src="{% static "cspace_django_site/images/timer-animated.gif" %}" alt="Searching..."/>
+            <img src="{% static 'cspace_django_site/images/timer-animated.gif' %}" alt="Searching..."/>
         </div>
         <div id="checkPanel">
             <form class="reviewForm" id="check" method="POST">
@@ -63,6 +63,7 @@
                     {{ numberofitems }} items listed.
                     {% include "toolbox_button_action.html" %}
                 {% endif %}
+            </form>
         </div>
         <div id="resultsPanel">
             <form class="resultsForm" id="results" method="POST">
