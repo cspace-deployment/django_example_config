@@ -34,6 +34,7 @@ def tool(request, appname):
         form = forms.Form()
 
     if form.is_valid():
+        # context = dispatch(context, request.GET, appname)
         loginfo(appname, context, request)
         return render(request, 'toolbox.html', context)
 
@@ -58,21 +59,4 @@ def jsonrequest(request):
         loginfo(context['appname'], context, request)
         return HttpResponse(json.dumps(context))
     else:
-        return HttpResponse(json.dumps({'error': 'I only respond to GETs'}))
-
-
-@login_required()
-def update(request):
-    if request.method == 'POST':
-        form = forms.Form(request.POST)
-
-        if form.is_valid():
-            context = dispatch(request.POST, request, 'json')
-
-            loginfo(context['appname'], context, request)
-            if 'items' not in context:
-                return HttpResponse(json.dumps('error'))
-            else:
-                return HttpResponse(json.dumps({'items': context['items'], 'labels': context['labels']}))
-    else:
-        return HttpResponse(json.dumps('no data seen'))
+        return HttpResponse(json.dumps({'error': 'form is not valid'}))

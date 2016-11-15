@@ -98,26 +98,26 @@ def getfromXML(element, xpath):
     return result
 
 
-def dispatch(context, request, appname):
+def dispatch(request, context, state):
     # data requests are special (render json, not html)
-    if appname == 'data':
+    if state == 'data':
         context = heavylifting.getData(context, request)
 
     else:
         # do the heavy lifting
-        if 'search' in request.POST:
+        if 'start' in state:
             context = heavylifting.doSearch(context, request)
-        elif 'review' in request.POST:
+        elif 'review' in state:
             context = heavylifting.doReview(context, request)
-        elif 'enumerate' in request.POST:
+        elif 'enumerate' in state:
             context = heavylifting.doEnumerate(context, request)
-        elif 'update' in request.POST:
+        elif 'update' in state:
             context = heavylifting.doUpdate(context, request)
-        elif 'movecheck' in request.POST:
+        elif 'movecheck' in state:
             context = heavylifting.doMovecheck(context, request)
-        elif 'save' in request.POST:
+        elif 'save' in state:
             context = heavylifting.doSave(context, request)
-        elif 'activity' in request.POST:
+        elif 'activity' in state:
             context = heavylifting.doActivity(context, request)
 
             # if not 'items' in context:
@@ -136,19 +136,11 @@ def handleJSONrequest(context, request):
         x = appLayout
         context = {'applayout': appLayout[appname][state]}
         context['appname'] = request['appname']
+        context = dispatch(request, context, state)
         # context['nextstate'] = appLayout[app][state]['nextstate']
     except:
         context['error'] = 'no app or state for these values'
     return context
-
-
-def computenextstate(state):
-    if state in 'start review enumerate move end':
-        return state['start']['parameter']
-    elif 'start' in state:
-        return state['start']['parameter']
-    if 'start' in state:
-        return state['start']['parameter']
 
 
 def getapplist(myappdir, thisInstitution, thisDeployment):
