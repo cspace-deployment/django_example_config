@@ -215,12 +215,13 @@ def definefields(parmFile, suggestions):
             if not varname in appLayout[app][role]:
                 appLayout[app][role][varname] = {}
             for r, v in enumerate(columns):
-                if columns[r] in "id label type parameter autocomplete row column".split(" "):
+                if columns[r] in "id label type parameter row column".split(" "):
                     appLayout[app][role][varname][columns[r]] = convert2int(row[r])
             if varname in 'start review enumerate move movecheck end'.split(' '):
-                appLayout[app][role]['nextstate'] = row[6]
+                pass
+                #appLayout[app][role]['nextstate'] = row[6]
             if row[5] == 'dropdown':
-                appLayout[app][role][varname]['dropdown'] = getdropdown(row[6])
+                appLayout[app][role][varname]['parameter'] = getdropdown(row[6])
 
         f.close()
 

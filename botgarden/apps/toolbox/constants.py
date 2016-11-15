@@ -49,7 +49,7 @@ def getActivities(form):
                   ('works', 'works')
                   ]
 
-    return activities, selected
+    return activities
 
 
 def getPeriods(form):
@@ -61,7 +61,7 @@ def getPeriods(form):
               ('yearly', 'year')
               ]
 
-    return period, selected
+    return period
 
 
 def tricoderUsers():
@@ -128,7 +128,7 @@ def getHandlers(form):
             ("Jane Williams", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(7420)'Jane L. Williams'")
         ]
 
-    return handlerlist, selected
+    return handlerlist
 
 
 def getReasons(form):
@@ -199,7 +199,7 @@ def getReasons(form):
         ]
 
     reasons = [(r[1], r[0]) for r in reasons]
-    return reasons, selected
+    return reasons
 
 
 def getPrinters(form):
@@ -211,7 +211,7 @@ def getPrinters(form):
     ]
 
     # printerlist = [ (r[1], r[0]) for r in printerlist]
-    return printerlist, selected
+    return printerlist
 
 
 def getFieldset(form):
@@ -222,10 +222,10 @@ def getFieldset(form):
         ("Name & Desc.", "namedesc"),
         ("Registration", "registration"),
         ("HSR Info", "hsrinfo"),
-        ("Object Type/CM", "objtypecm"),
+        ("Object Type/CM", "objtypecm")
     ]
 
-    return fieldsets, selected
+    return fieldsets
 
 
 def getHierarchies(form):
@@ -240,7 +240,7 @@ def getHierarchies(form):
         ("Taxonomy", "taxonomy")
     ]
 
-    return authorities, selected
+    return authorities
 
 
 def getAltNumTypes(form):
@@ -275,7 +275,7 @@ def getAltNumTypes(form):
     ]
 
     # altnumtypes = [ (r[1], r[0]) for r in altnumtypes]
-    return altnumtypes, selected
+    return altnumtypes
 
 
 def getObjType(form):
@@ -293,7 +293,7 @@ def getObjType(form):
         ("Unknown", "unknown")
     ]
 
-    return objtypes, selected
+    return objtypes
 
 
 def getCollMan(form):
@@ -308,7 +308,7 @@ def getCollMan(form):
         ("None (Registration)", "No collection manager (Registration)")
     ]
 
-    return collmans, selected
+    return collmans
 
 
 def getAgencies(form):
@@ -332,7 +332,7 @@ def getAgencies(form):
         ("U.S. Army Corps of Engineers", "urn:cspace:pahma.cspace.berkeley.edu:orgauthorities:name(organization):item:name(9133)"),
     ]
 
-    return agencies, selected
+    return agencies
 
 
 def getIntakeFields(fieldset):
@@ -368,7 +368,7 @@ def getIntakeFields(fieldset):
 if __name__ == '__main__':
 
     def handleResult(result, header):
-        items, selected = result
+        items = result
         htmlobject = '\n<tr><td>%s<td>' % header
 
         htmlobject += '''<select class="cell" "><option value="None">Select an option</option>'''
