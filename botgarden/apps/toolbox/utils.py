@@ -205,23 +205,26 @@ def definefields(parmFile, suggestions):
             app = row[1]
             role = row[4]
             if suggestions == 'postgres' and row[7] != '':
-                varname = '%s.%s' % (row[7], row[2])
-            else:
-                varname = row[2]
+                row[2] = '%s.%s' % (row[7], row[2])
             if not app in appLayout:
                 appLayout[app] = {}
             if not role in appLayout[app]:
-                appLayout[app][role] = {}
-            if not varname in appLayout[app][role]:
-                appLayout[app][role][varname] = {}
+                appLayout[app][role] = []
+            #if not varname in appLayout[app][role]:
+            #    appLayout[app][role][varname] = []
+            pdict = {}
             for r, v in enumerate(columns):
-                if columns[r] in "id label type parameter row column".split(" "):
-                    appLayout[app][role][varname][columns[r]] = convert2int(row[r])
-            if varname in 'start review enumerate move movecheck end'.split(' '):
-                pass
+                if columns[r] in "id name label type parameter row column".split(" "):
+                    pdict[v] = convert2int(row[r])
+            if pdict['type'] == 'dropdown':
+                pdict['parameter'] = getdropdown(row[6])
+            if pdict['type'] == 'button':
+                del pdict['column']
+                del pdict['row']
+            appLayout[app][role].append(pdict)
+            #if varname in 'start review enumerate move movecheck end'.split(' '):
+                #pass
                 #appLayout[app][role]['nextstate'] = row[6]
-            if row[5] == 'dropdown':
-                appLayout[app][role][varname]['parameter'] = getdropdown(row[6])
 
         f.close()
 
