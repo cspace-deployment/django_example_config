@@ -21,8 +21,8 @@
 18	bedlist	dora	dead	start	radio	dead		1	2
 19	bedlist	groupby	location	start	radio	location		2	1
 20	bedlist	groupby	none	start	radio	none		2	1
-21	bedlist	rare	not rare	start	checkbox	false		2	2
-22	bedlist	rare	rare	start	checkbox	true		2	2
+21	bedlist	rare	not rare	start	radio	false		2	2
+22	bedlist	rare	rare	start	radio	true		2	2
 23	bedlist	enumerate	Enumerate	start	button	end			
 24	bedlist	start	Search	start	button	enumerate			
 25	#								
@@ -128,67 +128,68 @@
 133	#								
 134	#								
 135	keyinfo	museumnumber	Museum #	review	string	100	ob		
-136	keyinfo	objectname	Object name	review	string	140	ob		
+136	keyinfo	objectname	Object name	review	text	140	ob		
 137	keyinfo	count	Count	review	integer	40			
-138	keyinfo	fieldcollectionplace	Field Collection Place	review	string	150	fc		
-139	keyinfo	culturalgroup	Cultural Group	review	string	150			
-140	keyinfo	ethnographicfilecode	Ethnographic File Code	review	string	150			
+138	keyinfo	fieldcollectionplace	Field Collection Place	review	text	150	fc		
+139	keyinfo	culturalgroup	Cultural Group	review	text	150			
+140	keyinfo	ethnographicfilecode	Ethnographic File Code	review	text	150			
 141	namedesc	museumnumber	Museum #	review	string	100	ob		
-142	namedesc	objectname	Object name	review	string	140	ob		
-143	namedesc	briefdescription	Brief Description	review	string	150			
+142	namedesc	objectname	Object name	review	text	140	ob		
+143	namedesc	briefdescription	Brief Description	review	text	150			
 144	registration	museumnumber	Museum #	review	string	100	ob		
-145	registration	objectname	Object name	review	string	140	ob		
-146	registration	altnum	Alt Num	review	string	40			
-147	registration	altnumtype	Alt Num Type	review	string	40			
-148	registration	fieldcollector	Field Collector	review	string	100	pe		
-149	registration	donor	Donor	review	string	100			
+145	registration	objectname	Object name	review	text	140	ob		
+146	registration	altnum	Alt Num	review	text	40			
+147	registration	altnumtype	Alt Num Type	review	text	40			
+148	registration	fieldcollector	Field Collector	review	text	100	pe		
+149	registration	donor	Donor	review	text	100			
 150	registration	accession	Accession	review	string	60	ob		
 151	hsrinfo	museumnumber	Museum #	review	string	100	ob		
-152	hsrinfo	objectname	Object name	review	string	140	ob		
+152	hsrinfo	objectname	Object name	review	text	140	ob		
 153	hsrinfo	count	Count	review	integer	40			
-154	hsrinfo	countnote	Count Note	review	string	40			
-155	hsrinfo	fieldcollectionplace	Field Collection Place	review	string	150	fc		
+154	hsrinfo	countnote	Count Note	review	text	40			
+155	hsrinfo	fieldcollectionplace	Field Collection Place	review	text	150	fc		
 156	objtypecm	museumnumber	Museum #	review	string	100	ob		
-157	objtypecm	objectname	Object name	review	string	140	ob		
+157	objtypecm	objectname	Object name	review	text	140	ob		
 158	objtypecm	count	Count	review	integer	40			
-159	objtypecm	objecttype	Object Type	review	string	40			
-160	objtypecm	collectionmanager	Collection Manager	review	string	150	pe		
-161	objtypecm	fieldcollectionplace	Field Collection Place	review	string	150	fc		
-162	inventory	IDnumber	ID number 	review	string	40			
-163	inventory	title	Title	review	string	40			
-164	inventory	artist	Artist	review	string	150	pe		
-165	inventory	found	Found	review	radio	40			
-166	inventory	notfound	Not Found	review	radio	40			
+159	objtypecm	objecttype	Object Type	review	text	40			
+160	objtypecm	collectionmanager	Collection Manager	review	text	150	pe		
+161	objtypecm	fieldcollectionplace	Field Collection Place	review	text	150	fc		
+162	#inventory	IDnumber	ID number 	review	text	40			
+163	#inventory	title	Title	review	text	40			
+164	#inventory	artist	Artist	review	text	150	pe		
+165	#inventory	found	Found	review	radio	40			
+166	#inventory	notfound	Not Found	review	radio	40			
 167	inventory	museumnumber	Museum #	review	string	100	ob		
-168	inventory	objectname	Object name	review	string	140	ob		
-169	inventory	found	Found	review	string	40			
+168	inventory	objectname	Object name	review	text	140	ob		
+169	inventory	found	Found	review	radio	40			
+169	inventory	notfound	Not Found	review	radio	40			
 170	movecrate	museumnumber	Museum #	review	string	100	ob		
-171	movecrate	objectname	Object name	review	string	140	ob		
+171	movecrate	objectname	Object name	review	text	140	ob		
 172	movecrate	move	Move	review	radio	40			
 173	movecrate	dontmove	Don't move	review	radio	40			
-174	packinglist	IDnumber	ID number	enumerate	string	40			
-175	packinglist	title	Title	enumerate	string	150			
-176	packinglist	artist	Artist	enumerate	string	150	pe		
-177	packinglist	medium	Medium	enumerate	string	40			
-178	packinglist	dimensions	Dimensions	enumerate	string	100			
-179	packinglist	creditLine	Credit Line	enumerate	string	150			
+174	#packinglist	IDnumber	ID number	enumerate	string	40			
+175	#packinglist	title	Title	enumerate	string	150			
+176	#packinglist	artist	Artist	enumerate	string	150	pe		
+177	#packinglist	medium	Medium	enumerate	string	40			
+178	#packinglist	dimensions	Dimensions	enumerate	string	100			
+179	#packinglist	creditLine	Credit Line	enumerate	string	150			
 180	packinglist	museumnumber	Museum #	enumerate	string	100	ob		
 181	packinglist	objectname	Object name	enumerate	string	140	ob		
-182	packinglist	count	Count	enumerate	integer	40			
+182	packinglist	count	Count	enumerate	string	40			
 183	packinglist	fieldcollectionplace	Field Collection Place	enumerate	string	150	fc		
 184	packinglist	culturalgroup	Cultural Group	enumerate	string	150			
 185	packinglist	ethnographicfilecode	Ethnographic File Code	enumerate	string	150			
 186	packinglistbyculture	museumnumber	Museum #	review	string	100	ob		
 187	packinglistbyculture	objectname	Object name	review	string	140	ob		
-188	packinglistbyculture	count	Count	review	integer	40			
+188	packinglistbyculture	count	Count	review	string	40			
 189	packinglistbyculture	location	Location	review	string	150			
 190	packinglistbyculture	fieldcollectionplace	Field Collection Place	review	string	150	fc		
 191	moveobject	move	Move?	review	checkbox	40			
 192	moveobject	museumnumber	Museum #	review	string	100	ob		
-193	moveobject	objectname	Object name	review	string	140	ob		
+193	moveobject	objectname	Object name	review	text	140	ob		
 194	moveobject	count	Count	review	integer	40			
-195	moveobject	location	Location	review	string	150			
-196	bedlist	accession	Accession	review	float	60	ob		
+195	moveobject	location	Location	review	text	150			
+196	bedlist	accession	Accession	review	string	60	ob		
 197	bedlist	taxonomicname	Taxonomic Name	review	string	40	ta		
 198	bedlist	family	Family	review	string	150			
 199	bedlist	gardenlocation	Garden Location	review	string	150	lo		

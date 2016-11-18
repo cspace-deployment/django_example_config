@@ -30,7 +30,27 @@ def getFields(request, context):
     return search_terms
 
 
-def doQuery(query, fields):
+def doDemoQuery(query, fields):
+    # this just returns 40 rows of data from the portal...
+    import demodata
+
+    data = demodata.sampledata()
+    rows = []
+    for d in data:
+        row = []
+        for field in fields:
+            if field in d:
+                row.append(d[field])
+            else:
+                row.append('')
+        cells = {'csid': d['csid_s'], 'cells': row}
+        rows.append(cells)
+    data = rows
+
+    return data
+
+
+def doQuery(request, fields):
     # this just returns 40 rows of data from the portal...
     import demodata
 
@@ -124,7 +144,7 @@ def doActivity(context, request):
 
 
 def doEnumerate(context, request):
-    data = doQuery('query', 'objmusno_s objname_s objcount_s objfcpverbatim_s objfilecode_ss objassoccult_ss'.split(' '))
+    data = doDemoQuery('query', 'objmusno_s objname_s objcount_s objfcpverbatim_s objfilecode_ss objassoccult_ss'.split(' '))
 
     context['items'] = data
     context['numberofitems'] = len(data)
@@ -133,7 +153,7 @@ def doEnumerate(context, request):
 
 
 def doReview(context, request):
-    data = doQuery('query', 'objmusno_s objname_s objcount_s objfcpverbatim_s objfilecode_ss objassoccult_ss'.split(' '))
+    data = doDemoQuery('query', 'objmusno_s objname_s objcount_s objfcpverbatim_s objfilecode_ss objassoccult_ss'.split(' '))
 
     context['items'] = data
     context['numberofitems'] = len(data)
@@ -142,7 +162,7 @@ def doReview(context, request):
 
 
 def doUpdate(context, request):
-    context['items'] = doQuery('query', 'objmusno_s objname_s id'.split(' '))
+    context['items'] = doDemoQuery('query', 'objmusno_s objname_s id'.split(' '))
     context['numberofitems'] = len(context['items'])
 
     return context
