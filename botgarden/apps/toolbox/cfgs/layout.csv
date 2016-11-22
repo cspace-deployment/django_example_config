@@ -134,6 +134,9 @@
 138	keyinfo	fieldcollectionplace	Field Collection Place	review	text	150	fc		
 139	keyinfo	culturalgroup	Cultural Group	review	text	150			
 140	keyinfo	ethnographicfilecode	Ethnographic File Code	review	text	150			
+135	keyinfo	museumnumber	Museum #	update	string	100	ob		
+136	keyinfo	status	Status	update	string	140	ob		
+137	keyinfo	csid	CSID	update	integer	40			
 141	namedesc	museumnumber	Museum #	review	string	100	ob		
 142	namedesc	objectname	Object name	review	text	140	ob		
 143	namedesc	briefdescription	Brief Description	review	text	150			

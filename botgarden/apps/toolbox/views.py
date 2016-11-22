@@ -7,7 +7,7 @@ from django.shortcuts import render, HttpResponse, redirect
 from django import forms
 import json
 
-from utils import loginfo, dispatch, handleJSONrequest, appLayout, setconstants, APPS
+from utils import loginfo, handleJSONrequest, setconstants, APPS
 
 
 def direct(request):

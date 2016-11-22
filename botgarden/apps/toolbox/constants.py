@@ -1,7 +1,8 @@
 #!/usr/bin/env /usr/bin/python
 # -*- coding: UTF-8 -*-
 
-import csv, sys, time, os, datetime
+import sys
+import time
 
 reload(sys)
 sys.setdefaultencoding('utf-8')

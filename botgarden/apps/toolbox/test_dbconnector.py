@@ -11,11 +11,11 @@ from cspace_django_site import settings
 class ConnectorTestCase(unittest.TestCase):
     def test_connection(self):
         # No module level setUp function, so just run this first
-        config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), "testConnector")
+        config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), "toolbox")
         self.assertEqual(dbconnector.testDB(config), "OK")
 
     def test_setQuery(self):
-        config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), "testConnector")
+        config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), "toolbox")
         institution = config.get('info','institution')
         qualifier = ''
         location = ''
