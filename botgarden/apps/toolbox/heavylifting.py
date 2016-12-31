@@ -1,7 +1,7 @@
 import re
 import django_tables2 as tables
 from constants import getAgencies, getHierarchies
-import dbconnector
+import dbqueries
 from toolbox import activity2db
 
 
@@ -50,23 +50,34 @@ def doDemoQuery(query, fields):
     return data
 
 
-def doQuery(request, fields):
-    # this just returns 40 rows of data from the portal...
-    import demodata
+def doQuery(request):
+    appname = request['appname']
 
-    data = demodata.sampledata()
-    rows = []
-    for d in data:
-        row = []
-        for field in fields:
-            if field in d:
-                row.append(d[field])
-            else:
-                row.append('')
-        rows.append(row)
-    data = rows
+    #if not dbqueries.validateParameters(form, config): return
 
-    return data
+    try:
+        locationList = dbqueries.getloclist('range', request["lo.location.start"], request["lo.location.end"], 500)
+    except:
+        raise
+
+    totalobjects = 0
+    totallocations = 0
+    objectdata = []
+    for location in locationList:
+
+        try:
+            objects = dbqueries.getlocations(location[0], '', 1, appname)
+        except:
+            raise
+
+        objectdata.append(['subheader', location[0]])
+        totallocations += 1
+        for r in objects:
+
+            totalobjects += 1
+            objectdata.append(r)
+
+    return objectdata
 
 
 def doSearch(context, request):
@@ -153,7 +164,7 @@ def doEnumerate(context, request):
 
 
 def doReview(context, request):
-    data = doDemoQuery('query', 'objmusno_s objname_s objcount_s objfcpverbatim_s objfilecode_ss objassoccult_ss'.split(' '))
+    data = doQuery(request)
 
     context['items'] = data
     context['numberofitems'] = len(data)
@@ -186,7 +197,7 @@ def xxx(request,context,config):
         hierarchy = request.GET["hierarchy"]
         context['selected_hierarchy'] = hierarchy
         config_file_name = 'HierarchyViewer'
-        res = dbconnector.gethierarchy(hierarchy, config)
+        res = dbqueries.gethierarchy(hierarchy, config)
         hostname = config.get('connect', 'hostname')
         institution = config.get('info', 'institution')
         port = config.get('link', 'port')

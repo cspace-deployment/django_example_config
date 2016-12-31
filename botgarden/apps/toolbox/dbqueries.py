@@ -10,21 +10,26 @@ sys.setdefaultencoding('utf-8')
 
 timeoutcommand = "set statement_timeout to 1200000; SET NAMES 'utf8';"
 
-from utils import institution, connect_string
+from initialsetup import institution, connect_string
 
-dbconn = psycopg2.connect(connect_string)
-cursor = dbconn.cursor()
-cursor.execute(timeoutcommand)
+sys.stderr.write('starting database connection: %s\n' % connect_string)
+try:
+    dbconn = psycopg2.connect(connect_string)
+    cursor = dbconn.cursor()
+    cursor.execute(timeoutcommand)
+    sys.stderr.write('database connection started.\n')
+except:
+    sys.stderr.write('database connection failed. apps using sql will fail.\n')
 
 def testDB(cursor):
     try:
-        cursor.execute('set statement_timeout to 5000')
         cursor.execute('select * from hierarchy limit 30000')
         return "OK"
     except psycopg2.DatabaseError, e:
         sys.stderr.write('testDB error: %s' % e)
         return '%s' % e
     except:
+        raise
         sys.stderr.write("some other testDB error!")
         return "Some other failure"
 
@@ -33,16 +38,17 @@ def dbtransaction(command):
     cursor.execute(command)
 
 
-def getlocations(location1, location2, num2ret, updateType, institution):
+def getlocations(location1, location2, num2ret, updateType):
 
-    debug = False
+    debug = True
 
     result = []
 
     for loc in getloclist('set', location1, '', num2ret):
-        getobjects = setquery(updateType, loc[0], '', institution)
+        getobjects = setquery(updateType, loc[0], 'alive')
 
-        sys.stderr.write("getloclist %s" % location1)
+
+        #print getobjects
 
         try:
             elapsedtime = time.time()
@@ -60,6 +66,7 @@ def getlocations(location1, location2, num2ret, updateType, institution):
 
         try:
             rows = [list(item) for item in cursor.fetchall()]
+            sys.stderr.write("getloclist %s = %s\n" % (loc[0], len(rows)))
         except psycopg2.DatabaseError, e:
             sys.stderr.write("fetchall getlocations database error!")
 
@@ -80,9 +87,7 @@ def getplants(location1, location2, num2ret, updateType, qualifier):
 
     result = []
 
-    #for loc in getloclist('set',location1,'',num2ret,config):
-    getobjects = setquery(updateType, location1, qualifier, 'ucbg')
-    #print "<span>%s</span>" % getobjects
+    getobjects = setquery(updateType, location1, qualifier)
     try:
         elapsedtime = time.time()
         cursor.execute(getobjects)
@@ -620,4 +625,4 @@ ORDER BY REGEXP_REPLACE(fcp.item, '^.*\)''(.*)''$', '\\1'), pog.anthropologyplac
 
 if __name__ == "__main__":
 
-    print "compiles OK"
+    print "it compiles"

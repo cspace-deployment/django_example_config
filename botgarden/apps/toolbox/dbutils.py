@@ -176,8 +176,3 @@ if __name__ == "__main__":
     print '\nkeyinfo\n'
     for i, loc in enumerate(getlocations('Kroeber, 20AMez, 128 A', '', 1, config, 'keyinfo','pahma')):
         print 'location', i + 1, loc[0:12]
-
-
-if __name__ == "__main__":
-
-    print "compiles OK"
