@@ -38,3 +38,4 @@ field	23	mediadate	Date	mediadate_s			date	5,2				12			15	x
 field	24	posttopublic	Post to Public	posttopublic_s			dropdown								16	x
 field	25	handwritten	Handwritten?	handwritten_s			dropdown					13			17	x
 field	26	collector	Collector	collector_s			keyword					14			18	x
+field	27	hasimage	Has image(s)?	blob_ss			present	8,3								x
