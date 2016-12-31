@@ -3,6 +3,8 @@ __author__ = 'jblowe'
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 import json
+import traceback
+import sys
 # from common.cspace import logged_in_or_basicauth
 from django.shortcuts import render, HttpResponse
 import time, datetime, re
@@ -44,7 +46,8 @@ def prepareFiles(request, validateonly):
                 if validateonly:
                     fileinfo['status'] = 'validation failed'
                 else:
-                    fileinfo['status'] = 'file handling problem, not uploaded'
+                    fileinfo['status'] = "error! %s" % traceback.format_exc()
+                    sys.stderr.write("error! %s" % traceback.format_exc())
                 numProblems += 1
 
         tricoder_files.append(fileinfo)
