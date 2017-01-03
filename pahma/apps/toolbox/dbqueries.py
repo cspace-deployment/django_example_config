@@ -3,53 +3,56 @@
 import time
 import sys
 import psycopg2
+from setquery import setquery
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-timeoutcommand = "set statement_timeout to 240000; SET NAMES 'utf8';"
+timeoutcommand = "set statement_timeout to 1200000; SET NAMES 'utf8';"
 
-def testDB(config):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
+from initialsetup import institution, connect_string
+
+sys.stderr.write('starting database connection: %s\n' % connect_string)
+try:
+    dbconn = psycopg2.connect(connect_string)
+    cursor = dbconn.cursor()
+    cursor.execute(timeoutcommand)
+    sys.stderr.write('database connection started.\n')
+except:
+    sys.stderr.write('database connection failed. apps using sql will fail.\n')
+
+def testDB(cursor):
     try:
-        objects.execute('set statement_timeout to 5000')
-        objects.execute('select * from hierarchy limit 30000')
+        cursor.execute('select * from hierarchy limit 30000')
         return "OK"
     except psycopg2.DatabaseError, e:
         sys.stderr.write('testDB error: %s' % e)
         return '%s' % e
     except:
+        raise
         sys.stderr.write("some other testDB error!")
         return "Some other failure"
 
 
-def dbtransaction(command, config):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    cursor = dbconn.cursor()
+def dbtransaction(command):
     cursor.execute(command)
 
 
-def setquery(type, location, qualifier, institution):
-    return dbqueries(type, location, qualifier, institution)
+def getlocations(location1, location2, num2ret, updateType):
 
-def getlocations(location1, location2, num2ret, config, updateType, institution):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
-
-    debug = False
+    debug = True
 
     result = []
 
-    for loc in getloclist('set', location1, '', num2ret, config):
-        getobjects = setquery(updateType, loc[0], '', institution)
+    for loc in getloclist('set', location1, '', num2ret):
+        getobjects = setquery(updateType, loc[0], 'alive')
 
-        sys.stderr.write("getloclist %s" % location1)
+
+        #print getobjects
 
         try:
             elapsedtime = time.time()
-            objects.execute(getobjects)
+            cursor.execute(getobjects)
             elapsedtime = time.time() - elapsedtime
             if debug: sys.stderr.write('all objects: %s :: %s\n' % (loc[0], elapsedtime))
         except psycopg2.DatabaseError, e:
@@ -62,7 +65,8 @@ def getlocations(location1, location2, num2ret, config, updateType, institution)
             raise
 
         try:
-            rows = objects.fetchall()
+            rows = [list(item) for item in cursor.fetchall()]
+            sys.stderr.write("getloclist %s = %s\n" % (loc[0], len(rows)))
         except psycopg2.DatabaseError, e:
             sys.stderr.write("fetchall getlocations database error!")
 
@@ -73,26 +77,20 @@ def getlocations(location1, location2, num2ret, config, updateType, institution)
         except:
             sys.stderr.write("other getobjects error: %s" % len(rows))
             raise
-            #sys.stderr.write("other getobjects error: %s" % len(rows))
 
     return result
 
 
-def getplants(location1, location2, num2ret, config, updateType, qualifier):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
+def getplants(location1, location2, num2ret, updateType, qualifier):
 
     debug = False
 
     result = []
 
-    #for loc in getloclist('set',location1,'',num2ret,config):
-    getobjects = setquery(updateType, location1, qualifier, 'ucbg')
-    #print "<span>%s</span>" % getobjects
+    getobjects = setquery(updateType, location1, qualifier)
     try:
         elapsedtime = time.time()
-        objects.execute(getobjects)
+        cursor.execute(getobjects)
         elapsedtime = time.time() - elapsedtime
         #sys.stderr.write('query :: %s\n' % getobjects)
         if debug: sys.stderr.write('all objects: %s :: %s\n' % (location1, elapsedtime))
@@ -105,7 +103,7 @@ def getplants(location1, location2, num2ret, config, updateType, qualifier):
         return result
 
     try:
-        result = objects.fetchall()
+        result = [list(item) for item in cursor.fetchall()]
         if debug: sys.stderr.write('object count: %s\n' % (len(result)))
     except psycopg2.DatabaseError, e:
         sys.stderr.write("fetchall getplants database error!")
@@ -113,7 +111,7 @@ def getplants(location1, location2, num2ret, config, updateType, qualifier):
     return result
 
 
-def getloclist(searchType, location1, location2, num2ret, config):
+def getloclist(searchType, location1, location2, num2ret):
     # 'set' means 'next num2ret locations', otherwise prefix match
     if searchType == 'set':
         whereclause = "WHERE locationkey >= replace('" + location1 + "',' ','0')"
@@ -124,15 +122,12 @@ def getloclist(searchType, location1, location2, num2ret, config):
     elif searchType == 'range':
         whereclause = "WHERE locationkey >= replace('" + location1 + "',' ','0') AND locationkey <= replace('" + location2 + "',' ','0')"
 
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
     if int(num2ret) > 30000: num2ret = 30000
     if int(num2ret) < 1:    num2ret = 1
 
     getobjects = """
 select * from (
-select termdisplayname,replace(termdisplayname,' ','0') locationkey
+select termdisplayname,replace(termdisplayname,' ','0') locationkey 
 FROM loctermgroup ltg
 INNER JOIN hierarchy h_ltg
         ON h_ltg.id=ltg.id
@@ -146,15 +141,16 @@ order by locationkey
 limit """ + str(num2ret)
 
     try:
-        objects.execute(getobjects)
+        cursor.execute(getobjects)
         #for object in objects.fetchall():
         #print object
-        return objects.fetchall()
+        # return objects.fetchall()
+        return [list(item) for item in cursor.fetchall()]
     except:
         raise
 
 
-def getobjlist(searchType, object1, object2, num2ret, config):
+def getobjlist(searchType, object1, object2, num2ret):
     query1 = """
     SELECT objectNumber,
 cp.sortableobjectnumber
@@ -167,16 +163,13 @@ INNER JOIN misc
 WHERE
      cc.objectNumber = '%s'"""
 
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
     if int(num2ret) > 1000: num2ret = 1000
     if int(num2ret) < 1:    num2ret = 1
 
-    objects.execute(query1 % object1)
-    (object1, sortkey1) = objects.fetchone()
-    objects.execute(query1 % object2)
-    (object2, sortkey2) = objects.fetchone()
+    cursor.execute(query1 % object1)
+    (object1, sortkey1) = cursor.fetchone()
+    cursor.execute(query1 % object2)
+    (object2, sortkey2) = cursor.fetchone()
 
     # 'set' means 'next num2ret objects', otherwise prefix match
     if searchType == 'set':
@@ -187,13 +180,13 @@ WHERE
         whereclause = "WHERE sortableobjectnumber >= '" + sortkey1 + "' AND sortableobjectnumber <= '" + sortkey2 + "'"
 
     getobjects = """SELECT DISTINCT ON (sortableobjectnumber)
-(case when ca.computedcrate is Null then regexp_replace(cc.computedcurrentlocation, '^.*\\)''(.*)''$', '\\1')
+(case when ca.computedcrate is Null then regexp_replace(cc.computedcurrentlocation, '^.*\\)''(.*)''$', '\\1') 
      else concat(regexp_replace(cc.computedcurrentlocation, '^.*\\)''(.*)''$', '\\1'),
      ': ',regexp_replace(ca.computedcrate, '^.*\\)''(.*)''$', '\\1')) end) AS storageLocation,
 cc.computedcurrentlocation AS locrefname,
 '' AS locdate,
 cc.objectnumber objectnumber,
-(case when ong.objectName is NULL then '' else ong.objectName end) objectName,
+(case when ong.objectName is NULL then '' else regexp_replace(ong.objectName, '^.*\\)''(.*)''$', '\\1') end) objectName,
 cc.numberofobjects objectCount,
 case when (pfc.item is not null and pfc.item <> '') then
  substring(pfc.item, position(')''' IN pfc.item)+2, LENGTH(pfc.item)-position(')''' IN pfc.item)-2)
@@ -230,14 +223,8 @@ h9.name accCSID,
 cp.inventoryCount,
 cc.collection,
 rd.item,
-regexp_replace(tig.taxon, '^.*\\)''(.*)''$', '\\1') taxon,
-tig.qualifier,
-tig.identkind,
-REGEXP_REPLACE(tig.identby, '^.*\\)''(.*)''$', '\\1') identby,
-REGEXP_REPLACE(tig.institution, '^.*\\)''(.*)''$', '\\1') institution,
-tig.notes,
-sdg.datedisplaydate
-
+cp.pahmafieldlocverbatim,
+fcd.datedisplaydate
 
 FROM collectionobjects_pahma cp
 left outer join collectionobjects_common cc on (cp.id=cc.id)
@@ -255,7 +242,7 @@ left outer join collectionobjects_pahma_pahmaethnographicfilecodelist pef on (pe
 left outer join hierarchy h5 on (cc.id=h5.parentid and h5.primarytype =
 'assocPeopleGroup' and (h5.pos=0 or h5.pos is null))
 left outer join assocpeoplegroup apg on (apg.id=h5.id)
-
+ 
 left outer join collectionobjects_common_briefdescriptions bd on (bd.id=cc.id and bd.pos=0)
 left outer join collectionobjects_common_fieldcollectors pc on (pc.id=cc.id and pc.pos=0)
 
@@ -269,29 +256,36 @@ FULL OUTER JOIN misc msac ON (ac.id = msac.id AND msac.lifecyclestate <> 'delete
 FULL OUTER JOIN hierarchy h8 ON (cc.id = h8.parentid AND h8.name = 'collectionobjects_pahma:pahmaAltNumGroupList' AND (h8.pos = 0 OR h8.pos IS NULL))
 FULL OUTER JOIN pahmaaltnumgroup an ON (h8.id = an.id)
 
+FULL OUTER JOIN hierarchy h10 ON (h10.parentid = cc.id AND h10.pos = 0 AND h10.name = 'collectionobjects_pahma:pahmaFieldCollectionDateGroupList')
+FULL OUTER JOIN structureddategroup fcd ON (fcd.id = h10.id)
+ 
 join misc ms on (cc.id=ms.id and ms.lifecyclestate <> 'deleted')
 
 left outer join collectionobjects_common_responsibledepartments rd on (rd.id=cc.id and rd.pos=0)
-
-FULL OUTER JOIN hierarchy h10 ON (cc.id=h10.parentid AND h10.primarytype = 'taxonomicIdentGroup' AND h10.pos=0)
-FULL OUTER JOIN taxonomicidentgroup tig ON (h10.id = tig.id)
-FULL OUTER JOIN hierarchy hd ON (hd.parentid=tig.id)
-FULL OUTER JOIN structureddategroup sdg ON (sdg.id=hd.id)
-
 """ + whereclause + """
 ORDER BY sortableobjectnumber
 limit """ + str(num2ret)
 
-    objects.execute(getobjects)
+    cursor.execute(getobjects)
     #for object in objects.fetchall():
     #print object
-    return objects.fetchall()
+    # return objects.fetchall()
+    return [list(item) for item in cursor.fetchall()]
 
 
-def getrefname(table, term, config):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
+def findcurrentlocation(csid):
+
+    getloc = "select findcurrentlocation('" + csid + "')"
+
+    try:
+        cursor.execute(getloc)
+    except:
+        return "findcurrentlocation error"
+
+    return cursor.fetchone()[0]
+
+
+def getrefname(table, term):
 
     if term == None or term == '':
         return ''
@@ -316,25 +310,22 @@ def getrefname(table, term, config):
             column, table, column, term.replace("'", "''"))
 
     try:
-        objects.execute(query)
-        return objects.fetchone()[0]
+        cursor.execute(query)
+        return cursor.fetchone()[0]
     except:
         return ''
         raise
 
 
-def findrefnames(table, termlist, config):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
+def findrefnames(table, termlist):
 
     result = []
     for t in termlist:
         query = "select refname from %s where refname ILIKE '%%''%s''%%'" % (table, t.replace("'", "''"))
 
         try:
-            objects.execute(query)
-            refname = objects.fetchone()
+            cursor.execute(query)
+            refname = cursor.fetchone()
             result.append([t, refname])
         except:
             raise
@@ -342,25 +333,19 @@ def findrefnames(table, termlist, config):
 
     return result
 
-def finddoctypes(table, doctype, config):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    doctypes = dbconn.cursor()
-    doctypes.execute(timeoutcommand)
-
+def finddoctypes(table, doctype):
     query = "select %s,count(*) as n from %s group by %s;" % (doctype,table,doctype)
 
     try:
-        doctypes.execute(query)
-        return doctypes.fetchall()
+        cursor.execute(query)
+        # return doctypes.fetchall()
+        return [list(item) for item in cursor.fetchall()]
     except:
         raise
         return "finddoctypes error"
 
 
-def getobjinfo(museumNumber, config):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
+def getobjinfo(museumNumber):
 
     getobjects = """
     SELECT co.objectnumber,
@@ -380,23 +365,19 @@ LEFT OUTER JOIN assocpeoplegroup apg ON apg.id=h2.id
 JOIN misc ON misc.id = co.id AND misc.lifecyclestate <> 'deleted'
 WHERE co.objectnumber = '%s' LIMIT 1""" % museumNumber
 
-    objects.execute(getobjects)
+    cursor.execute(getobjects)
     #for ob in objects.fetchone():
     #print ob
-    return objects.fetchone()
+    return cursor.fetchone()
 
 
-def gethierarchy(query, config):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    institution = config.get('info', 'institution')
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
+def gethierarchy(query):
 
     if query == 'taxonomy':
         gethierarchy = """
 SELECT DISTINCT
-        regexp_replace(child.refname, '^.*\\)''(.*)''$', '\\1') AS Child,
-        regexp_replace(parent.refname, '^.*\\)''(.*)''$', '\\1') AS Parent,
+        regexp_replace(child.refname, '^.*\\)''(.*)''$', '\\1') AS Child, 
+        regexp_replace(parent.refname, '^.*\\)''(.*)''$', '\\1') AS Parent, 
         h1.name AS ChildKey,
         h2.name AS ParentKey
 FROM taxon_common child
@@ -412,8 +393,8 @@ ORDER BY Parent, Child
     elif query != 'places':
         gethierarchy = """
 SELECT DISTINCT
-        regexp_replace(child.refname, '^.*\\)''(.*)''$', '\\1') AS Child,
-        regexp_replace(parent.refname, '^.*\\)''(.*)''$', '\\1') AS Parent,
+        regexp_replace(child.refname, '^.*\\)''(.*)''$', '\\1') AS Child, 
+        regexp_replace(parent.refname, '^.*\\)''(.*)''$', '\\1') AS Parent, 
         h1.name AS ChildKey,
         h2.name AS ParentKey
 FROM concepts_common child
@@ -427,67 +408,60 @@ AND misc.lifecyclestate <> 'deleted'
 ORDER BY Parent, Child""" % institution
         gethierarchy = gethierarchy.format(query)
     else:
+        if institution == 'pahma': tenant = 'Tenant15'
+        if institution == 'botgarden': tenant = 'Tenant35'
         gethierarchy = """
 SELECT DISTINCT
-        regexp_replace(child.refname, '^.*\\)''(.*)''$', '\\1') AS Place,
-        regexp_replace(parent.refname, '^.*\\)''(.*)''$', '\\1') AS ParentPlace,
-        h1.name AS ChildKey,
-        h2.name AS ParentKey
-FROM places_common child
-JOIN misc ON (misc.id = child.id)
-FULL OUTER JOIN hierarchy h1 ON (child.id = h1.id)
-FULL OUTER JOIN relations_common rc ON (h1.name = rc.subjectcsid)
-FULL OUTER JOIN hierarchy h2 ON (rc.objectcsid = h2.name)
-FULL OUTER JOIN places_common parent ON (parent.id = h2.id)
-WHERE misc.lifecyclestate <> 'deleted'
-ORDER BY ParentPlace, Place
+	regexp_replace(tc.refname, '^.*\\)''(.*)''$', '\\1') Place,
+	regexp_replace(tc2.refname, '^.*\\)''(.*)''$', '\\1') ParentPlace,
+	h.name ChildKey,
+	h2.name ParentKey
+FROM public.places_common tc
+	INNER JOIN misc m ON (tc.id=m.id AND m.lifecyclestate<>'deleted')
+	INNER JOIN hierarchy h ON (tc.id = h.id AND h.primarytype='Placeitem%s')
+	LEFT OUTER JOIN public.relations_common rc ON (h.name = rc.subjectcsid)
+	LEFT OUTER JOIN hierarchy h2 ON (h2.primarytype = 'Placeitem%s' AND rc.objectcsid = h2.name)
+	LEFT OUTER JOIN places_common tc2 ON (tc2.id = h2.id)
+ORDER BY ParentPlace, Place""" % (tenant, tenant)
 
-"""
-
-    objects.execute(gethierarchy)
-    return objects.fetchall()
+    cursor.execute(gethierarchy)
+    #return cursor.fetchall()
+    return [list(item) for item in cursor.fetchall()]
 
 
-def getCSID(argType, arg, config):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
+def getCSID(argType, arg):
 
     if argType == 'objectnumber':
         query = """SELECT h.name from collectionobjects_common cc
 JOIN hierarchy h on h.id=cc.id
-WHERE objectnumber = '%s'""" % arg
+WHERE objectnumber = '%s'""" % arg.replace("'", "''")
     elif argType == 'crateName':
         query = """SELECT h.name FROM collectionobjects_anthropology ca
 JOIN hierarchy h on h.id=ca.id
-WHERE computedcrate ILIKE '%%''%s''%%'""" % arg
+WHERE computedcrate ILIKE '%%''%s''%%'""" % arg.replace("'", "''")
     elif argType == 'placeName':
         query = """SELECT h.name from places_common pc
 JOIN hierarchy h on h.id=pc.id
-WHERE pc.refname ILIKE '%""" + arg + "%%'"
+WHERE pc.refname ILIKE '%""" + arg.replace("'", "''") + "%%'"
 
-    objects.execute(query)
-    return objects.fetchone()
+    cursor.execute(query)
+    return cursor.fetchone()
 
 
-def getCSIDs(argType, arg, config):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
+def getCSIDs(argType, arg):
 
     if argType == 'crateName':
         query = """SELECT h.name FROM collectionobjects_anthropology ca
 JOIN hierarchy h on h.id=ca.id
-WHERE computedcrate ILIKE '%%''%s''%%'""" % arg
+WHERE computedcrate ILIKE '%%''%s''%%'""" % arg.replace("'", "''")
 
-    objects.execute(query)
-    return objects.fetchall()
+    cursor.execute(query)
+    # return cursor.fetchall()
+    return [list(item) for item in cursor.fetchall()]
 
 
-def findparents(refname, config):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
+def findparents(refname):
+
     query = """WITH RECURSIVE ethnculture_hierarchyquery as (
 SELECT regexp_replace(cc.refname, '^.*\\)''(.*)''$', '\\1') AS ethnCulture,
       cc.refname,
@@ -518,17 +492,16 @@ FROM ethnculture_hierarchyquery
 order by level""" % refname.replace("'", "''")
 
     try:
-        objects.execute(query)
-        return objects.fetchall()
+        cursor.execute(query)
+        # return cursor.fetchall()
+        return [list(item) for item in cursor.fetchall()]
     except:
         #raise
         return [["findparents error"]]
 
 def getCSIDDetail(config, csid, detail):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
 
+    
     if detail == 'fieldcollectionplace':
         query = """SELECT substring(pfc.item, position(')''' IN pfc.item)+2, LENGTH(pfc.item)-position(')''' IN pfc.item)-2)
 AS fieldcollectionplace
@@ -559,38 +532,15 @@ WHERE h1.name = '%s'""" % csid
 FROM collectionobjects_common cc
 left outer join hierarchy h1 on (cc.id=h1.id)
 WHERE h1.name = '%s'""" % csid
-    elif detail == 'taxon':
-        query = """SELECT regexp_replace(tig.taxon, '^.*\\)''(.*)''$', '\\1') as taxon FROM hierarchy h
-JOIN collectionobjects_common co ON (co.id=h.parentid AND h.primarytype = 'taxonomicIdentGroup' AND h.pos=0)
-JOIN hierarchy csid ON (co.id = csid.id)
-JOIN taxonomicidentgroup tig ON (h.id = tig.id)
-AND csid.name = '%s'""" % csid
-    elif detail == 'person':
-        query = """SELECT REGEXP_REPLACE(tig.identby, '^.*\\)''(.*)''$', '\\1') AS "identby"
-FROM hierarchy h
-JOIN collectionobjects_common co ON (co.id=h.parentid AND h.primarytype = 'taxonomicIdentGroup' AND h.pos=0)
-JOIN hierarchy csid ON (co.id = csid.id)
-JOIN taxonomicidentgroup tig ON (h.id = tig.id)
-AND csid.name = '%s'""" % csid
-    elif detail == 'organization':
-        query = """SELECT REGEXP_REPLACE(tig.institution, '^.*\\)''(.*)''$', '\\1') AS "institution"
-FROM hierarchy h
-JOIN collectionobjects_common co ON (co.id=h.parentid AND h.primarytype = 'taxonomicIdentGroup' AND h.pos=0)
-JOIN hierarchy csid ON (co.id = csid.id)
-JOIN taxonomicidentgroup tig ON (h.id = tig.id)
-AND csid.name = '%s'""" % csid
     else:
         return ''
     try:
-        objects.execute(query)
-        return objects.fetchone()[0]
+        cursor.execute(query)
+        return cursor.fetchone()[0]
     except:
         return ''
 
 def checkData(config, data, datatype):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
 
     if datatype == "objno":
         query = """SELECT
@@ -606,46 +556,37 @@ FROM locations_common lc
 JOIN misc ON (lc.id=misc.id)
 WHERE misc.lifecyclestate <> 'deleted'
 AND lc.refname LIKE 'urn:cspace:pahma.cspace.berkeley.edu:locationauthorities:name(""" + datatype + """):%""" + data + """''')"""
-    else:
-        raise
-    objects.execute(query)
-    return objects.fetchone()
+    cursor.execute(query)
+    return cursor.fetchone()
 
 def getSitesByOwner(config, owner):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
 
     query = """SELECT DISTINCT REGEXP_REPLACE(fcp.item, '^.*\)''(.*)''$', '\\1') AS "site",
-    REGEXP_REPLACE(pog.owner, '^.*\)''(.*)''$', '\\1') AS "site owner",
-    pog.ownershipnote AS "ownership note",
+    REGEXP_REPLACE(pog.anthropologyplaceowner, '^.*\)''(.*)''$', '\\1') AS "site owner",
+    pog.anthropologyplaceownershipnote AS "ownership note",
     pc.placenote AS "place note"
-FROM collectionobjects_pahma_pahmafieldcollectionplacelist fcp
+FROM collectionobjects_pahma_pahmafieldcollectionplacelist fcp 
 JOIN places_common pc ON (pc.refname = fcp.item)
 JOIN misc ms ON (ms.id = pc.id AND ms.lifecyclestate <> 'deleted')
-JOIN hierarchy h1 ON (h1.parentid = pc.id AND h1.name = 'places_common:placeOwnerGroupList')
-JOIN placeownergroup pog ON (pog.id = h1.id)
-WHERE pog.owner LIKE '%%""" + owner + """%%'
+JOIN hierarchy h1 ON (h1.parentid = pc.id AND h1.name = 'places_anthropology:anthropologyPlaceOwnerGroupList')
+JOIN anthropologyplaceownergroup pog ON (pog.id = h1.id)
+WHERE pog.anthropologyplaceowner LIKE '%%""" + owner.replace("'", "''") + """%%'
 ORDER BY REGEXP_REPLACE(fcp.item, '^.*\)''(.*)''$', '\\1')"""
-    objects.execute(query)
-    return objects.fetchall()
+    cursor.execute(query)
+    # return cursor.fetchall()
+    return [list(item) for item in cursor.fetchall()]
+
 
 def getDisplayName(config, refname):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
 
-    query = """SELECT REGEXP_REPLACE(pog.owner, '^.*\)''(.*)''$', '\\1')
-FROM placeownergroup pog
-WHERE pog.owner LIKE '""" + refname + "%'"
-
-    objects.execute(query)
-    return objects.fetchone()
+    query = """SELECT REGEXP_REPLACE(pog.anthropologyplaceowner, '^.*\)''(.*)''$', '\\1')
+FROM anthropologyplaceownergroup pog
+WHERE pog.anthropologyplaceowner LIKE '""" + refname + "%'"
+    
+    cursor.execute(query)
+    return cursor.fetchone()
 
 def getObjDetailsByOwner(config, owner):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
 
     query = """SELECT DISTINCT cc.objectnumber AS "Museum No.",
     cp.sortableobjectnumber AS "sort number",
@@ -654,29 +595,34 @@ def getObjDetailsByOwner(config, owner):
     fcd.datedisplaydate AS "collection date",
     STRING_AGG(DISTINCT(ac.acquisitionreferencenumber), ', ') AS "Acc. No.",
     REGEXP_REPLACE(fcp.item, '^.*\)''(.*)''$', '\\1') AS "site",
-    REGEXP_REPLACE(pog.owner, '^.*\)''(.*)''$', '\\1') AS "site owner",
-    pog.ownershipnote AS "ownership note", pc.placenote AS "place note"
+    REGEXP_REPLACE(pog.anthropologyplaceowner, '^.*\)''(.*)''$', '\\1') AS "site owner",
+    pog.anthropologyplaceownershipnote AS "ownership note", pc.placenote AS "place note"
 FROM collectionobjects_common cc
 JOIN collectionobjects_pahma cp ON (cc.id = cp.id)
 JOIN collectionobjects_pahma_pahmafieldcollectionplacelist fcp ON (fcp.id = cc.id)
 JOIN misc ms ON (ms.id = cc.id AND ms.lifecyclestate <> 'deleted')
 JOIN places_common pc ON (pc.refname = fcp.item)
-JOIN hierarchy h1 ON (h1.parentid = pc.id AND h1.name = 'places_common:placeOwnerGroupList')
-JOIN placeownergroup pog ON (pog.id = h1.id)
+JOIN hierarchy h1 ON (h1.parentid = pc.id AND h1.name = 'places_anthropology:anthropologyPlaceOwnerGroupList')
+JOIN anthropologyplaceownergroup pog ON (pog.id = h1.id)
 FULL OUTER JOIN hierarchy h2 ON (h2.parentid = cc.id AND h2.name = 'collectionobjects_common:objectNameList' AND h2.pos = 0)
 FULL OUTER JOIN objectnamegroup ong ON (ong.id = h2.id)
 FULL OUTER JOIN hierarchy h3 ON (h3.id = cc.id)
 FULL OUTER JOIN relations_common rc ON (rc.subjectcsid = h3.name AND rc.objectdocumenttype = 'Acquisition')
 FULL OUTER JOIN hierarchy h4 ON (h4.name = rc.objectcsid)
 FULL OUTER JOIN acquisitions_common ac ON (ac.id = h4.id)
-FULL OUTER JOIN hierarchy h5 ON (h5.parentid = cc.id AND h5.pos = 0 AND h5.name = 'collectionobjects_pahma:pahmaFieldCollectionDateGroupList')
+FULL OUTER JOIN hierarchy h5 ON (h5.parentid = cc.id AND h5.pos = 0 AND h5.name = 'collectioncursor_pahma:pahmaFieldCollectionDateGroupList')
 FULL OUTER JOIN structureddategroup fcd ON (fcd.id = h5.id)
-WHERE REGEXP_REPLACE(pog.owner, '^.*\)''(.*)''$', '\\1') ILIKE '%""" + owner + """%'
-OR (pog.owner IS NULL AND pog.ownershipnote ILIKE '%""" + owner + """%')
-GROUP BY cc.objectnumber, cp.sortableobjectnumber, cc.numberofobjects, ong.objectname, fcd.datedisplaydate, fcp.item, pog.owner, pog.ownershipnote, pc.placenote
-ORDER BY REGEXP_REPLACE(fcp.item, '^.*\)''(.*)''$', '\\1'), pog.ownershipnote, cp.sortableobjectnumber"""
+WHERE REGEXP_REPLACE(pog.anthropologyplaceowner, '^.*\)''(.*)''$', '\\1') ILIKE '%""" + owner + """%'
+OR (pog.anthropologyplaceowner IS NULL AND pog.anthropologyplaceownershipnote ILIKE '%""" + owner + """%')
+GROUP BY cc.objectnumber, cp.sortableobjectnumber, cc.numberofobjects, ong.objectname, fcd.datedisplaydate, fcp.item, pog.anthropologyplaceowner, pog.anthropologyplaceownershipnote, pc.placenote
+ORDER BY REGEXP_REPLACE(fcp.item, '^.*\)''(.*)''$', '\\1'), pog.anthropologyplaceownershipnote, cp.sortableobjectnumber
+"""
 
-    objects.execute(query)
-    return objects.fetchall()
+    cursor.execute(query)
+    # return cursor.fetchall()
+    return [list(item) for item in cursor.fetchall()]
 
 
+if __name__ == "__main__":
+
+    print "it compiles"

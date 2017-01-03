@@ -3,43 +3,60 @@ __author__ = 'jblowe'
 import operator
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
 from django import forms
 import json
 
-from utils import loginfo, dispatch, appLayout, setconstants, APPS
+from utils import loginfo, handleJSONrequest, setconstants, APPS
 
-@login_required()
-def index(request):
+
+def direct(request):
+    return redirect('toolbox/')
+
+
+# @login_required()
+def toolbox(request):
     # APPS is a dict of configured webapps, show the list sorted by "app title"
     sorted_apps = sorted(APPS.items(), key=operator.itemgetter(1))
-    context = setconstants(request, {'apps': sorted_apps}, 'listapps')
+    context = setconstants({'apps': sorted_apps}, 'listapps')
     return render(request, 'toolbox.html', context)
 
 
-@login_required()
+# @login_required()
 def tool(request, appname):
+    if appname == 'json':
+        return jsonrequest(request)
     # if we are here, we have been given a particular appname, e.g. "keyinfo", as part of the url
-    context = {'applayout': appLayout[appname]}
-    if request.method == 'POST':
-        form = forms.Form(request.POST)
-
-    elif request.method == 'GET':
+    context = setconstants({}, appname)
+    if request.method == 'GET':
         form = forms.Form(request.GET)
-
     else:
         form = forms.Form()
 
     if form.is_valid():
+        # context = dispatch(context, request.GET, appname)
         loginfo(appname, context, request)
-        context = dispatch(context, request, appname)
-
-        #context['form'] = form
-        context = setconstants(request, context, appname)
-        loginfo(appname, context, request)
-
-    # special case: the data endpoint returns JSON
-    if appname == 'data':
-        return HttpResponse(json.dumps(context['data']))
-    else:
         return render(request, 'toolbox.html', context)
+
+
+def jsonrequest(request):
+    if request.method == 'GET':
+        form = forms.Form(request.GET)
+        requestObject = request.GET
+
+    if request.method == 'POST':
+        form = forms.Form(request.POST)
+        requestObject = request.POST
+
+    if form.is_valid():
+        context = setconstants({}, 'json')
+        del context['additionalInfo']
+        del context['extra_nav']
+        del context['searchrows']
+        del context['searchcolumns']
+        context = handleJSONrequest(context, requestObject)
+
+        loginfo(context['appname'], context, request)
+        return HttpResponse(json.dumps(context))
+    else:
+        return HttpResponse(json.dumps({'error': 'form is not valid'}))

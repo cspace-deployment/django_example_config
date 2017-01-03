@@ -3,61 +3,48 @@
 {% load staticfiles %}
 {% load render_table from django_tables2 %}
 
-{% block extrascript %}
-    <script>
-        $(function () {
-            $(".datepicker").datepicker({dateFormat: "yy-mm-dd"});
-        });
-    </script>
- {% endblock extrascript %}
+{% block scripts %}
+  <script type="text/javascript" src="{% static "app.bundle.js" %}"></script>
+  <script type="text/javascript">
+      var trackingid = '{{ UA_TRACKING_ID }}';
+      // if there is a tracker id, go ahead and create a tracking object...
+      if (trackingid != '') {
+          xga('create', trackingid, 'auto', true);
+          xga('send', 'pageview', undefined, trackingid);
+      }
+  </script>
+  <script type="text/javascript" src="{% static "toolbox.bundle.js" %}"></script>
+{% endblock %}
 
 {% block content %}
     <div id="content-main">
         {% include "toggled.html" %}
         <input type="hidden" value="{{ institution }}"/>
+        <div id="waitingImage" style="display: none">
+            <img src="{% static "cspace_django_site/images/timer-animated.gif" %}" alt="Searching..."/>
+        </div>
         <div class="searchPanel">
             {% if appname == 'listapps' %}
-                <table id="resultsListing">
-                    {% for app in apps %}
-                        {% if app.0 != 'listapps' and app.0 != 'data' %}
-                            <tr><td><a class="facet-item" href="{{ app.0 }}">{{ app.1.0 }}</a></td></tr>
-                        {% endif %}
-                    {% endfor %}
-                </table>
-            {% else %}
-                <form class="searchForm" id="search" method="POST">
-                    {% csrf_token %}
-                    <div>
-                        {% include "toolbox_fields.html" %}
-                        {% include "toolbox_button_start.html" %}
-                    </div>
-                </form>
+            <table id="resultsListing">
+                {% for app in apps %}
+                    {% if app.0 != 'listapps' and app.0 != 'data' %}
+                        <tr>
+                            <td><a class="facet-item" href="{{ app.0 }}">{{ app.1.0 }}</a></td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
             {% endif %}
         </div>
-        <div id="waitingImage" style="display: none">
-            <img src="{% static 'cspace_django_site/images/timer-animated.gif' %}" alt="Searching..."/>
+        <div id="searchForm">
         </div>
-        <div id="checkPanel">
-            <form class="reviewForm" id="check" method="POST">
-                {% csrf_token %}
-                {% if checkitems %}
-                    <table>
-                    {% for key,value in checkitems.items %}
-                        <tr><td>{{ value.3 }}</td><td><b>{{ value.2 }}</b></td><td>({{ value.0 }} {{ value.1 }} {{ value.4 }})</td></tr>
-                    {% endfor %}
-                    </table>
-                    <hr/>
-                    {% include "toolbox_button_action.html" %}
-                {% endif %}
-            </form>
+        <div id="resultsForm">
         </div>
         <div id="reviewPanel">
             <form class="reviewForm" id="review" method="POST">
                 {% csrf_token %}
-                {% if appname == "activityviewer" %}
-                    {% include "toolbox_activity_graphs.html" %}
-                {% endif %}
                 {% if reviewitems %}
+                    {% include "toolbox_activity_graphs.html" %}
                     {% render_table reviewitems %}
                     <hr/>
                     {{ numberofitems }} items listed.
@@ -65,16 +52,8 @@
                 {% endif %}
             </form>
         </div>
-        <div id="resultsPanel">
-            <form class="resultsForm" id="results" method="POST">
-                {% csrf_token %}
-                {% if enumerateditems %}
-                    {% render_table enumerateditems %}
-                    <hr/>
-                    {{ numberofitems }} items listed.
-                    {% include "toolbox_button_action.html" %}
-                {% endif %}
-            </form>
-        </div>
     </div>
+    <script type="text/javascript">
+      displayApp.displayApp("{{ appname }}");
+    </script>
 {% endblock %}

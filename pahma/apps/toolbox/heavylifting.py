@@ -1,7 +1,7 @@
 import re
 import django_tables2 as tables
 from constants import getAgencies, getHierarchies
-import dbconnector
+import dbqueries
 from toolbox import activity2db
 
 
@@ -30,29 +30,58 @@ def getFields(request, context):
     return search_terms
 
 
-def doQuery(query, fields):
+def doDemoQuery(query, fields):
     # this just returns 40 rows of data from the portal...
     import demodata
 
     data = demodata.sampledata()
     rows = []
     for d in data:
-        row = {}
+        row = []
         for field in fields:
             if field in d:
-                row[field] = d[field]
-        rows.append(row)
+                row.append(d[field])
+            else:
+                row.append('')
+        cells = {'csid': d['csid_s'], 'cells': row}
+        rows.append(cells)
     data = rows
 
     return data
 
 
+def doQuery(request):
+    appname = request['appname']
+
+    #if not dbqueries.validateParameters(form, config): return
+
+    try:
+        locationList = dbqueries.getloclist('range', request["lo.location.start"], request["lo.location.end"], 500)
+    except:
+        raise
+
+    totalobjects = 0
+    totallocations = 0
+    objectdata = []
+    for location in locationList:
+
+        try:
+            objects = dbqueries.getlocations(location[0], '', 1, appname)
+        except:
+            raise
+
+        objectdata.append(['subheader', location[0]])
+        totallocations += 1
+        for r in objects:
+
+            totalobjects += 1
+            objectdata.append(r)
+
+    return objectdata
+
+
 def doSearch(context, request):
     context['checkitems'] = getFields(request, context)
-
-    if 'items' in context: del context['items']
-    context['action'] = 'enumerate'
-
     return context
 
 
@@ -126,107 +155,38 @@ def doActivity(context, request):
 
 
 def doEnumerate(context, request):
-    data = doQuery('query', 'objmusno_s objname_s objcount_s objfcpverbatim_s objfilecode_ss objassoccult_ss'.split(' '))
+    data = doDemoQuery('query', 'objmusno_s objname_s objcount_s objfcpverbatim_s objfilecode_ss objassoccult_ss'.split(' '))
 
-    class NameTable(tables.Table):
-
-        def render_objassoccult_ss(self, value):
-            if value is not None:
-                return ', '.join(value)
-            else:
-                return ''
-
-        objmusno_s = tables.Column(verbose_name='museum number')
-        objname_s = tables.Column(verbose_name='object name')
-        objcount_s = tables.Column(verbose_name='count')
-        objfcpverbatim_s = tables.Column(verbose_name='field collection place')
-        objassoccult_ss = tables.Column(verbose_name='culture')
-
-    table = NameTable(data)
-
-    context['enumerateditems'] = table
+    context['items'] = data
     context['numberofitems'] = len(data)
-
-    # set next workflow state
-    context['action'] = context['applayout']['enumerate']['parameter']
 
     return context
 
 
 def doReview(context, request):
-    # foo = tables.TemplateColumn('{{ record.bar }}')
-    data = doQuery('query', 'objmusno_s objname_s objcount_s objfcpverbatim_s objfilecode_ss objassoccult_ss'.split(' '))
+    data = doQuery(request)
 
-    class NameTable(tables.Table):
-
-        def render_objassoccult_ss(self, value):
-            if value is not None:
-                return ', '.join(value)
-            else:
-                return ''
-
-        objmusno_s = tables.Column(verbose_name='museum number')
-        objname_s = tables.TemplateColumn('<input type ="text" value="{{ record.objname_s }}"/>',
-                                          verbose_name='object name')
-        objcount_s = tables.TemplateColumn('<input type ="text" value="{{ record.objcount_s }}"/>',
-                                           verbose_name='count')
-        objfcpverbatim_s = tables.TemplateColumn('<input type ="text" value="{{ record.objfcpverbatim_s }}"/>',
-                                                 verbose_name='field collection place')
-        objassoccult_ss = tables.TemplateColumn('<input type ="text" value="{% record.objassoccult_ss %}"/>',
-                                                verbose_name='culture')
-
-    table = NameTable(data)
-
-    context['reviewitems'] = table
+    context['items'] = data
     context['numberofitems'] = len(data)
-
-    # set next workflow state
-    context['action'] = context['applayout']['review']['parameter']
-
-    if 'items' in context: del context['items']
 
     return context
 
 
 def doUpdate(context, request):
-    data = doQuery('query', 'objmusno_s objname_s id'.split(' '))
-
-    class NameTable(tables.Table):
-        objmusno_s = tables.Column(verbose_name='museum number')
-        id = tables.Column(verbose_name='csid')
-        updated = tables.Column(verbose_name='status')
-
-    table = NameTable(data)
-
-    context['enumerateditems'] = table
-    context['numberofitems'] = len(data)
-
-    # set next workflow state
-    context['action'] = context['applayout']['update']['parameter']
+    context['items'] = doDemoQuery('query', 'objmusno_s objname_s id'.split(' '))
+    context['numberofitems'] = len(context['items'])
 
     return context
 
 
 def doSave(context, request):
     context['checkitems'] = getFields(request, context)
-    context['enumerate'] = 'update'
-
-    if 'items' in context: del context['items']
-
-    # set next workflow state
-    context['action'] = context['applayout']['save']['parameter']
 
     return context
 
 
 def doMovecheck(context, request):
     context['checkitems'] = getFields(context, request)
-    context['action'] = 'move'
-
-    # set next workflow state
-    context['action'] = context['applayout']['movecheck']['parameter']
-
-    if 'items' in context: del context['items']
 
     return context
 
@@ -237,7 +197,7 @@ def xxx(request,context,config):
         hierarchy = request.GET["hierarchy"]
         context['selected_hierarchy'] = hierarchy
         config_file_name = 'HierarchyViewer'
-        res = dbconnector.gethierarchy(hierarchy, config)
+        res = dbqueries.gethierarchy(hierarchy, config)
         hostname = config.get('connect', 'hostname')
         institution = config.get('info', 'institution')
         port = config.get('link', 'port')
