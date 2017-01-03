@@ -74,5 +74,5 @@ field	60	comment	email a comment about this record	mailto:ucjepscomments@lists.b
 #	61	these two fields are placeholders used to create needed empty columns in the bMapper file														x
 field	62	collnumprefix	Collector Num Prefix	na			constant			5						x
 field	63	collnumsuffix	Collector Num Suffix	na			constant			7						x
-field	64	hasimage	Has image(s)?	blob_ss			present	8,3								x
-field	65	hascoords	Has coordinates?	latlong_p			present	9,3								x
+field	64	hasimage	Has image(s)?	blob_ss			present	5,3								x
+field	65	hascoords	Has coordinates?	latlong_p			present	6,3								x
