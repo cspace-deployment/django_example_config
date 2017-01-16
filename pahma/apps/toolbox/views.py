@@ -1,62 +1,57 @@
 __author__ = 'jblowe'
 
-import operator
-
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, HttpResponse, redirect
-from django import forms
+from django.shortcuts import render, HttpResponse
 import json
+from django.conf import settings
+import os
+import time
+import ConfigParser
 
-from utils import loginfo, handleJSONrequest, setconstants, APPS
+from cspace_django_site.main import cspace_django_site
+from common import cspace, appconfig
+from common.utils import devicetype
+from cswaMain import main
 
+from cswaConstants import BASE_DIR
 
-def direct(request):
-    return redirect('toolbox/')
+config = cspace_django_site.getConfig()
+hostname = cspace.getConfigOptionWithSection(config,
+                                             cspace.CONFIGSECTION_AUTHN_CONNECT,
+                                             cspace.CSPACE_HOSTNAME_PROPERTY)
 
-
-# @login_required()
-def toolbox(request):
-    # APPS is a dict of configured webapps, show the list sorted by "app title"
-    sorted_apps = sorted(APPS.items(), key=operator.itemgetter(1))
-    context = setconstants({'apps': sorted_apps}, 'listapps')
-    return render(request, 'toolbox.html', context)
-
-
-# @login_required()
-def tool(request, appname):
-    if appname == 'json':
-        return jsonrequest(request)
-    # if we are here, we have been given a particular appname, e.g. "keyinfo", as part of the url
-    context = setconstants({}, appname)
-    if request.method == 'GET':
-        form = forms.Form(request.GET)
-    else:
-        form = forms.Form()
-
-    if form.is_valid():
-        # context = dispatch(context, request.GET, appname)
-        loginfo(appname, context, request)
-        return render(request, 'toolbox.html', context)
+TITLE = 'Tools Available'
 
 
-def jsonrequest(request):
-    if request.method == 'GET':
-        form = forms.Form(request.GET)
-        requestObject = request.GET
+def index(request):
+    context = {}
+    context['version'] = appconfig.getversion()
+    context['labels'] = 'name file'.split(' ')
+    context['apptitle'] = TITLE
+    context['hostname'] = hostname
+    context['device'] = devicetype(request)
+    context['timestamp'] = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
+    context['html'] = main(request, '')
+    context['extra_nav'] = {'href': './', 'id': 'switchtool', 'name': 'Switch Tool'}
+    return render(request, 'index.html', context)
 
-    if request.method == 'POST':
-        form = forms.Form(request.POST)
-        requestObject = request.POST
 
-    if form.is_valid():
-        context = setconstants({}, 'json')
-        del context['additionalInfo']
-        del context['extra_nav']
-        del context['searchrows']
-        del context['searchcolumns']
-        context = handleJSONrequest(context, requestObject)
+def toolbox(request, action):
+    context = {}
+    context['version'] = appconfig.getversion()
+    context['labels'] = 'name file'.split(' ')
 
-        loginfo(context['appname'], context, request)
-        return HttpResponse(json.dumps(context))
-    else:
-        return HttpResponse(json.dumps({'error': 'form is not valid'}))
+    # the biggest problem with this approach is that the config file for the tool
+    # is re-read every time the tool is started by a user...
+    # on the other hand, it may provide a means for real time updates of configuration...
+    webappconfig = ConfigParser.RawConfigParser()
+    webappconfig.read(os.path.join(BASE_DIR, action + '.cfg'))
+    context['apptitle'] = webappconfig.get('info', 'apptitle')
+    context['hostname'] = hostname
+    context['device'] = devicetype(request)
+    context['timestamp'] = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
+    context['html'] = main(request, action)
+    context['extra_nav'] = {'href': './', 'id': 'switchtool', 'name': 'Switch Tool'}
+    return render(request, 'index.html', context)
+
+
