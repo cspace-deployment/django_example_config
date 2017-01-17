@@ -5,7 +5,7 @@ import csv, sys, time, os, datetime
 import ConfigParser
 
 # BASE_DIR = '.' + request.path + 'cfgs'
-BASE_DIR = './toolbox/cfgs'
+BASE_DIR = '/home/app_webapps/pahma/toolbox/cfgs'
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
