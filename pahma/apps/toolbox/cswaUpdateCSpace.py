@@ -16,7 +16,7 @@ import re
 
 from dirq.QueueSimple import QueueSimple
 DIRQ = QueueSimple('/tmp/cswa')
-WHEN2POST = 'queue'
+WHEN2POST = 'now'
 
 MAXLOCATIONS = 1000
 
