@@ -3,9 +3,10 @@
 
 import csv, sys, time, os, datetime
 import ConfigParser
+from os import path
 
-# BASE_DIR = '.' + request.path + 'cfgs'
-BASE_DIR = '/home/app_webapps/pahma/toolbox/cfgs'
+SITE_ROOT = path.dirname(path.realpath(__file__))
+BASE_DIR = path.join(SITE_ROOT, 'cfgs')
 
 reload(sys)
 sys.setdefaultencoding('utf-8')

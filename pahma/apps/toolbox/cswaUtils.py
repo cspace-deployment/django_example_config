@@ -65,7 +65,7 @@ MAINCONFIG = cspace_django_site.getConfig()
 def getConfig(request, action):
     try:
         # pretty hacky, let's improve the filename construction someday
-        fileName = '.' + request.path.replace('toolbox/','toolbox/cfgs/') + '.cfg'
+        fileName = '.' + request.path.replace('toolbox/', 'toolbox/cfgs/') + '.cfg'
         config = ConfigParser.RawConfigParser()
         config.read(fileName)
         # test to see if it seems like it is really a config file
@@ -1482,6 +1482,17 @@ def downloadCsv(form, config):
     updateType = config.get('info', 'updateType')
     institution = config.get('info','institution')
 
+    try:
+        # create the HttpResponse object with the appropriate CSV header.
+        response = HttpResponse(content_type='text/csv')
+        filename = '%s_%s.csv' % (updateType, datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S"))
+        response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+        #html += 'Content-type: application/octet-stream; charset=utf-8'
+        writer = csv.writer(response, quoting=csv.QUOTE_ALL)
+    except:
+        html += 'Problem creating .csv file. Sorry!'
+        return html
+
     if updateType == 'governmentholdings':
         try:
             query = cswaDB.getDisplayName(config, form.get('agency'))[0]
@@ -1493,11 +1504,6 @@ def downloadCsv(form, config):
         except:
             raise
 
-        rowcount = len(sites)
-        html += 'Content-type: application/octet-stream; charset=utf-8'
-        html += 'Content-Disposition: attachment; filename="Sites By %s.csv"' % query
-        print
-        writer = csv.writer(sys.stdout, quoting=csv.QUOTE_ALL)
         for s in sites:
                 writer.writerow((s[0], s[1], s[2], s[3]))
 
@@ -1515,11 +1521,6 @@ def downloadCsv(form, config):
 
         #rowcount = len(rows)
 
-        filename = 'packinglist%s.csv' % datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S")
-        html += 'Content-type: application/octet-stream; charset=utf-8'
-        html += 'Content-Disposition: attachment; filename="%s"' % filename
-        print
-        writer = csv.writer(sys.stdout, quoting=csv.QUOTE_ALL)
         for r in rows:
             objects = cswaDB.getlocations(r[0], '', 1, config, 'keyinfo', institution)
             #[sys.stderr.write('packing list csv objects: %s\n' % x[3]) for x in objects]
@@ -1529,10 +1530,8 @@ def downloadCsv(form, config):
                         writer.writerow([o[x] for x in [0, 1, 3, 4, 6, 7, 9]])
                     else:
                         writer.writerow([o[x] for x in [0, 2, 3, 4, 5, 6, 7, 9]])
-    sys.stdout.flush()
-    sys.stdout.close()
 
-    return html
+    return response
 
 
 
@@ -1784,7 +1783,7 @@ def doHierarchyView(form, config):
         if len(prettyName) > 0 and prettyName[0] == '@':
             #prettyName = '<' + prettyName[1:] + '> '
             prettyName = '<b>&lt;' + prettyName[1:] + '&gt;</b> '
-        prettyName = '<a href="%s">%s</a>' % (link % (row[2]), prettyName)
+        prettyName = '<a target="term" href="%s">%s</a>' % (link % (row[2]), prettyName)
         lookup[row[2]] = prettyName
     # html += '''var data = ['''
     #html += concept.buildJSON(concept.buildConceptDict(res), 0, lookup)
@@ -1847,7 +1846,7 @@ def doListGovHoldings(form, config):
         html += '<td align="left"><a href="' + link + str(cswaDB.getCSID('placeName',site[0], config)[0]) + '&vocab=place">' + site[0] + '</td>'
         html += '<td align="left">' + (site[2] or '') + "</td>"
         html += '<td align="left">' + (site[3] or '') + "</td>"
-        html += '</tr><tr><td colspan="3"></td></tr>'
+        html += '</tr>'
     html += "</table>"
     html += '<h4> %s sites listed.</h4>' % len(sites)
 

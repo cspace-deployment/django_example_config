@@ -55,16 +55,8 @@ def main(request, updateType):
 
     elapsedtime = time.time()
 
-    if (updateType == 'packinglist' or updateType == 'governmentholdings') and action == 'Download as CSV':
-        html += starthtml(form, config)
-        downloadCsv(form,config)
-        elapsedtime = time.time() - elapsedtime
-        writeInfo2log('end', form, config, elapsedtime)
-        html += endhtml(form, config, elapsedtime)
-        return html
-    else:
-        writeInfo2log('start', form, config, 0.0)
-        html += starthtml(form,config)
+    writeInfo2log('start', form, config, 0.0)
+    html += starthtml(form,config)
 
     try:
         sys.stdout.flush()
@@ -76,10 +68,6 @@ def main(request, updateType):
                 html += doEnumerateObjects(form,config)
             elif action == "Create Labels for Locations Only":
                 html += doBarCodes(form,config)
-            elif action == "Start Intake":
-                html += doSetupIntake(form, config)
-            elif action == "View Intakes":
-                html += doProcedureSearch(form, config)
             elif action == config.get('info','updateactionlabel'):
                 if   updateType == 'packinglist':  html += doPackingList(form,config)
                 elif updateType == 'movecrate':    html += doUpdateLocations(form,config)

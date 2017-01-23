@@ -8,6 +8,7 @@ import psycopg2
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+# timeoutcommand = "set statement_timeout to 9000; SET NAMES 'utf8';"
 timeoutcommand = "set statement_timeout to 1200000; SET NAMES 'utf8';"
 
 def testDB(config):

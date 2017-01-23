@@ -12,6 +12,7 @@ from cspace_django_site.main import cspace_django_site
 from common import cspace, appconfig
 from common.utils import devicetype
 from cswaMain import main
+from cswaUtils import downloadCsv
 
 from cswaConstants import BASE_DIR
 
@@ -51,6 +52,20 @@ def toolbox(request, action):
     context['device'] = devicetype(request)
     context['timestamp'] = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
     context['html'] = main(request, action)
+
+
+    if (action == 'packinglist' or action == 'governmentholdings'):
+        # html += starthtml(form, config)
+        form = {}
+        for r in request.POST.keys():
+            form[r] = request.POST[r]
+        if 'action' in form and form['action'] == 'Download as CSV':
+            response = downloadCsv(form, webappconfig)
+            # elapsedtime = time.time() - elapsedtime
+            #writeInfo2log('end', form, config, elapsedtime)
+            # html += endhtml(form, config, elapsedtime)
+            return response
+
     context['extra_nav'] = {'href': './', 'id': 'switchtool', 'name': 'Switch Tool'}
     return render(request, 'index.html', context)
 
