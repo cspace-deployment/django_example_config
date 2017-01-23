@@ -5,6 +5,7 @@ import cgitb; cgitb.enable()  # for troubleshooting
 from cswaConstants import selectWebapp
 from cswaUtils import *
 from cswaObjDetails import *
+from cswaUpdateCSpace import writeInfo2log
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
