@@ -2,8 +2,17 @@ import sys
 import cswaConstants
 
 
+def makeObjectLink(config, csid, objectnumber):
+    hostname = config.get('connect', 'hostname')
+    institution = config.get('info', 'institution')
+    port = ''
+    protocol = 'https'
+    link = protocol + '://' + hostname + port + '/collectionspace/ui/' + institution + '/html/cataloging.html?csid=%s' % csid
+    return """<tr><td class="objno"><a target="cspace" href="%s">%s</a></td>""" % (link, objectnumber)
+
+
 def handleTimeout(source, form):
-    html = '<h3><span class="error">Time limit exceeded! The problem has been logged and will be examined. Feel free to try again though!</span></h3>'
+    html = '<h3 class="error">Time limit exceeded! The problem has been logged and will be examined. Feel free to try again though!</h3>'
     sys.stderr.write('TIMEOUT::' + source + '::location::' + str(form.get("lo.location1")) + '::')
     return html
 
@@ -13,27 +22,27 @@ def validateParameters(form, config):
     valid = True
 
     if form.get('handlerRefName') == 'None':
-        html += '<h3>Please select a handler before searching</h3>'
+        html += '<h3 class="error">Please select a handler before searching.</h3>'
         valid = False
 
     # if not str(form.get('num2ret')).isdigit():
-    #    html += '<h3><i>number to retrieve</i> must be a number, please!</h3>'
+    #    html += '<h3 class="error"><i>number to retrieve</i> must be a number, please!</h3>'
     #    valid = False
 
     if form.get('reason') == 'None':
-        html += '<h3>Please select a reason before searching</h3>'
+        html += '<h3 class="error">Please select a reason before searching.</h3>'
         valid = False
 
     if config.get('info', 'updatetype') == 'barcodeprint':
         if form.get('printer') == 'None':
-            html += '<h3>Please select a printer before trying to html += labels</h3>'
+            html += '<h3 class="error">Please select a printer before trying to print labels.</h3>'
             valid = False
 
     # prohibitedLocations = cswaConstants.getProhibitedLocations(config, request)
     # if form.get("lo.location1"):
     #    loc = form.get("lo.location1")
     #    if loc in prohibitedLocations:
-    #        html += '<h3>Location "%s" is unavailable to this webapp. Please contact registration staff for details.</h3>' % form.get(
+    #        html += '<h3 class="error">Location "%s" is unavailable to this webapp. Please contact registration staff for details.</h3>' % form.get(
     #            "lo.location1")
     #        valid = False
 
@@ -41,7 +50,7 @@ def validateParameters(form, config):
     # if form.get("lo.location2"):
     #    loc = form.get("lo.location2")
     #    if loc in prohibitedLocations:
-    #        html += '<h3>Location "%s" is unavailable to this webapp. Please contact registration staff for details.</h3>' % form.get(
+    #        html += '<h3 class="error">Location "%s" is unavailable to this webapp. Please contact registration staff for details.</h3>' % form.get(
     #            "lo.location2")
     #        valid = False
 

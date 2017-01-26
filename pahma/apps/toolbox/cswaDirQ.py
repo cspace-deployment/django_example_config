@@ -2,6 +2,7 @@ from dirq.QueueSimple import QueueSimple
 import sys
 from time import sleep, time
 import datetime
+#from cswaUpdateCSpace import processqueueelement
 
 queue_dir = sys.argv[1]
 
@@ -19,6 +20,7 @@ passes = 0
 items = 0
 elapsedtime = time()
 logmessageinterval = 60 #seconds
+WHEN2POST = 'queue'
 
 while True:
     for name in dirq:
@@ -26,11 +28,14 @@ while True:
             continue
         print("# reading element %s" % name)
         data = dirq.get(name)
+        print data
         # one could use dirq.unlock(name) to only browse the queue...
-        print("# removing element %s" % name)
-        dirq.remove(name)
+        dirq.unlock(name)
+        # print("# removing element %s" % name)
+        # dirq.remove(name)
         items += 1
         print("# items processed: %s" % items)
+    sys.exit()
     sleep(1)
     passes += 1
     if time() - elapsedtime > logmessageinterval:

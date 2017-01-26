@@ -32,7 +32,7 @@ def index(request):
     context['hostname'] = hostname
     context['device'] = devicetype(request)
     context['timestamp'] = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
-    context['html'] = main(request, '')
+    context['html'], context['elapsedtime'] = main(request, '')
     context['extra_nav'] = {'href': './', 'id': 'switchtool', 'name': 'Switch Tool'}
     return render(request, 'index.html', context)
 
@@ -48,23 +48,27 @@ def toolbox(request, action):
     webappconfig = ConfigParser.RawConfigParser()
     webappconfig.read(os.path.join(BASE_DIR, action + '.cfg'))
     context['apptitle'] = webappconfig.get('info', 'apptitle')
+    context['serverlabel'] = webappconfig.get('info', 'serverlabel')
+    context['serverlabelcolor'] = webappconfig.get('info', 'serverlabelcolor')
     context['hostname'] = hostname
     context['device'] = devicetype(request)
     context['timestamp'] = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
-    context['html'] = main(request, action)
+    context['html'], context['elapsedtime'] = main(request, action)
 
 
     if (action == 'packinglist' or action == 'governmentholdings'):
-        # html += starthtml(form, config)
         form = {}
         for r in request.POST.keys():
             form[r] = request.POST[r]
         if 'action' in form and form['action'] == 'Download as CSV':
             response = downloadCsv(form, webappconfig)
-            # elapsedtime = time.time() - elapsedtime
-            #writeInfo2log('end', form, config, elapsedtime)
-            # html += endhtml(form, config, elapsedtime)
-            return response
+            if type(response) == type(' '):
+                context['html'] += response
+            else:
+                # elapsedtime = time.time() - elapsedtime
+                #writeInfo2log('end', form, config, elapsedtime)
+                # html += endhtml(form, config, elapsedtime)
+                return response
 
     context['extra_nav'] = {'href': './', 'id': 'switchtool', 'name': 'Switch Tool'}
     return render(request, 'index.html', context)

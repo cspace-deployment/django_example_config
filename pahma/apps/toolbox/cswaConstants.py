@@ -19,7 +19,7 @@ table { }
 td { padding-right: 10px; }
 th { text-align: left ;color: #666666; font-size: 16px; font-weight: bold; padding-right: 20px;}
 h2 { font-size:32px; padding:10px; margin:0px; border-bottom: none; }
-h2 { font-size:24px; color:white; background:blue; }
+h3 { font-size:24px; padding:10px; }
 p { padding:10px 10px 10px 10px; }
 li { text-align: left; list-style-type: none; }
 a { text-decoration: none; }

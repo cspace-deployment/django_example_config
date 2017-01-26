@@ -21,7 +21,7 @@ def main(request, updateType):
     if request.user.is_authenticated():
         form['userdata'] = request.user
     else:
-        return "<span style='color:red'>You must be authenticated to use these Tools! Please sign in (upper right of this page).</span>"
+        return "<span style='color:red'>You must be authenticated to use these Tools! Please sign in (upper right of this page).</span>", None
 
     try:
         action = request.POST['action']
@@ -30,7 +30,7 @@ def main(request, updateType):
 
     checkServer = form.get('check')
 
-    config  = getConfig(request, updateType)
+    config  = getConfig(request)
     # we don't do anything with debug now, but it is a comfort to have
     debug = form.get("debug")
     html = ''
@@ -38,7 +38,7 @@ def main(request, updateType):
     # bail if we don't know which webapp to be...(i.e. no config object passed in from cswaMain)
     if config == False:
         html = selectWebapp(form, request)
-        return html
+        return html, None
 
     #updateType  = config.get('info','updatetype')
 
@@ -86,7 +86,6 @@ def main(request, updateType):
                 elif updateType == 'advsearch':    html += doAdvancedSearch(form,config)
                 elif updateType == 'upload':       uploadFile(form,form,config)
                 elif updateType == 'governmentholdings': html += doListGovHoldings(form, config)
-                elif updateType == 'intake':       html += doCommitIntake(form, config)
                 #elif updateType == 'editrel':      html += doRelationsEdit(form,config)
                 elif updateType == 'makegroup':    makeGroup(form,config)
                 elif action == "Recent Activity":
@@ -151,4 +150,4 @@ def main(request, updateType):
     writeInfo2log('end', form, config, elapsedtime)
     html += endhtml(form,config,elapsedtime)
 
-    return html
+    return html, ('%8.2f' % elapsedtime) + ' seconds'
