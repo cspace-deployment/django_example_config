@@ -1663,8 +1663,7 @@ def doHierarchyView(form, config):
         return '<h3 class="error">Please select an authority!</h3>'
 
     res = cswaDB.gethierarchy(query, config)
-    html += '<div id="tree">'
-    #html += '<div id="tree"><table>'
+    html += '<a class="prettyBtn" id="all">Toggle All</a><p/><div class="tree">'
     lookup = {concept.PARENT: concept.PARENT}
     link = ''
     hostname = config.get('connect', 'hostname')
@@ -1682,7 +1681,9 @@ def doHierarchyView(form, config):
         if len(prettyName) > 0 and prettyName[0] == '@':
             #prettyName = '<' + prettyName[1:] + '> '
             prettyName = '<b>&lt;' + prettyName[1:] + '&gt;</b> '
+
         prettyName = '<a target="term" href="%s">%s</a>' % (link % (row[2]), prettyName)
+        #prettyName = '<a>%s</a>' % prettyName
         lookup[row[2]] = prettyName
     # html += '''var data = ['''
     #html += concept.buildJSON(concept.buildConceptDict(res), 0, lookup)
@@ -1693,6 +1694,29 @@ def doHierarchyView(form, config):
     #html += re.sub(r'\n    { label: "(.*?)"},', r'''\n    { label: "no parent >> \1"},''', res)
     #html += '</table></div>'
     html += '</div>'
+    html += """
+    <script>
+    $( document ).ready( function( ) {
+    $( 'div.tree li' ).each( function() {
+        if( $( this ).children( 'ul' ).length > 0 ) {
+            $( this ).addClass( 'parent' );
+        }
+    });
+
+    $( 'div.tree li.parent > a' ).click( function( ) {
+        $( this ).parent().toggleClass( 'active' );
+        $( this ).parent().children( 'ul' ).slideToggle( 'fast' );
+    });
+
+    $( '#all' ).click( function() {
+        $( 'div.tree li' ).each( function() {
+            $( this ).toggleClass( 'active' );
+            $( this ).children( 'ul' ).slideToggle( 'fast' );
+        });
+    });
+});
+</script>
+    """
 #     html += """$(function() {
 #     $('#tree').tree({
 #         data: data,

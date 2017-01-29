@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 """
 A collection of functions for processing parent-child lists into hierarchical dictionaries.
 The goal, which buildConceptDict accomplishes, is to go from a list like this:
@@ -5,11 +6,11 @@ The goal, which buildConceptDict accomplishes, is to go from a list like this:
     inp = [['San Francisco','California'], ['California','United States'], ['North America',None], ['Africa',None],\
     ['New York','United States'], ['United States','North America'], ['Angola','Africa'], ['Eastern Cape','South Africa'],\
     ['South Africa','Africa'], ['Rapa Nui',None]]
-    
+
 to a dictionary like this:
 
-    res = {PARENT: ['Rapa Nui', {'North America': [{'United States': ['New York', {'California': ['San Francisco']}]}]}, {'Africa':\
-    ['Angola', {'South Africa': ['Eastern Cape']}]}]}
+    res = {PARENT: ['Rapa Nui', {'North America': [{'United States': ['New York', {'California': ['San Francisco']}]}]},\
+     {'Africa':['Angola', {'South Africa': ['Eastern Cape']}]}]}
 
 Or in hierarchical form:
 
@@ -36,7 +37,7 @@ The hierarchy is now built from the third and fourth rows and displayed using th
 
 """
 
-#This should be set to whatever the root value should be.
+# This should be set to whatever the root value should be.
 PARENT = 'ROOT'
 
 
@@ -74,24 +75,10 @@ def dictBuilder(l, root=PARENT):
     return d
 
 
-def stripRootJSON(res):
-    """Removes the ROOT level from the JSON tree"""
-    res = res[:res.rfind(',]}')]
-    return res.replace('{ label: "' + PARENT + '",\nchildren: [', '')
-
-
 def stripRootHTML(res):
     """Removes the ROOT level from the JSON tree"""
-    #res = res[:res.rfind('</ul>')]
-    return res.replace('<li>' + PARENT + '</li><ul>', '<ul class="tree">')
-
-
-def buildJSON(d, indent=0, lookup=None):
-    """
-    Given a dictionary D, an optional initial indent INDENT, and a lookup table LOOKUP,
-    returns a string representation of the tree needed for jqTree without a root level.
-    """
-    return stripRootJSON(makeJSON(d, indent, lookup))
+    # res = res[:res.rfind('</ul>')]
+    return res.replace('<li><a>►</a> ' + PARENT + '<ul>', '<ul class="tree">')
 
 
 def buildHTML(d, indent=0, lookup=None):
@@ -100,37 +87,6 @@ def buildHTML(d, indent=0, lookup=None):
     returns a string representation of the tree needed for jqTree without a root level.
     """
     return stripRootHTML(makeHTML(d, indent, lookup))
-
-
-def makeJSON(d, indent=0, lookup=None):
-    """
-    Given a dictionary D, an optional initial indent INDENT, and a lookup table LOOKUP,
-    returns a string representation of the tree needed for jqTree.
-    """
-    res = ''
-    if not (lookup):
-        print '<tr>NO LOOKUP TABLE!</tr>'
-    space = ' '
-    if not (isinstance(d, dict)):
-        res += space * indent + '{ label: "' + str(lookup[d]) + '"}\n'
-    for key in d:
-        res += space * indent + '{ label: "' + str(lookup[key]) + '",\n'
-        if isinstance(d[key], basestring):
-            res += space * indent + '{ label: "' + str(lookup(d[key])) + '"}\n'
-        else:
-            res += space * indent + 'children: [\n'
-            for val in d[key]:
-                if isinstance(val, dict):
-                    res += makeJSON(val, indent + 4, lookup)
-                else:
-                    res += space * (indent + 4) + '{ label: "' + str(lookup[val]) + '"},\n'
-        if indent:
-            res = res[:-2]
-            res += ']},\n'
-        else:
-            res = res[:-1]
-            res += ']}'
-    return res
 
 
 def makeHTML(d, indent=0, lookup=None):
@@ -145,7 +101,7 @@ def makeHTML(d, indent=0, lookup=None):
     if not (isinstance(d, dict)):
         res += '<li>' + str(lookup[d]) + '</li>'
     for key in d:
-        res += '<li>' + str(lookup[key]) + '</li>'
+        res += '<li><a>►</a> ' + str(lookup[key])
         if isinstance(d[key], basestring):
             res += '<li>' + str(lookup(d[key])) + '</li>'
         else:
@@ -155,78 +111,5 @@ def makeHTML(d, indent=0, lookup=None):
                     res += makeHTML(val, indent + 4, lookup)
                 else:
                     res += '<li>' + str(lookup[val]) + '</li>'
-            res += '</ul>'
-        #res += '</ul>'
+            res += '</li></ul>'
     return res
-
-
-def printDict(dictionary, indent=0, lookupTable=None, html=''):
-    """
-    Given a dictionary and an optional initial indent, prints the dictionary hierarchically, i.e.:
-    <ROOT>
-        <LEVEL 1>
-            <LEVEL 2>
-            <LEVEL 2>
-        <LEVEL 1>
-            <LEVEL 2>
-                <LEVEL 3>
-        <LEVEL 1>
-        ... etc...
-    """
-    if not (lookupTable):
-        html += '<tr>NO LOOKUP TABLE!</tr>'
-    space = ' '
-    if not (isinstance(dictionary, dict)):
-        html += '<tr><th align="left"><pre>' + str(lookupTable[dictionary]) + '</pre></tr>'
-    for key in dictionary:
-        html += '<tr><th align="left"><pre>' + str(lookupTable[key]) + '</pre></tr>'
-        if isinstance(dictionary[key], basestring):
-            html += '<tr><th align="left"><pre>' + str(lookupTable[dictionary[key]]) + '</pre></tr>'
-        else:
-            for val in dictionary[key]:
-                if isinstance(val, dict):
-                    html = printDict(val, indent + 4, lookupTable, html)
-                else:
-                    html += '<tr><th align="left"><pre>' + str(lookupTable[val]) + '</pre></tr>'
-    return html
-
-if __name__ == '__main__':
-
-    import sys
-    import cswaDB as cswaDB
-    from cswaUtils import getConfig, doHierarchyView
-
-    #authoritylist = [ \
-    #    ("Ethnographic Culture", "concept"),
-    #    ("Places", "places"),
-    #    ("Archaeological Culture", "archculture"),
-    #    ("Ethnographic File Codes", "ethusecode"),
-    #    ("Materials", "material_ca"),
-    #    ("Taxonomy", "taxonomy")
-    #]
-
-    form = {'authority': 'taxonomy', 'webapp': 'ucbghierarchyViewerDev' }
-    config = getConfig(form)
-
-    doHierarchyView(form, config)
-    sys.exit()
-
-    res = cswaDB.gethierarchy('taxonomy', config)
-
-    PARENT = 'ROOT'
-    lookup = {PARENT: PARENT}
-    #for row in res:
-    #    prettyName = row[0].replace('"', "'")
-    #    if prettyName[0] == '@':
-    #        prettyName = '<' + prettyName[1:] + '>'
-    #    lookup[row[2]] = prettyName
-    #print '''var data = ['''
-    #print concept.buildJSON(concept.buildConceptDict(res), 0, lookup)
-    d = buildConceptDict(res)
-    for top in d[PARENT]:
-        if type(top) == type('str'): print top
-    #print d
-    #if sys.argv[2] == '-j' or sys.argv[2] == '-J':
-    #    print makeJSON(d) #doesn't actually work anymore without lookup table
-    #else:
-    #    printDict(d) #doesn't work either for the same reason
