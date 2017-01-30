@@ -1,5 +1,6 @@
 import sys
 import cswaConstants
+from django.conf import settings
 
 
 def makeObjectLink(config, csid, objectnumber):
@@ -638,8 +639,9 @@ def starthtml(form, config):
           <th>internal error: updateType not specified</th></tr>
           <tr><th/><th/><th/><th/></tr>'''
 
+    staticurl = settings.STATIC_URL
     return cswaConstants.getStyle(schemacolor1) + '''
-    <div style="width:80px; ";" id="appstatus"><img height="60px" src="../cspace_django_project_static/cspace_django_site/images/timer-animated.gif"></div>
+    <div style="width:80px; ";" id="appstatus"><img height="60px" src="''' + staticurl + '''cspace_django_site/images/timer-animated.gif"></div>
     <table width="100%">
         <tr>
         <th>

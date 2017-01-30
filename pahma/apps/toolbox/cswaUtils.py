@@ -1663,7 +1663,7 @@ def doHierarchyView(form, config):
         return '<h3 class="error">Please select an authority!</h3>'
 
     res = cswaDB.gethierarchy(query, config)
-    html += '<a class="prettyBtn" id="all">Toggle All</a><p/><div class="tree">'
+    html += '<p></p><a class="prettyBtn" id="all">Toggle All</a><p/><div class="tree">'
     lookup = {concept.PARENT: concept.PARENT}
     link = ''
     hostname = config.get('connect', 'hostname')
@@ -1681,18 +1681,10 @@ def doHierarchyView(form, config):
         if len(prettyName) > 0 and prettyName[0] == '@':
             #prettyName = '<' + prettyName[1:] + '> '
             prettyName = '<b>&lt;' + prettyName[1:] + '&gt;</b> '
-
         prettyName = '<a target="term" href="%s">%s</a>' % (link % (row[2]), prettyName)
         #prettyName = '<a>%s</a>' % prettyName
         lookup[row[2]] = prettyName
-    # html += '''var data = ['''
-    #html += concept.buildJSON(concept.buildConceptDict(res), 0, lookup)
-    # res = concept.buildJSON(concept.buildConceptDict(res), 0, lookup)
     html += concept.buildHTML(concept.buildConceptDict(res), 0, lookup)
-    #x = ''
-    #html += concept.printDict(concept.buildConceptDict(res), 0, lookup, x)
-    #html += re.sub(r'\n    { label: "(.*?)"},', r'''\n    { label: "no parent >> \1"},''', res)
-    #html += '</table></div>'
     html += '</div>'
     html += """
     <script>
@@ -1717,26 +1709,6 @@ def doHierarchyView(form, config):
 });
 </script>
     """
-#     html += """$(function() {
-#     $('#tree').tree({
-#         data: data,
-#         autoOpen: true,
-#         useContextMenu: false,
-#         selectable: false
-#     });
-#     $('#tree').bind(
-#     'tree.click',
-#     function(event) {
-#         // The clicked node is 'event.node'
-#         var node = event.node;
-#         var URL = node.url;
-#         if (URL) {
-#             window.open(URL);
-#         }
-#     }
-# );
-# });</script>"""
-    #html += "\n</table>"
     html += "\n"
 
     return html
