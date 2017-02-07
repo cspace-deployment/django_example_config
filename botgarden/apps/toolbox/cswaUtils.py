@@ -122,7 +122,7 @@ def doComplexSearch(form, config, displaytype):
     #listAuthorities('taxon',     'TaxonTenant35',  form.get("ob.objectnumber"),config, form, displaytype)
     #listAuthorities('concepts',  'TaxonTenant35',  form.get("cx.concept"),     config, form, displaytype)
 
-    return getTableFooter(config, displaytype, '')
+    getTableFooter(config, displaytype, '')
 
 
 def doLocationSearch(form, config, displaytype):
