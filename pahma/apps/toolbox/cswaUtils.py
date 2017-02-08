@@ -106,23 +106,29 @@ def makeGroup(form,config):
 
 
 def listAuthorities(authority, primarytype, authItem, config, form, displaytype):
-    if authItem == None or authItem == '': return
+    if authItem == None or authItem == '': return False, '', []
     rows = cswaGetAuthorityTree.getAuthority(authority, primarytype, authItem, config.get('connect', 'connect_string'))
 
     hasDups, html = listSearchResults(authority, config, displaytype, form, rows)
 
-    return rows
+    return hasDups, html, rows
+    #return rows
 
 
 def doComplexSearch(form, config, displaytype):
+    html = ''
     #if not validateParameters(form,config): return
-    listAuthorities('taxon', 'TaxonTenant35', form.get("ut.taxon"), config, form, displaytype)
-    listAuthorities('locations', 'Locationitem', form.get("lo.location1"), config, form, displaytype)
-    listAuthorities('places', 'Placeitem', form.get("px.place"), config, form, displaytype)
+    hasDups, x, r = listAuthorities('taxon', 'TaxonTenant35', form.get("ut.taxon"), config, form, displaytype)
+    html += x
+    hasDups, x, r = listAuthorities('locations', 'Locationitem', form.get("lo.location1"), config, form, displaytype)
+    html += x
+    hasDups, x, r = listAuthorities('places', 'Placeitem', form.get("px.place"), config, form, displaytype)
+    html += x
     #listAuthorities('taxon',     'TaxonTenant35',  form.get("ob.objectnumber"),config, form, displaytype)
     #listAuthorities('concepts',  'TaxonTenant35',  form.get("cx.concept"),     config, form, displaytype)
 
-    return getTableFooter(config, displaytype, '')
+    html += getTableFooter(config, displaytype, '')
+    return html
 
 
 def doLocationSearch(form, config, displaytype):
@@ -152,60 +158,6 @@ def doLocationSearch(form, config, displaytype):
     if len(rows) != 0: html += getTableFooter(config, displaytype, '')
     return html
 
-
-def doProcedureSearch(form, config, displaytype):
-    html = ''
-
-    valid, error = validateParameters(form, config)
-    if not valid: return html + error
-
-    updateType = config.get('info', 'updatetype')
-    institution = config.get('info','institution')
-    updateactionlabel = config.get('info', 'updateactionlabel')
-
-    if updateType == 'intake':
-        crate = verifyLocation(form.get("lo.crate"), form, config)
-        toLocation = verifyLocation(form.get("lo.location1"), form, config)
-
-        if str(form.get("lo.crate")) != '' and crate == '':
-            html += '<span style="color:red;">Crate is not valid! Sorry!</span><br/>'
-        if toLocation == '':
-            html += '<span style="color:red;">Destination is not valid! Sorry!</span><br/>'
-        if (str(form.get("lo.crate")) != '' and crate == '') or toLocation == '':
-            return
-
-        toRefname = cswaDB.getrefname('locations_common', toLocation, config)
-        toCrate = cswaDB.getrefname('locations_common', crate, config)
-
-    try:
-        rows = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 500, config)
-    except:
-        raise
-
-    if len(rows) == 0:
-        return '<h3 class="error">No objects in this range! Sorry!</h3>'
-    else:
-        totalobjects = 0
-        if updateType == 'objinfo':
-            html += cswaConstants.infoHeaders(form.get('fieldset'))
-        else:
-            html += cswaConstants.getHeader(updateType,institution)
-        for r in rows:
-            totalobjects += 1
-            html += formatRow({'rowtype': updateType, 'data': r}, form, config)
-
-        html += '\n</table><table width="100%"'
-        html += """<tr><td align="center" colspan="3">"""
-        msg = "Caution: clicking on the button at left will update <b>ALL %s objects</b> shown on this page!" % totalobjects
-        html += '''<input type="submit" class="save" value="''' + updateactionlabel + '''" name="action"></td><td  colspan="3">%s</td></tr>''' % msg
-        html += "\n</table>"
-
-        if updateType == 'moveobject':
-            html += '<input type="hidden" name="toRefname" value="%s">' % toRefname
-            html += '<input type="hidden" name="toCrate" value="%s">' % toCrate
-            html += '<input type="hidden" name="toLocAndCrate" value="%s: %s">' % (toLocation, crate)
-
-    return html
 
 def doObjectSearch(form, config, displaytype):
     html = ''
@@ -618,10 +570,6 @@ def doCheckGroupMove(form, config):
 
     if toLocation is None:
         return '<h3 class="error">Please enter a valid storage location!</h3>'
-
-    updateType = 'powermove'
-    institution = config.get('info','institution')
-    updateactionlabel = config.get('info', 'updateactionlabel')
 
     try:
         objects = cswaDB.getgrouplist(form.get("gr.group"), 3000, config)
@@ -1303,7 +1251,6 @@ def doPackingList(form, config):
 def doAuthorityScan(form, config):
     html = ''
 
-    updateactionlabel = config.get('info', 'updateactionlabel')
     updateType = config.get('info', 'updatetype')
     institution = config.get('info','institution')
 
@@ -1315,7 +1262,7 @@ def doAuthorityScan(form, config):
     if updateType == 'locreport':
         Taxon = form.get("ut.taxon")
         if Taxon != None:
-            Taxa = listAuthorities('taxon', 'TaxonTenant35', Taxon, config, form, 'list')
+            dummy1, dummy2, Taxa = listAuthorities('taxon', 'TaxonTenant35', Taxon, config, form, 'list')
         else:
             Taxa = []
         tList = [t[0] for t in Taxa]
@@ -1324,7 +1271,7 @@ def doAuthorityScan(form, config):
     elif updateType == 'holdings':
         Place = form.get("px.place")
         if Place != None:
-            Places = listAuthorities('places', 'Placeitem', Place, config, form, 'silent')
+            dummy1, dummy2, Places = listAuthorities('places', 'Placeitem', Place, config, form, 'silent')
         else:
             Places = []
         tList = [t[0] for t in Places]
@@ -1363,16 +1310,6 @@ def doAuthorityScan(form, config):
                 totalobjects += 1
                 countStuff(statistics,counts,t,totalobjects)
 
-    #html += '\n'.join(accessions)
-    html += """</table>"""
-    #html += """"""
-    #html += """<table width="100%">"""
-    #html += """<tr><td colspan="2"><b>Summary Statistics (experimental and unverified!)</b></tr>"""
-
-    #for s in sorted(statistics.keys()):
-    #   html += """<tr><th width=300px>%s</th><td>%s</td></tr>""" % (s, len(counts[s]))
-
-    #html += """<tr><td align="center">Report completed.</td></tr>"""
     html += "\n</table>"
 
     return html
