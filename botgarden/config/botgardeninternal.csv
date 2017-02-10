@@ -1,7 +1,7 @@
 #	Parameters for UC Botanical Garden INTERNAL portal															x
 #																x
-date	4/3/16															x
-revision	1.18															x
+date	2/10/17															x
+revision	1.19															x
 #																x
 title	Plant Collection Information (internal use only!)															x
 #																x
@@ -41,7 +41,7 @@ field	26	gardenlocation	Garden Location	gardenlocation_s			keyword	7,2	7		11	4	6
 field	27	dataquality	Data Quality	dataquality_s			keyword				12					x
 field	28	locality	Geographic Place Name	locality_s		pl	keyword	8,2			13	5			15	x
 field	29	rare	Rare?	rare_s			dropdown	12,1	8		14	8	7		16	x
-field	30	deadflag	Dead?	deadflag_s			dropdown	11,1	9		15	9	8		17	x
+field	30	deadflag	Dead?	deadflag_s			dropdown,default=no	11,1	9		15	9	8		17	x
 field	31	flowercolor	Flower Color	flowercolor_s			keyword	8,1	10		16	10	9		18	x
 field	32	determinationnoauth	Determination	determinationnoauth_s			keyword				17					x
 field	33	reasonformove	Reason for Move	reasonformove_s			keyword				18					x
@@ -74,3 +74,5 @@ field	59	accessrestrictions	Access Restrictions	accessrestrictions_s			dropdown	
 field	60	commonname	Common Name	commonname_s			keyword	2,1			1				40	x
 field	61	accessionnotes	Accession Notes	accessionnotes_s			keyword				39				6	x
 field	62	blobs	Images	blob_ss			blob								41	x
+field	63	hasimage	Has image(s)?	blob_ss			present	13,3								x
+field	64	hascoords	Has coordinates?	latlong_p			present	14,3								x
