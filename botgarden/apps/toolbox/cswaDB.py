@@ -11,6 +11,22 @@ sys.setdefaultencoding('utf-8')
 # timeoutcommand = "set statement_timeout to 9000; SET NAMES 'utf8';"
 timeoutcommand = "set statement_timeout to 1200000; SET NAMES 'utf8';"
 
+def setupcursor(config, command):
+    try:
+        dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
+    except psycopg2.DatabaseError, e:
+        sys.stderr.write('DB connection error: %s' % e)
+        raise
+        # return '%s' % e
+    objects = dbconn.cursor()
+    objects.execute(timeoutcommand)
+    try:
+        objects.execute(command)
+    except psycopg2.DatabaseError, e:
+        sys.stderr.write('DB query error: %s' % e)
+        raise
+    return objects
+
 def testDB(config):
     dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
     objects = dbconn.cursor()
@@ -454,9 +470,6 @@ left outer join taxon_naturalhistory tn on (tc.id=tn.id) """
 #left outer join taxon_naturalhistory tn on (tc.id=tn.id)""" % ("and con.rare = 'true'","and cob.deadflag = 'false'")
 
 def getlocations(location1, location2, num2ret, config, updateType, institution):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
 
     debug = False
 
@@ -469,7 +482,7 @@ def getlocations(location1, location2, num2ret, config, updateType, institution)
 
         try:
             elapsedtime = time.time()
-            objects.execute(getobjects)
+            objects = setupcursor(config, getobjects)
             elapsedtime = time.time() - elapsedtime
             if debug: sys.stderr.write('all objects: %s :: %s\n' % (loc[0], elapsedtime))
         except psycopg2.DatabaseError, e:
@@ -498,9 +511,6 @@ def getlocations(location1, location2, num2ret, config, updateType, institution)
 
 
 def getplants(location1, location2, num2ret, config, updateType, qualifier):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
 
     debug = False
 
@@ -511,7 +521,7 @@ def getplants(location1, location2, num2ret, config, updateType, qualifier):
     #print "<span>%s</span>" % getobjects
     try:
         elapsedtime = time.time()
-        objects.execute(getobjects)
+        objects = setupcursor(config, getobjects)
         elapsedtime = time.time() - elapsedtime
         #sys.stderr.write('query :: %s\n' % getobjects)
         if debug: sys.stderr.write('all objects: %s :: %s\n' % (location1, elapsedtime))
@@ -532,9 +542,6 @@ def getplants(location1, location2, num2ret, config, updateType, qualifier):
     return result
 
 def getgrouplist(group, num2ret, config):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
     if int(num2ret) > 30000: num2ret = 30000
     if int(num2ret) < 1:    num2ret = 1
 
@@ -632,7 +639,7 @@ limit """ + str(num2ret)
 
 
     try:
-        objects.execute(getobjects)
+        objects = setupcursor(config, getobjects)
         #for object in objects.fetchall():
         #print object
         return [list(item) for item in objects.fetchall()]
@@ -651,9 +658,6 @@ def getloclist(searchType, location1, location2, num2ret, config):
     elif searchType == 'range':
         whereclause = "WHERE locationkey >= replace('" + location1 + "',' ','0') AND locationkey <= replace('" + location2 + "',' ','0')"
 
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
     if int(num2ret) > 30000: num2ret = 30000
     if int(num2ret) < 1:    num2ret = 1
 
@@ -673,7 +677,7 @@ order by locationkey
 limit """ + str(num2ret)
 
     try:
-        objects.execute(getobjects)
+        objects = setupcursor(config, getobjects)
         #for object in objects.fetchall():
         #print object
         # return objects.fetchall()
@@ -695,15 +699,12 @@ INNER JOIN misc
 WHERE
      cc.objectNumber = '%s'"""
 
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
     if int(num2ret) > 1000: num2ret = 1000
     if int(num2ret) < 1:    num2ret = 1
 
-    objects.execute(query1 % object1)
+    objects = setupcursor(config, query1 % object1)
     (object1, sortkey1) = objects.fetchone()
-    objects.execute(query1 % object2)
+    objects = setupcursor(config, query1 % object2)
     (object2, sortkey2) = objects.fetchone()
 
     # 'set' means 'next num2ret objects', otherwise prefix match
@@ -801,7 +802,7 @@ left outer join collectionobjects_common_responsibledepartments rd on (rd.id=cc.
 ORDER BY sortableobjectnumber
 limit """ + str(num2ret)
 
-    objects.execute(getobjects)
+    objects = setupcursor(config, getobjects)
     #for object in objects.fetchall():
     #print object
     # return objects.fetchall()
@@ -809,14 +810,11 @@ limit """ + str(num2ret)
 
 
 def findcurrentlocation(csid, config):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
 
     getloc = "select findcurrentlocation('" + csid + "')"
 
     try:
-        objects.execute(getloc)
+        objects = setupcursor(config, getloc)
     except:
         return "findcurrentlocation error"
 
@@ -824,9 +822,6 @@ def findcurrentlocation(csid, config):
 
 
 def getrefname(table, term, config):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
 
     if term == None or term == '':
         return ''
@@ -851,7 +846,7 @@ def getrefname(table, term, config):
             column, table, column, term.replace("'", "''"))
 
     try:
-        objects.execute(query)
+        objects = setupcursor(config, query)
         return objects.fetchone()[0]
     except:
         return ''
@@ -859,16 +854,13 @@ def getrefname(table, term, config):
 
 
 def findrefnames(table, termlist, config):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
 
     result = []
     for t in termlist:
         query = "select refname from %s where refname ILIKE '%%''%s''%%'" % (table, t.replace("'", "''"))
 
         try:
-            objects.execute(query)
+            objects = setupcursor(config, query)
             refname = objects.fetchone()
             result.append([t, refname])
         except:
@@ -878,14 +870,11 @@ def findrefnames(table, termlist, config):
     return result
 
 def finddoctypes(table, doctype, config):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    doctypes = dbconn.cursor()
-    doctypes.execute(timeoutcommand)
 
     query = "select %s,count(*) as n from %s group by %s;" % (doctype,table,doctype)
 
     try:
-        doctypes.execute(query)
+        doctypes = setupcursor(config,query)
         # return doctypes.fetchall()
         return [list(item) for item in doctypes.fetchall()]
     except:
@@ -894,9 +883,6 @@ def finddoctypes(table, doctype, config):
 
 
 def getobjinfo(museumNumber, config):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
 
     getobjects = """
     SELECT co.objectnumber,
@@ -916,17 +902,14 @@ LEFT OUTER JOIN assocpeoplegroup apg ON apg.id=h2.id
 JOIN misc ON misc.id = co.id AND misc.lifecyclestate <> 'deleted'
 WHERE co.objectnumber = '%s' LIMIT 1""" % museumNumber
 
-    objects.execute(getobjects)
+    objects = setupcursor(config, getobjects)
     #for ob in objects.fetchone():
     #print ob
     return objects.fetchone()
 
 
 def gethierarchy(query, config):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
     institution = config.get('info', 'institution')
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
 
     if query == 'taxonomy':
         gethierarchy = """
@@ -979,15 +962,12 @@ FROM public.places_common tc
 	LEFT OUTER JOIN places_common tc2 ON (tc2.id = h2.id)
 ORDER BY ParentPlace, Place""" % (tenant, tenant)
 
-    objects.execute(gethierarchy)
+    objects = setupcursor(config, gethierarchy)
     #return objects.fetchall()
     return [list(item) for item in objects.fetchall()]
 
 
 def getCSID(argType, arg, config):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
 
     if argType == 'objectnumber':
         query = """SELECT h.name from collectionobjects_common cc
@@ -1002,29 +982,24 @@ WHERE computedcrate ILIKE '%%''%s''%%'""" % arg.replace("'", "''")
 JOIN hierarchy h on h.id=pc.id
 WHERE pc.refname ILIKE '%""" + arg.replace("'", "''") + "%%'"
 
-    objects.execute(query)
+    objects = setupcursor(config, query)
     return objects.fetchone()
 
 
 def getCSIDs(argType, arg, config):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
 
     if argType == 'crateName':
         query = """SELECT h.name FROM collectionobjects_anthropology ca
 JOIN hierarchy h on h.id=ca.id
 WHERE computedcrate ILIKE '%%''%s''%%'""" % arg.replace("'", "''")
 
-    objects.execute(query)
+    objects = setupcursor(config, query)
     # return objects.fetchall()
     return [list(item) for item in objects.fetchall()]
 
 
 def findparents(refname, config):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
+
     query = """WITH RECURSIVE ethnculture_hierarchyquery as (
 SELECT regexp_replace(cc.refname, '^.*\\)''(.*)''$', '\\1') AS ethnCulture,
       cc.refname,
@@ -1055,7 +1030,7 @@ FROM ethnculture_hierarchyquery
 order by level""" % refname.replace("'", "''")
 
     try:
-        objects.execute(query)
+        objects = setupcursor(config, query)
         # return objects.fetchall()
         return [list(item) for item in objects.fetchall()]
     except:
@@ -1063,9 +1038,6 @@ order by level""" % refname.replace("'", "''")
         return [["findparents error"]]
 
 def getCSIDDetail(config, csid, detail):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
     
     if detail == 'fieldcollectionplace':
         query = """SELECT substring(pfc.item, position(')''' IN pfc.item)+2, LENGTH(pfc.item)-position(')''' IN pfc.item)-2)
@@ -1100,16 +1072,13 @@ WHERE h1.name = '%s'""" % csid
     else:
         return ''
     try:
-        objects.execute(query)
+        objects = setupcursor(config, query)
         return objects.fetchone()[0]
     except:
         return ''
 
 
 def getSitesByOwner(config, owner):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
 
     query = """SELECT DISTINCT REGEXP_REPLACE(fcp.item, '^.*\)''(.*)''$', '\\1') AS "site",
     REGEXP_REPLACE(pog.anthropologyplaceowner, '^.*\)''(.*)''$', '\\1') AS "site owner",
@@ -1122,27 +1091,22 @@ JOIN hierarchy h1 ON (h1.parentid = pc.id AND h1.name = 'places_anthropology:ant
 JOIN anthropologyplaceownergroup pog ON (pog.id = h1.id)
 WHERE pog.anthropologyplaceowner LIKE '%%""" + owner.replace("'", "''") + """%%'
 ORDER BY REGEXP_REPLACE(fcp.item, '^.*\)''(.*)''$', '\\1')"""
-    objects.execute(query)
+    objects = setupcursor(config,query)
     # return objects.fetchall()
     return [list(item) for item in objects.fetchall()]
 
 
 def getDisplayName(config, refname):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
+
 
     query = """SELECT REGEXP_REPLACE(pog.anthropologyplaceowner, '^.*\)''(.*)''$', '\\1')
 FROM anthropologyplaceownergroup pog
 WHERE pog.anthropologyplaceowner LIKE '""" + refname + "%'"
-    
-    objects.execute(query)
+
+    objects = setupcursor(config,query)
     return objects.fetchone()
 
 def getObjDetailsByOwner(config, owner):
-    dbconn = psycopg2.connect(config.get('connect', 'connect_string'))
-    objects = dbconn.cursor()
-    objects.execute(timeoutcommand)
 
     query = """SELECT DISTINCT cc.objectnumber AS "Museum No.",
     cp.sortableobjectnumber AS "sort number",
@@ -1174,60 +1138,6 @@ GROUP BY cc.objectnumber, cp.sortableobjectnumber, cc.numberofobjects, ong.objec
 ORDER BY REGEXP_REPLACE(fcp.item, '^.*\)''(.*)''$', '\\1'), pog.anthropologyplaceownershipnote, cp.sortableobjectnumber
 """
 
-    objects.execute(query)
+    objects = setupcursor(config,query)
     # return objects.fetchall()
     return [list(item) for item in objects.fetchall()]
-
-
-if __name__ == "__main__":
-
-    from cswaUtils import getConfig
-
-    form = {'webapp': 'ucbgLocationReportV321'}
-    config = getConfig(form)
-    allplants = getplants('Pteridophyta', '', 1, config, 'getalltaxa', 'alive')
-    print 'array:',len(allplants)
-    sys.exit()
-
-    form = {'webapp': 'barcodeprintDev'}
-
-    config = getConfig(form)
-    print getobjinfo('1-504', config)
-
-    print '\nkeyinfo\n'
-    # Kroeber, 20A, X  1,  1
-    # Kroeber, 20AMez, 128 A
-    for i, loc in enumerate(getlocations('Kroeber, 20A, X  1,  3', '', 1, config, 'keyinfo','pahma')):
-        print 'location', i + 1, loc[0:12]
-
-    sys.exit()
-
-
-    config = getConfig('sysinvProd.cfg')
-    print '\nrefnames\n'
-    print getrefname('concepts_common', 'zzz', config)
-    print getrefname('concepts_common', '', config)
-    print getrefname('concepts_common', 'Yurok', config)
-    print findrefnames('places_common', ['zzz', 'Sudan, Northern Africa, Africa'], config)
-    print '\ncurrentlocation\n'
-    print findcurrentlocation('c65b2ffa-6e5f-4a6d-afa4-e0b57fc16106', config)
-
-    print '\nset of locations\n'
-    for loc in getloclist('set', 'Kroeber, 20A, W B', '', 10, config):
-        print loc
-
-    print '\nlocations by prefix\n'
-    for loc in getloclist('prefix', 'Kroeber, 20A, W B', '', 1000, config):
-        print loc
-
-    print '\nlocations by range\n'
-    for loc in getloclist('range', 'Kroeber, 20A, W B2, 1', 'Kroeber, 20A, W B5, 11', 1000, config):
-        print loc
-
-    print '\nobjects\n'
-    for i, loc in enumerate(getlocations('Regatta, A150, South Nexel Unit 6, C', '', 1, config, 'inventory','pahma')):
-        print 'location', i + 1, loc[0:6]
-
-    print '\nkeyinfo\n'
-    for i, loc in enumerate(getlocations('Kroeber, 20AMez, 128 A', '', 1, config, 'keyinfo','pahma')):
-        print 'location', i + 1, loc[0:12]

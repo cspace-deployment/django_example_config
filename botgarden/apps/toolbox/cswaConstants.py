@@ -742,7 +742,7 @@ def getHeader(updateType, institution):
     </tr>"""
     elif updateType == 'bedlist':
         return """
-    <table class="tablesorter" id="sortTable%s"><thead>
+    <table class="tablesorter-blue" id="sortTable%s"><thead>
     <tr>
       <th data-sort="float">Accession</th>
       <th data-sort="string">Family</th>
@@ -752,7 +752,7 @@ def getHeader(updateType, institution):
     </tr></thead><tbody>"""
     elif updateType == 'bedlistxxx' or updateType == 'advsearchxxx':
         return """
-    <table class="tablesorter" id="sortTable%s"><thead>
+    <table class="tablesorter-blue" id="sortTable%s"><thead>
     <tr>
       <th data-sort="float">Accession Number</th>
       <th data-sort="string">Family</th>
@@ -760,7 +760,7 @@ def getHeader(updateType, institution):
     </tr></thead><tbody>"""
     elif updateType == 'bedlistnone':
         return """
-    <table class="tablesorter" id="sortTable"><thead><tr>
+    <table class="tablesorter-blue" id="sortTable"><thead><tr>
       <th data-sort="float">Accession</th>
       <th data-sort="string">Family</th>
       <th data-sort="string">Taxonomic Name</th>
@@ -770,7 +770,7 @@ def getHeader(updateType, institution):
     </tr></thead><tbody>"""
     elif updateType in ['locreport', 'holdings', 'advsearch']:
         return """
-    <table class="tablesorter" id="sortTable"><thead><tr>
+    <table class="tablesorter-blue" id="sortTable"><thead><tr>
       <th data-sort="float">Accession</th>
       <th data-sort="string">Taxonomic Name</th>
       <th data-sort="string">Family</th>
