@@ -30,6 +30,9 @@
             </tr>
             <tr>
                 <td><input type="submit" name="submit" value="Check input" style="margin: 10px;"></td>
+                <td colspan="2">
+
+                </td>
             </tr>
         </table>
         {% for field in form.hidden_fields %}
@@ -52,8 +55,6 @@
                 <b>"{{ group }}"</b>
                 (Uncheck members below to delete members from group)
                 {% include "results.html" %}
-            {% else %}
-                no items found.
             {% endif %}
         </div>
     </form>

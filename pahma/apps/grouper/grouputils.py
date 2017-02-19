@@ -101,7 +101,7 @@ def find_group(request, grouptitle):
 
     TIMESTAMP = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
 
-    asquery = '%s?as=%s_common%%3Atitle%%3D%%27%s%%27&wf_deleted=false' % ('groups', 'groups', grouptitle,)
+    asquery = '%s?as=%s_common%%3Atitle%%3D%%27%s%%27&wf_deleted=false&pgSz=500' % ('groups', 'groups', grouptitle)
 
     #expectedmimetype = 'application/xml'
 
@@ -116,7 +116,7 @@ def find_group(request, grouptitle):
         return(None, None, 'Error: We could not find the group \'%s.\' Please try another.' % grouptitle)
     groupcsid = groupcsid.text
 
-    uri = 'collectionobjects?rtObj=%s' % groupcsid
+    uri = 'collectionobjects?rtObj=%s&pgSz=500' % groupcsid
     # Make authenticated connection to ucjeps.cspace...
     try:
         (groupurl, groupmembers, x) = getfromCSpace(uri, request)
@@ -127,3 +127,48 @@ def find_group(request, grouptitle):
         objectcsids = []
 
     return (grouptitle, groupcsid, objectcsids)
+
+
+def delete_from_group(groupcsid, list_of_objects, request):
+    connection = cspace.connection.create_connection(config, request.user)
+
+    relationcsids = find_group_relations(request, groupcsid)
+    delrelations = []
+    for r in relationcsids:
+        keep = False
+        for a in r:
+            if a in list_of_objects and groupcsid in r: keep = True
+        if keep:
+            delrelations.append(r[0])
+
+    messages = []
+
+    for object in delrelations:
+        messages.append("deleting relation %s..." % object)
+        uri = 'cspace-services/relations/%s' % object
+        (url, data, csid, elapsedtime) = connection.postxml(uri=uri, payload='', requesttype="DELETE")
+
+    return messages
+
+
+def find_group_relations(request, groupcsid):
+
+    TIMESTAMP = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
+
+    kwquery = 'relations?kw=%s&pgSz=1000' % groupcsid.replace('-',' ')
+
+    # Make authenticated connection to ucjeps.cspace...
+    (groupurl, searchresult, x) = getfromCSpace(kwquery, request)
+    if searchresult is None:
+        return(None, None, 'Error: We could not find the groupcsid \'%s.\' Please try another.' % groupcsid)
+    relationlist = fromstring(searchresult)
+
+    relations = relationlist.findall('.//relation-list-item')
+    if relations is None:
+        return(None, None, 'Error: We could not find any relations for groupcsid \'%s.\' Please try another.' % groupcsid)
+
+    relationcsids = []
+    for r in relations:
+        relationcsids.append([e.text for e in r.findall('.//csid')])
+
+    return relationcsids

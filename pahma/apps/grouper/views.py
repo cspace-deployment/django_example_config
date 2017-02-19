@@ -4,6 +4,7 @@ import os
 import re
 import time
 import logging
+import urllib
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, render_to_response
@@ -11,7 +12,7 @@ from django.shortcuts import render, render_to_response
 from common.utils import doSearch, setConstants, loginfo
 from common.appconfig import loadConfiguration, loadFields, getParms
 from common import cspace # we use the config file reading function
-from grouputils import find_group, create_group, add2group
+from grouputils import find_group, create_group, add2group, delete_from_group
 from cspace_django_site import settings
 from os import path
 from .models import AdditionalInfo
@@ -23,15 +24,16 @@ common = 'common'
 prmz = loadConfiguration(common)
 print 'Configuration for %s successfully read' % common
 
-searchConfig = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'grouper')
-prmz.FIELDDEFINITIONS = searchConfig.get('grouper', 'FIELDDEFINITIONS')
+groupConfig = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'grouper')
+prmz.FIELDDEFINITIONS = groupConfig.get('grouper', 'FIELDDEFINITIONS')
 
 # add in the the field definitions...
 prmz = loadFields(prmz.FIELDDEFINITIONS, prmz)
 
 # override a couple parameters for this app
-prmz.MAXRESULTS = int(searchConfig.get('grouper', 'MAXRESULTS'))
-prmz.TITLE = searchConfig.get('grouper', 'TITLE')
+prmz.MAXRESULTS = int(groupConfig.get('grouper', 'MAXRESULTS'))
+prmz.TITLE = groupConfig.get('grouper', 'TITLE')
+prmz.NUMBERFIELD = groupConfig.get('grouper', 'NUMBERFIELD')
 
 print 'Configuration for %s successfully read' % 'grouper'
 
@@ -60,7 +62,7 @@ def index(request):
         if 'gr.group' in request.POST:
             context['group'] = request.POST['gr.group']
             #context['searchValues']['grouptitle'] =request.POST['gr.group']
-            grouptitle, groupcsid, list_of_objects = find_group(request, request.POST['gr.group'])
+            grouptitle, groupcsid, list_of_objects = find_group(request, urllib.quote_plus(request.POST['gr.group']))
             if groupcsid is not None:
                 queryterms.append('csid_s:(' + " OR ".join(list_of_objects) + ')')
                 context['groupaction'] = 'Update Group'
@@ -74,8 +76,7 @@ def index(request):
                 context['objects'] = objectnumbers
                 objectnumbers = objectnumbers.split(' ')
                 if len(objectnumbers) > 0:
-                    objectnumberfield = "accessionnumber_s"
-                    queryterms.append('%s: (' %objectnumberfield + " OR ".join(objectnumbers) + ')')
+                    queryterms.append('%s: (' % prmz.NUMBERFIELD + " OR ".join(objectnumbers) + ')')
         context['searchValues']['querystring'] = ' OR '.join(queryterms)
         context['searchValues']['url'] = ''
         if 'submit' in request.POST:
@@ -85,7 +86,7 @@ def index(request):
             context = doSearch(context, prmz, request)
 
         elif 'updategroup' in request.POST:
-            grouptitle, groupcsid, list_of_objects = find_group(request, request.POST['gr.group'])
+            grouptitle, groupcsid, list_of_objects = find_group(request, urllib.quote_plus(request.POST['gr.group']))
             if groupcsid is None:
                 groupcsid = create_group(request.POST['gr.group'], request)
             items2add = []
@@ -104,7 +105,11 @@ def index(request):
                 else:
                     items2delete.append(item)
             add2group(groupcsid, items2add, request)
-            grouptitle, groupcsid, list_of_objects = find_group(request, request.POST['gr.group'])
+            delete_from_group(groupcsid, items2delete, request)
+            # it's complicated: we can't search in Solr for the group, as we may have just created or updated it.
+            # so we have to do a REST calls to find the group and its CSIDs, then we can search Solr
+            # though we might still miss some... :-(
+            grouptitle, groupcsid, list_of_objects = find_group(request, urllib.quote_plus(request.POST['gr.group']))
             context['searchValues']['querystring'] = '%s: (' % 'csid_s' + " OR ".join(list_of_objects) + ')'
             loginfo(logger, 'start grouper search', context, request)
             context = doSearch(context, prmz, request)
