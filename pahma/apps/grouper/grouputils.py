@@ -44,7 +44,7 @@ def add2group(groupcsid, list_of_objects, request):
     messages = []
 
     for object in list_of_objects:
-        messages.append("posting group2obj to relations REST API...")
+        # messages.append("posting group2obj to relations REST API...")
 
         # "urn:cspace:institution.cspace.berkeley.edu:group:id(%s)" % groupCSID
         groupElements = {}
@@ -56,12 +56,12 @@ def add2group(groupcsid, list_of_objects, request):
         payload = relationsPayload(groupElements)
         (url, data, csid, elapsedtime) = connection.postxml(uri=uri, payload=payload, requesttype="POST")
         # elapsedtimetotal += elapsedtime
-        messages.append('got relation csid %s elapsedtime %s ' % (csid, elapsedtime))
+        # messages.append('got relation csid %s elapsedtime %s ' % (csid, elapsedtime))
         groupElements['group2objCSID'] = csid
-        messages.append("relations REST API post succeeded...")
+        # messages.append("relations REST API post succeeded...")
 
         # reverse the roles
-        messages.append("posting obj2group to relations REST API...")
+        # messages.append("posting obj2group to relations REST API...")
         temp = groupElements['objectCsid']
         groupElements['objectCsid'] = groupElements['subjectCsid']
         groupElements['subjectCsid'] = temp
@@ -70,10 +70,11 @@ def add2group(groupcsid, list_of_objects, request):
         payload = relationsPayload(groupElements)
         (url, data, csid, elapsedtime) = connection.postxml(uri=uri, payload=payload, requesttype="POST")
         # elapsedtimetotal += elapsedtime
-        messages.append('got relation csid %s elapsedtime %s ' % (csid, elapsedtime))
+        # messages.append('got relation csid %s elapsedtime %s ' % (csid, elapsedtime))
         groupElements['obj2groupCSID'] = csid
-        messages.append("relations REST API post succeeded...")
+        # messages.append("relations REST API post succeeded...")
 
+    messages.append('%s item(s) added to group' % len(list_of_objects))
     return messages
 
 
@@ -106,7 +107,7 @@ def find_group(request, grouptitle):
     #expectedmimetype = 'application/xml'
 
     # Make authenticated connection to ucjeps.cspace...
-    (groupurl, grouprecord, x) = getfromCSpace(asquery, request)
+    (groupurl, grouprecord, dummy) = getfromCSpace(asquery, request)
     if grouprecord is None:
         return(None, None, 'Error: We could not find the group \'%s.\' Please try another.' % grouptitle)
     grouprecordtree = fromstring(grouprecord)
@@ -119,12 +120,11 @@ def find_group(request, grouptitle):
     uri = 'collectionobjects?rtObj=%s&pgSz=500' % groupcsid
     # Make authenticated connection to ucjeps.cspace...
     try:
-        (groupurl, groupmembers, x) = getfromCSpace(uri, request)
+        (groupurl, groupmembers, dummy) = getfromCSpace(uri, request)
         groupmembers = fromstring(groupmembers)
         objectcsids = [e.text for e in groupmembers.findall('.//csid')]
     except urllib2.HTTPError, e:
-        print 'Error2.'
-        objectcsids = []
+        return (None, None, 'Could not make list of group members')
 
     return (grouptitle, groupcsid, objectcsids)
 
@@ -144,10 +144,11 @@ def delete_from_group(groupcsid, list_of_objects, request):
     messages = []
 
     for object in delrelations:
-        messages.append("deleting relation %s..." % object)
+        # messages.append("deleting relation %s..." % object)
         uri = 'cspace-services/relations/%s' % object
         (url, data, csid, elapsedtime) = connection.postxml(uri=uri, payload='', requesttype="DELETE")
 
+    messages.append('%s item(s) deleted from group' % len(delrelations))
     return messages
 
 

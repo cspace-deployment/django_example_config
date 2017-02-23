@@ -84,6 +84,10 @@ def index(request):
             # do search
             loginfo(logger, 'start grouper search', context, request)
             context = doSearch(context, prmz, request)
+            itemsfound = [item['accession'] for item in context['items']]
+            messages = ['"%s" not found and so not included.' % accession for accession in objectnumbers if accession not in itemsfound ]
+            if len(messages) > 0:
+                context['messages'] = messages
 
         elif 'updategroup' in request.POST:
             grouptitle, groupcsid, list_of_objects = find_group(request, urllib.quote_plus(request.POST['gr.group']))
@@ -104,8 +108,9 @@ def index(request):
                     pass
                 else:
                     items2delete.append(item)
-            add2group(groupcsid, items2add, request)
-            delete_from_group(groupcsid, items2delete, request)
+            messages = []
+            messages += add2group(groupcsid, items2add, request)
+            messages += delete_from_group(groupcsid, items2delete, request)
             # it's complicated: we can't search in Solr for the group, as we may have just created or updated it.
             # so we have to do a REST calls to find the group and its CSIDs, then we can search Solr
             # though we might still miss some... :-(
@@ -113,6 +118,7 @@ def index(request):
             context['searchValues']['querystring'] = '%s: (' % 'csid_s' + " OR ".join(list_of_objects) + ')'
             loginfo(logger, 'start grouper search', context, request)
             context = doSearch(context, prmz, request)
+            context['messages'] = messages
         return render(request, 'grouper.html', context)
 
     else:

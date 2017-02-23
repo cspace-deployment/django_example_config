@@ -40,9 +40,11 @@
         {% endfor %}
 
         <div>
-            {% if errormsg %}
+            {% if messages %}
                 <hr/>
-                <span style="color: red">{{ errormsg }}</span>
+                {% for m in messages %}
+                    <span style="color: red">{{ m }}</span><br/>
+                {% endfor %}
             {% endif %}
             {% if count > 0 %}
                 <hr/>
