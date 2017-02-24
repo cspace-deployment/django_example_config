@@ -59,35 +59,43 @@ def index(request):
         context['searchValues'] = {'map-bmapper': '', 'querystring': ''}
         context['maxresults'] = prmz.MAXRESULTS
         context['displayType'] = 'list'
+        messages = []
         if 'gr.group' in request.POST:
-            context['group'] = request.POST['gr.group']
-            #context['searchValues']['grouptitle'] =request.POST['gr.group']
-            grouptitle, groupcsid, list_of_objects = find_group(request, urllib.quote_plus(request.POST['gr.group']))
-            if groupcsid is not None:
-                queryterms.append('csid_s:(' + " OR ".join(list_of_objects) + ')')
-                context['groupaction'] = 'Update Group'
+            if request.POST['gr.group'] == '':
+                messages = ['A value for group title (either an existing group or a potential new one) is required.']
             else:
-                context['groupaction'] = 'Create Group'
-        if 'objects' in request.POST:
-            objectnumbers = request.POST['objects'].strip()
-            if objectnumbers == '':
-                pass
-            else:
-                context['objects'] = objectnumbers
-                objectnumbers = objectnumbers.split(' ')
-                if len(objectnumbers) > 0:
-                    queryterms.append('%s: (' % prmz.NUMBERFIELD + " OR ".join(objectnumbers) + ')')
-        context['searchValues']['querystring'] = ' OR '.join(queryterms)
-        context['searchValues']['url'] = ''
+                context['group'] = request.POST['gr.group']
+                #context['searchValues']['grouptitle'] =request.POST['gr.group']
+                grouptitle, groupcsid, list_of_objects = find_group(request, urllib.quote_plus(request.POST['gr.group']))
+                if groupcsid is not None:
+                    queryterms.append('csid_s:(' + " OR ".join(list_of_objects) + ')')
+                    context['groupaction'] = 'Update Group'
+                else:
+                        context['groupaction'] = 'Create Group'
+            if 'objects' in request.POST:
+                objectnumbers = request.POST['objects'].strip()
+                objectnumbers = re.sub(r"[\r\n ]+", ' ', objectnumbers)
+                if objectnumbers == '':
+                    pass
+                else:
+                    context['objects'] = objectnumbers
+                    objectnumbers = objectnumbers.split(' ')
+                    if len(objectnumbers) > 0:
+                        queryterms.append('%s: (' % prmz.NUMBERFIELD + " OR ".join(objectnumbers) + ')')
+            context['searchValues']['querystring'] = ' OR '.join(queryterms)
+            context['searchValues']['url'] = ''
+
         if 'submit' in request.POST:
 
             # do search
             loginfo(logger, 'start grouper search', context, request)
             context = doSearch(context, prmz, request)
-            itemsfound = [item['accession'] for item in context['items']]
-            messages = ['"%s" not found and so not included.' % accession for accession in objectnumbers if accession not in itemsfound ]
-            if len(messages) > 0:
-                context['messages'] = messages
+            if 'items' in context:
+                items_found = [item['accession'] for item in context['items']]
+                messages += ['"%s" not found and so not included.' % accession for accession in objectnumbers if accession not in items_found ]
+                messages += ['"%s" already in member list and so not duplicated.' % accession for accession in objectnumbers if accession in items_found]
+            else:
+                messages += ['problem with Solr query: %s' % context['searchValues']['querystring'] ]
 
         elif 'updategroup' in request.POST:
             grouptitle, groupcsid, list_of_objects = find_group(request, urllib.quote_plus(request.POST['gr.group']))
@@ -108,7 +116,6 @@ def index(request):
                     pass
                 else:
                     items2delete.append(item)
-            messages = []
             messages += add2group(groupcsid, items2add, request)
             messages += delete_from_group(groupcsid, items2delete, request)
             # it's complicated: we can't search in Solr for the group, as we may have just created or updated it.
@@ -118,6 +125,8 @@ def index(request):
             context['searchValues']['querystring'] = '%s: (' % 'csid_s' + " OR ".join(list_of_objects) + ')'
             loginfo(logger, 'start grouper search', context, request)
             context = doSearch(context, prmz, request)
+
+        if len(messages) > 0:
             context['messages'] = messages
         return render(request, 'grouper.html', context)
 
