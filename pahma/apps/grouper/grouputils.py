@@ -1,12 +1,10 @@
-import re
-import sys
 import time
-from django.shortcuts import render, render_to_response, redirect
-import urllib
+import logging
 import urllib2
 from cspace_django_site.main import cspace_django_site
 from common import cspace
 from toolbox.cswaUtils import relationsPayload
+from common.utils import doSearch, loginfo
 
 
 # alas, there are many ways the XML parsing functionality might be installed.
@@ -38,9 +36,18 @@ except ImportError:
 # global variables (at least to this module...)
 config = cspace_django_site.getConfig()
 
+# Get an instance of a logger, log some startup info
+logger = logging.getLogger(__name__)
+logger.info('%s :: %s :: %s' % ('grouper startup', '-', '%s | %s' % ('', '')))
+
+
 def add2group(groupcsid, list_of_objects, request):
     connection = cspace.connection.create_connection(config, request.user)
     uri = 'cspace-services/relations'
+
+    if len(list_of_objects) == 0:
+        return ['no objects added to the group.']
+
     messages = []
 
     for object in list_of_objects:
@@ -100,13 +107,11 @@ def getfromCSpace(uri, request):
 
 def find_group(request, grouptitle):
 
-    TIMESTAMP = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
+    # TIMESTAMP = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
 
     asquery = '%s?as=%s_common%%3Atitle%%3D%%27%s%%27&wf_deleted=false&pgSz=500' % ('groups', 'groups', grouptitle)
 
-    #expectedmimetype = 'application/xml'
-
-    # Make authenticated connection to ucjeps.cspace...
+    # Make authenticated connection to cspace server...
     (groupurl, grouprecord, dummy) = getfromCSpace(asquery, request)
     if grouprecord is None:
         return(None, None, 'Error: We could not find the group \'%s.\' Please try another.' % grouptitle)
@@ -132,6 +137,9 @@ def find_group(request, grouptitle):
 def delete_from_group(groupcsid, list_of_objects, request):
     connection = cspace.connection.create_connection(config, request.user)
 
+    if len(list_of_objects) == 0:
+        return ['no objects deleted from the group.']
+
     relationcsids = find_group_relations(request, groupcsid)
     delrelations = []
     for r in relationcsids:
@@ -148,7 +156,7 @@ def delete_from_group(groupcsid, list_of_objects, request):
         uri = 'cspace-services/relations/%s' % object
         (url, data, csid, elapsedtime) = connection.postxml(uri=uri, payload='', requesttype="DELETE")
 
-    messages.append('%s item(s) deleted from group' % len(delrelations))
+    messages.append('%s item(s) deleted from group' % len(list_of_objects))
     return messages
 
 
@@ -173,3 +181,10 @@ def find_group_relations(request, groupcsid):
         relationcsids.append([e.text for e in r.findall('.//csid')])
 
     return relationcsids
+
+def setup_solr_search(queryterms, context, prmz, request):
+    context['searchValues']['querystring'] = ' OR '.join(queryterms)
+    context['searchValues']['url'] = ''
+    context['searchValues']['maxresults'] = prmz.MAXRESULTS
+    loginfo(logger, 'start grouper search', context, request)
+    return doSearch(context, prmz, request)
