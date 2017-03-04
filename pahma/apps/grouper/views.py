@@ -57,19 +57,27 @@ def index(request):
         messages = []
         groupcsid = None
         if 'gr.group' in request.POST:
-            if request.POST['gr.group'] == '':
+            group = request.POST['gr.group']
+            if group == '':
                 messages = ['A value for group title (either an existing group or a potential new one) is required.']
             else:
-                context['group'] = request.POST['gr.group']
-                #context['searchValues']['grouptitle'] =request.POST['gr.group']
-                grouptitle, groupcsid, list_of_objects = find_group(request, urllib.quote_plus(request.POST['gr.group']))
-                if len(list_of_objects) > prmz.MAXRESULTS:
-                    messages += ['This group has %s members and so is too big for Grouper. Maximum number of members is %s' % (len(list_of_objects), prmz.MAXRESULTS)]
-                elif groupcsid is not None:
-                    queryterms.append('csid_s:(' + " OR ".join(list_of_objects) + ')')
+                context['group'] = group
+                grouptitle, groupcsid, totalItems, list_of_objects, errormsg = find_group(request, urllib.quote_plus(group), prmz.MAXRESULTS)
+
+                if groupcsid is not None:
+                    if len(list_of_objects) > 0:
+                        queryterms.append('csid_s:(' + " OR ".join(list_of_objects) + ')')
                     context['groupaction'] = 'Update Group'
                 else:
                     context['groupaction'] = 'Create Group'
+
+                if totalItems > prmz.MAXRESULTS:
+                    messages += ['This group has %s members and so is too big for Grouper. Maximum number of members Grouper can handle is %s' % (totalItems, prmz.MAXRESULTS)]
+                    del context['groupaction']
+                if errormsg is not None:
+                    messages.append(errormsg)
+                    del context['groupaction']
+
         if 'objects' in request.POST:
             objectnumbers = request.POST['objects'].strip()
             objectnumbers = re.sub(r"[\r\n ]+", ' ', objectnumbers)
@@ -83,8 +91,11 @@ def index(request):
 
         if 'submit' in request.POST:
             context = setup_solr_search(queryterms, context, prmz, request)
-            if context['count'] > prmz.MAXRESULTS:
-                messages += ['This group is too big for Grouper. maximum number of members is %s' % prmz.MAXRESULTS]
+            if 'count' in context and context['count'] > prmz.MAXRESULTS:
+                messages += ['This group is too big for Grouper. Maximum number of members is %s' % prmz.MAXRESULTS]
+                del context['groupaction']
+                del context['items']
+                del context['labels']
             elif 'items' in context:
                 object_numbers_found = [item['accession'] for item in context['items']]
                 obj2csid = [[item['csid'], item['accession']] for item in context['items'] if item['accession'] in objectnumbers]
@@ -98,18 +109,20 @@ def index(request):
                 messages += ['problem with Solr query: %s' % context['searchValues']['querystring'] ]
 
         elif 'updategroup' in request.POST:
-            grouptitle, groupcsid, list_of_objects = find_group(request, urllib.quote_plus(request.POST['gr.group']))
-
+            group = request.POST['gr.group']
             # it's complicated: we can't search in Solr for the group, as we may have just created or updated it.
-            # so we have to do a REST calls to find the group and its CSIDs, then we can search Solr
+            # so we have to do REST calls to find the group and its CSIDs, then we can search Solr
             # though we might still miss some... :-(
-            queryterms = ['%s: (' % 'csid_s' + " OR ".join(list_of_objects) + ')']
-            context = setup_solr_search(queryterms, context, prmz, request)
-            if prmz.MAXRESULTS < len(context['items']):
-                messages += ['Only %s items of %s are displayed below.' % (prmz.MAXRESULTS, context['items'])]
-
+            grouptitle, groupcsid, totalItems, list_of_objects, errormsg = find_group(request, urllib.quote_plus(group), prmz.MAXRESULTS)
             if groupcsid is None:
-                groupcsid = create_group(request.POST['gr.group'], request)
+                groupcsid = create_group(group, request)
+                context['items'] = []
+            else:
+                if len(list_of_objects) > 0:
+                    queryterms = ['%s: (' % 'csid_s' + " OR ".join(list_of_objects) + ')']
+                context = setup_solr_search(queryterms, context, prmz, request)
+                if prmz.MAXRESULTS < len(context['items']):
+                    messages += ['Only %s items of %s are displayed below.' % (prmz.MAXRESULTS, context['items'])]
             items2add = []
             items2delete = []
             items_ignored = []
@@ -130,9 +143,8 @@ def index(request):
 
             messages += add2group(groupcsid, items2add, request)
             messages += delete_from_group(groupcsid, items2delete, request)
-            grouptitle, groupcsid, list_of_objects = find_group(request, urllib.quote_plus(request.POST['gr.group']))
+            grouptitle, groupcsid, totalItems, list_of_objects, errormsg = find_group(request, urllib.quote_plus(group), prmz.MAXRESULTS)
             if len(items_ignored) > 0 : messages += ['%s items in group untouched.' % len(items_ignored)]
-
             queryterms = [ '%s: (' % 'csid_s' + " OR ".join(list_of_objects) + ')' ]
             context = setup_solr_search(queryterms, context, prmz, request)
 

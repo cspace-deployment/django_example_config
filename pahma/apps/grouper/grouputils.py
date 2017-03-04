@@ -105,33 +105,35 @@ def getfromCSpace(uri, request):
     return connection.make_get_request(url)
 
 
-def find_group(request, grouptitle):
+def find_group(request, grouptitle, pgSz):
 
     # TIMESTAMP = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
 
-    asquery = '%s?as=%s_common%%3Atitle%%3D%%27%s%%27&wf_deleted=false&pgSz=500' % ('groups', 'groups', grouptitle)
+    asquery = '%s?as=%s_common%%3Atitle%%3D%%27%s%%27&wf_deleted=false&pgSz=%s' % ('groups', 'groups', grouptitle, pgSz)
 
     # Make authenticated connection to cspace server...
     (groupurl, grouprecord, dummy) = getfromCSpace(asquery, request)
     if grouprecord is None:
-        return(None, None, 'Error: We could not find the group \'%s.\' Please try another.' % grouptitle)
+        return(None, None, 0, [], 'Error: the search for group \'%s.\' failed.' % grouptitle)
     grouprecordtree = fromstring(grouprecord)
-
     groupcsid = grouprecordtree.find('.//csid')
     if groupcsid is None:
-        return(None, None, 'Error: We could not find the group \'%s.\' Please try another.' % grouptitle)
+        return(None, None, 0, [], None)
     groupcsid = groupcsid.text
 
-    uri = 'collectionobjects?rtObj=%s&pgSz=500' % groupcsid
+    uri = 'collectionobjects?rtObj=%s&pgSz=%s' % (groupcsid, pgSz)
+    totalItems = 0
     # Make authenticated connection to ucjeps.cspace...
     try:
         (groupurl, groupmembers, dummy) = getfromCSpace(uri, request)
         groupmembers = fromstring(groupmembers)
+        totalItems = groupmembers.find('.//totalItems')
+        totalItems = int(totalItems.text)
         objectcsids = [e.text for e in groupmembers.findall('.//csid')]
     except urllib2.HTTPError, e:
-        return (None, None, 'Could not make list of group members')
+        return (None, None, 0, [], 'Error: we could not make list of group members')
 
-    return (grouptitle, groupcsid, objectcsids)
+    return (grouptitle, groupcsid, totalItems, objectcsids, None)
 
 
 def delete_from_group(groupcsid, list_of_objects, request):
@@ -167,7 +169,7 @@ def find_group_relations(request, groupcsid):
     kwquery = 'relations?kw=%s&pgSz=1000' % groupcsid.replace('-',' ')
 
     # Make authenticated connection to ucjeps.cspace...
-    (groupurl, searchresult, x) = getfromCSpace(kwquery, request)
+    (groupurl, searchresult, dummy) = getfromCSpace(kwquery, request)
     if searchresult is None:
         return(None, None, 'Error: We could not find the groupcsid \'%s.\' Please try another.' % groupcsid)
     relationlist = fromstring(searchresult)
