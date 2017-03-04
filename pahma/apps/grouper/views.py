@@ -36,6 +36,12 @@ prmz.NUMBERFIELD = groupConfig.get('grouper', 'NUMBERFIELD')
 
 print 'Configuration for %s successfully read' % 'grouper'
 
+def remove_items(context):
+    for item in 'groupaction items labels count'.split(' '):
+        try:
+            del context[item]
+        except:
+            pass
 
 @login_required()
 def index(request):
@@ -45,68 +51,69 @@ def index(request):
 
     if request.method == 'POST':
         prmz.MAXFACETS = 0
-
-        queryterms = []
-        # we piggyback on the "bmapper search handling" here: we don't want
-        # doSearch to construct the query string for us 'cause it won't
-        # do it right: we make our own below that merges the group results (if any)
-        # with the list of object numbers (if any)
         context['searchValues'] = {'map-bmapper': '', 'querystring': ''}
         context['maxresults'] = prmz.MAXRESULTS
         context['displayType'] = 'list'
+
+        context['objects'] = request.POST['objects']
+        context['group'] = request.POST['gr.group']
+
         messages = []
         groupcsid = None
-        if 'gr.group' in request.POST:
-            group = request.POST['gr.group']
-            if group == '':
-                messages = ['A value for group title (either an existing group or a potential new one) is required.']
-            else:
-                context['group'] = group
-                grouptitle, groupcsid, totalItems, list_of_objects, errormsg = find_group(request, urllib.quote_plus(group), prmz.MAXRESULTS)
-
-                if groupcsid is not None:
-                    if len(list_of_objects) > 0:
-                        queryterms.append('csid_s:(' + " OR ".join(list_of_objects) + ')')
-                    context['groupaction'] = 'Update Group'
-                else:
-                    context['groupaction'] = 'Create Group'
-
-                if totalItems > prmz.MAXRESULTS:
-                    messages += ['This group has %s members and so is too big for Grouper. Maximum number of members Grouper can handle is %s' % (totalItems, prmz.MAXRESULTS)]
-                    del context['groupaction']
-                if errormsg is not None:
-                    messages.append(errormsg)
-                    del context['groupaction']
-
-        if 'objects' in request.POST:
-            objectnumbers = request.POST['objects'].strip()
-            objectnumbers = re.sub(r"[\r\n ]+", ' ', objectnumbers)
-            if objectnumbers == '':
-                pass
-            else:
-                context['objects'] = objectnumbers
-                objectnumbers = objectnumbers.split(' ')
-                if len(objectnumbers) > 0:
-                    queryterms.append('%s: (' % prmz.NUMBERFIELD + " OR ".join(objectnumbers) + ')')
+        queryterms = []
 
         if 'submit' in request.POST:
-            context = setup_solr_search(queryterms, context, prmz, request)
-            if 'count' in context and context['count'] > prmz.MAXRESULTS:
-                messages += ['This group is too big for Grouper. Maximum number of members is %s' % prmz.MAXRESULTS]
-                del context['groupaction']
-                del context['items']
-                del context['labels']
-            elif 'items' in context:
-                object_numbers_found = [item['accession'] for item in context['items']]
-                obj2csid = [[item['csid'], item['accession']] for item in context['items'] if item['accession'] in objectnumbers]
-                # if we are dealing with a group that already exists, we need to avoid inserting duplicates
-                messages += ['"%s" not found and so not included.' % accession for accession in objectnumbers if accession not in object_numbers_found ]
-                if groupcsid is not None:
-                    messages += ['"%s" already in member list and so not duplicated.' % item[1] for item in obj2csid if item[0] in list_of_objects]
-                if prmz.MAXRESULTS < context['count']:
-                    messages += ['Only %s items of %s are displayed below and can be managed.' % (prmz.MAXRESULTS, context['count'])]
-            else:
-                messages += ['problem with Solr query: %s' % context['searchValues']['querystring'] ]
+            # we piggyback on the "bmapper search handling" here: we don't want
+            # doSearch to construct the query string for us 'cause it won't
+            # do it right: we make our own below that merges the group results (if any)
+            # with the list of object numbers (if any)
+            if 'gr.group' in request.POST:
+                group = request.POST['gr.group']
+                if group == '':
+                    messages = ['A value for group title (either an existing group or a potential new one) is required.']
+                else:
+                    grouptitle, groupcsid, totalItems, list_of_objects, errormsg = find_group(request, urllib.quote_plus(group), prmz.MAXRESULTS)
+
+                    if groupcsid is not None:
+                        if len(list_of_objects) > 0:
+                            queryterms.append('csid_s:(' + " OR ".join(list_of_objects) + ')')
+                        context['groupaction'] = 'Update Group'
+                    else:
+                        context['groupaction'] = 'Create Group'
+
+                    if totalItems > prmz.MAXRESULTS:
+                        messages += ['This group has %s members and so is too big for Grouper. Maximum number of members Grouper can handle is %s' % (totalItems, prmz.MAXRESULTS)]
+                        remove_items(context)
+                    if errormsg is not None:
+                        messages.append(errormsg)
+                        remove_items(context)
+
+            if 'objects' in request.POST:
+                objectnumbers = request.POST['objects'].strip()
+                objectnumbers = re.sub(r"[\r\n ]+", ' ', objectnumbers)
+                if objectnumbers == '':
+                    pass
+                else:
+                    objectnumbers = objectnumbers.split(' ')
+                    if len(objectnumbers) > 0:
+                        queryterms.append('%s: (' % prmz.NUMBERFIELD + " OR ".join(objectnumbers) + ')')
+
+            if 'groupaction' in context:
+                context = setup_solr_search(queryterms, context, prmz, request)
+                if 'count' in context and context['count'] > prmz.MAXRESULTS:
+                    messages += ['This group is too big for Grouper. Maximum number of members is %s' % prmz.MAXRESULTS]
+                    remove_items(context)
+                elif 'items' in context:
+                    object_numbers_found = [item['accession'] for item in context['items']]
+                    obj2csid = [[item['csid'], item['accession']] for item in context['items'] if item['accession'] in objectnumbers]
+                    # if we are dealing with a group that already exists, we need to avoid inserting duplicates
+                    messages += ['"%s" not found and so not included.' % accession for accession in objectnumbers if accession not in object_numbers_found ]
+                    if groupcsid is not None:
+                        messages += ['"%s" already in member list and so not duplicated.' % item[1] for item in obj2csid if item[0] in list_of_objects]
+                    if prmz.MAXRESULTS < context['count']:
+                        messages += ['Only %s items of %s are displayed below and can be managed.' % (prmz.MAXRESULTS, context['count'])]
+                else:
+                    messages += ['problem with Solr query: %s' % context['searchValues']['querystring'] ]
 
         elif 'updategroup' in request.POST:
             group = request.POST['gr.group']
