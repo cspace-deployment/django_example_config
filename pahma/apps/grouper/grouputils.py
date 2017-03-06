@@ -166,21 +166,20 @@ def find_group_relations(request, groupcsid):
 
     TIMESTAMP = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
 
-    kwquery = 'relations?kw=%s&pgSz=1000' % groupcsid.replace('-',' ')
-
-    # Make authenticated connection to ucjeps.cspace...
-    (groupurl, searchresult, dummy) = getfromCSpace(kwquery, request)
-    if searchresult is None:
-        return(None, None, 'Error: We could not find the groupcsid \'%s.\' Please try another.' % groupcsid)
-    relationlist = fromstring(searchresult)
-
-    relations = relationlist.findall('.//relation-list-item')
-    if relations is None:
-        return(None, None, 'Error: We could not find any relations for groupcsid \'%s.\' Please try another.' % groupcsid)
-
     relationcsids = []
-    for r in relations:
-        relationcsids.append([e.text for e in r.findall('.//csid')])
+    for qtype in 'obj sbj'.split(' '):
+        relationsquery = 'relations?%s=%s&pgSz=1000' % (qtype, groupcsid)
+
+        # Make authenticated connection to ucjeps.cspace...
+        (groupurl, searchresult, dummy) = getfromCSpace(relationsquery, request)
+        if searchresult is None:
+            return(None, None, 'Error: We could not find the groupcsid \'%s.\' Please try another.' % groupcsid)
+        relationlist = fromstring(searchresult)
+
+        relations = relationlist.findall('.//relation-list-item')
+        if relations is not None:
+            for r in relations:
+                relationcsids.append([e.text for e in r.findall('.//csid')])
 
     return relationcsids
 
