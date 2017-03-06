@@ -56,4 +56,4 @@ field	40	keyword	Keyword	text			keyword	1,1								x
 field	41	status	Status	status_s			dropdown	3,3								x
 #	for now, we need a dummy location value in this file.															x
 field	42	latlong	LatLong	latlong_p			location									x
-field	43	hasimage	Has image(s)?	blob_ss			present	4,3								x
+field	43	hasimage	Show only items with images	blob_ss			present	4,3								x
