@@ -1,7 +1,7 @@
 #	parameter specification spreadsheet for a django portal app															x
 #																x
-date	11/15/16															x
-revision	1.17															x
+date	3/6/17															x
+revision	1.18															x
 title	Collections															x
 #																x
 server	http://localhost:8983/solr															x
@@ -16,7 +16,7 @@ field	3	musno	Museum Number	objmusno_s			objectno,accession,string	2,1		1	1				2
 field	4	sortnum	Sortable Museum Number	objsortnum_s			string,sortkey								1	x
 field	5	name	Object Name	objname_s		na	keyword,mainentry	5,1	2	2	2				10	x
 field	6	altnum	Alternate Number	objaltnum_ss			keyword	3,1				1			11	x
-field	7	type	Object Type	objtype_s			dropdown	6,2	1			2			4	x
+field	7	type	Object Type	objtype_s			dropdown	7,2	1			2			4	x
 field	8	count	Object Count	objcount_s			string					3			5	x
 field	9	countnote	Count Note	objcountnote_s			keyword					4			7	x
 field	10	dept	Department	objdept_s			keyword					5			3	x
@@ -24,17 +24,17 @@ field	11	keelingser	Keeling Series Number	objkeelingser_s			keyword					6			8	x
 field	12	fcp	Collection Place	objfcp_s	objfcptree_s	pl	keyword	1,2	6	3		7	1		28	x
 field	13	fcptree	Collection Place (tree)	objfcptree_s			keyword									x
 field	14	fcpverbatim	Collection Place (vebatim)	objfcpverbatim_s		pl	keyword					8			9	x
-field	15	filecode	Ethnographic File Code	objfilecode_ss		fc	dropdown	7,2	3		4	10			12	x
+field	15	filecode	Ethnographic File Code	objfilecode_ss		fc	dropdown	8,2	3		4	10			12	x
 field	16	assoccult	Culture or Time period	objassoccult_ss	objculturetree_ss	cu	keyword	2,2	5	4	3	11	2		27	x
 field	17	culturetree	Culture (tree)	objculturetree_ss		cu	keyword									x
 field	18	inventory	Inventory	objinventory_s			keyword									x
-field	19	collector	Collector	objcollector_ss		pe	keyword	5,2	8		5	12			23	x
+field	19	collector	Collector	objcollector_ss		pe	keyword	6,2	8		5	12			23	x
 field	20	descr	Description	objdescr_s			keyword	6,1				13			14	x
 field	21	contextuse	Context of Use	objcontextuse_s			keyword					14			15	x
 field	22	dimensions	Dimensions	objdimensions_ss			keyword					15	3		16	x
 field	23	materialtree	Materials (tree)	objmaterialtree_ss			keyword									x
-field	24	materials	Materials	objmaterials_ss	objmaterialtree_ss		keyword	3,2	4			16	4		17	x
-field	25	inscrtext	Inscription	objinscrtext_ss			keyword	4,2				17			18	x
+field	24	materials	Materials	objmaterials_ss	objmaterialtree_ss		keyword	4,2	4			16	4		17	x
+field	25	inscrtext	Inscription	objinscrtext_ss			keyword	5,2				17			18	x
 field	26	comment	Comment	objcomment_s			keyword					18			19	x
 field	27	title	Title	objtitle_s			keyword					19			20	x
 field	28	colldate	Collection Date	objcolldate_s			keyword	2,3	7			20			21	x
@@ -58,3 +58,4 @@ field	45	hascoords	Has coordinates?	hascoords_s			dropdown	7,3								x
 field	46	donor	Donor	donor_ss			keyword									x
 field	47	anondonor	Donor	anonymousdonor_ss			keyword	7,1			6	25				x
 field	48	prodplace	Production Place	objpp_ss			keyword					9				x
+field	49	maker	Maker / Artist	objmaker_ss			keyword	3,2				27			32	x
