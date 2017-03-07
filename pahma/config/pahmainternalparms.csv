@@ -33,7 +33,7 @@ field	20	descr	Description	objdescr_s			keyword	6,1				13			14	x
 field	21	contextuse	Context of Use	objcontextuse_s			keyword					14			15	x
 field	22	dimensions	Dimensions	objdimensions_ss			keyword					15	3		16	x
 field	23	materialtree	Materials (tree)	objmaterialtree_ss			keyword									x
-field	24	materials	Materials	objmaterials_ss	objmaterialtree_ss		keyword	4,2	4			16	4		17	x
+field	24	materials	Materials	objmaterials_ss			keyword	4,2	4			16	4		17	x
 field	25	inscrtext	Inscription	objinscrtext_ss			keyword	5,2				17			18	x
 field	26	comment	Comment	objcomment_s			keyword					18			19	x
 field	27	title	Title	objtitle_s			keyword					19			20	x
