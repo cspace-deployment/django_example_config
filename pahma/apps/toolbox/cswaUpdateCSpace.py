@@ -55,7 +55,7 @@ def updateCspace(fieldset, updateItems, form, config, when2post):
         url2, content, elapsedtime = connection.make_get_request(url)
         message, payload = updateXML(fieldset, updateItems, content)
         (url3, data, csid, elapsedtime) = postxml('PUT', uri, payload, form)
-        sys.stderr.write("updated object with csid %s to REST API..." % csid)
+        sys.stderr.write("updated object with csid %s to REST API..." % updateItems['objectCsid'])
         writeLog(updateItems, uri, 'POST', '', config)
         return ''
     elif when2post == 'queue':
@@ -136,7 +136,7 @@ def updateXML(fieldset, updateItems, xml):
         # sys.stderr.write('tag2: %s\n' % (relationType + extra + listSuffix))
         metadata = root.findall('.//' + relationType + extra + listSuffix)
         if 'objectNumber' in updateItems and updateItems['objectNumber'] == '':
-            updateItems['objectNumber'] = root.find('.//objectNumber')
+            updateItems['objectNumber'] = root.find('.//objectNumber').text
         try:
             metadata = metadata[0]  # there had better be only one!
         except:
