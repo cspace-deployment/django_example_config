@@ -15,6 +15,7 @@ import cswaSMBclient
 from django.http import HttpResponse
 
 MAXLOCATIONS = 1000
+GLOBALWHEN2POST = 'now'
 WHEN2POST = 'now'
 
 try:
@@ -48,6 +49,18 @@ from cspace_django_site.main import cspace_django_site
 
 MAINCONFIG = cspace_django_site.getConfig()
 
+def basicSetup(config):
+    parms = []
+    for parm in 'institution updatetype updateactionlabel'.split(' '):
+        try:
+            parms.append(config.get('info',parm))
+        except:
+            parms.append('')
+    try:
+        WHEN2POST = config.get('info','when2post')
+    except:
+        WHEN2POST = GLOBALWHEN2POST
+    return parms
 
 def getConfig(request):
     try:
@@ -161,16 +174,12 @@ def doLocationSearch(form, config, displaytype):
 
 def doObjectSearch(form, config, displaytype):
     html = ''
-
+    institution, updateType, updateactionlabel = basicSetup(config)
     valid, error = validateParameters(form, config)
     if not valid: return html + error
 
     if form.get('ob.objno1') == '':
         return '<h3 class="error">Please enter at least a starting object number!</h3>'
-
-    updateType = config.get('info', 'updatetype')
-    institution = config.get('info','institution')
-    updateactionlabel = config.get('info', 'updateactionlabel')
 
     if updateType == 'moveobject':
         crate = verifyLocation(form.get("lo.crate"), form, config)
@@ -253,8 +262,7 @@ def doOjectRangeSearch(form, config, displaytype=''):
 
 def listSearchResults(authority, config, displaytype, form, rows):
     html = ''
-    updateType = config.get('info', 'updatetype')
-    institution = config.get('info','institution')
+    institution, updateType, updateactionlabel = basicSetup(config)
     hasDups = False
 
     if not rows: rows = []
@@ -338,11 +346,9 @@ def listSearchResults(authority, config, displaytype, form, rows):
 
 def doGroupSearch(form, config, displaytype):
     html = ''
-
+    institution, updateType, updateactionlabel = basicSetup(config)
     valid, error = validateParameters(form, config)
     if not valid: return html + error
-
-    updateType = config.get('info', 'updatetype')
 
     if form.get('gr.group') == '':
         return '<h3 class="error">Please enter group identifier!</h3>'
@@ -351,8 +357,6 @@ def doGroupSearch(form, config, displaytype):
         updateType = 'packinglist'
     else:
         updateType = 'objinfo'
-    institution = config.get('info','institution')
-    updateactionlabel = config.get('info', 'updateactionlabel')
 
     try:
         #sys.stderr.write('group: %s\n' % form.get("gr.group"))
@@ -385,11 +389,7 @@ def doGroupSearch(form, config, displaytype):
 
 def doEnumerateObjects(form, config):
     html = ''
-
-    updateactionlabel = config.get('info', 'updateactionlabel')
-    updateType = config.get('info', 'updatetype')
-    institution = config.get('info','institution')
-
+    institution, updateType, updateactionlabel = basicSetup(config)
     valid, error = validateParameters(form, config)
     if not valid: return html + error
 
@@ -472,11 +472,7 @@ def verifyLocation(loc, form, config):
 
 def doCheckMove(form, config):
     html = ''
-
-    updateactionlabel = config.get('info', 'updateactionlabel')
-    updateType = config.get('info', 'updatetype')
-    institution = config.get('info','institution')
-
+    institution, updateType, updateactionlabel = basicSetup(config)
     valid, error = validateParameters(form, config)
     if not valid: return html + error
 
@@ -610,11 +606,7 @@ def doCheckGroupMove(form, config):
 
 def doCheckPowerMove(form, config):
     html = ''
-
-    updateactionlabel = config.get('info', 'updateactionlabel')
-    updateType = config.get('info', 'updatetype')
-    institution = config.get('info','institution')
-
+    institution, updateType, updateactionlabel = basicSetup(config)
     valid, error = validateParameters(form, config)
     if not valid: return html + error
 
@@ -928,15 +920,9 @@ def doUpdateKeyinfo(form, config):
 
 def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
     html = ''
-
-    updateType = config.get('info', 'updatetype')
-    institution = config.get('info','institution')
+    institution, updateType, updateactionlabel = basicSetup(config)
 
     html += cswaConstants.getHeader('keyinfoResult',institution)
-
-    #for r in refNames2find:
-    #    html += '<tr><td>%s<td>%s<td>%s</tr>' % ('refname',refNames2find[r],r)
-    #html += CSIDs
 
     numUpdated = 0
     for row, csid in enumerate(CSIDs):
@@ -1073,9 +1059,7 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
 
 def doUpdateLocations(form, config):
     html = ''
-
-    institution = config.get('info','institution')
-    updateType = config.get('info', 'updatetype')
+    institution, updateType, updateactionlabel = basicSetup(config)
     #notlocated = config.get('info','notlocated')
     if institution == 'bampfa':
         notlocated = "urn:cspace:bampfa.cspace.berkeley.edu:locationauthorities:name(location):item:name(x781)'Not Located'"
@@ -1151,16 +1135,12 @@ def doUpdateLocations(form, config):
 
 def doPackingList(form, config):
     html = ''
-
-    updateactionlabel = config.get('info', 'updateactionlabel')
-    updateType = config.get('info', 'updatetype')
-    institution = config.get('info','institution')
+    institution, updateType, updateactionlabel = basicSetup(config)
+    valid, error = validateParameters(form, config)
+    if not valid: return html + error
 
     if form.get('groupbyculture') is not None:
         updateType = 'packinglistbyculture'
-
-    valid, error = validateParameters(form, config)
-    if not valid: return html + error
 
     place = form.get("cp.place")
     if place != None and place != '':
@@ -1250,10 +1230,7 @@ def doPackingList(form, config):
 
 def doAuthorityScan(form, config):
     html = ''
-
-    updateType = config.get('info', 'updatetype')
-    institution = config.get('info','institution')
-
+    institution, updateType, updateactionlabel = basicSetup(config)
     valid, error = validateParameters(form, config)
     if not valid: return html + error
 
@@ -1317,9 +1294,7 @@ def doAuthorityScan(form, config):
 
 def downloadCsv(form, config):
     html = ''
-
-    updateType = config.get('info', 'updateType')
-    institution = config.get('info','institution')
+    institution, updateType, updateactionlabel = basicSetup(config)
 
     try:
         # create the HttpResponse object with the appropriate CSV header.
@@ -1374,10 +1349,7 @@ def downloadCsv(form, config):
 
 def doBarCodes(form, config):
     html = ''
-
-    #updateactionlabel = config.get('info', 'updateactionlabel')
-    updateType = config.get('info', 'updatetype')
-    institution = config.get('info','institution')
+    institution, updateType, updateactionlabel = basicSetup(config)
 
     action = form.get('action')
 
@@ -1467,10 +1439,7 @@ def doBarCodes(form, config):
 
 def doAdvancedSearch(form, config):
     html = ''
-
-    updateactionlabel = config.get('info', 'updateactionlabel')
-    updateType = config.get('info', 'updatetype')
-    institution = config.get('info','institution')
+    institution, updateType, updateactionlabel = basicSetup(config)
     groupby = form.get('groupby')
 
     valid, error = validateParameters(form, config)
@@ -1511,14 +1480,11 @@ def doAdvancedSearch(form, config):
 
 def doBedList(form, config):
     html = ''
-
-    updateactionlabel = config.get('info', 'updateactionlabel')
-    updateType = config.get('info', 'updatetype')
-    institution = config.get('info','institution')
-    groupby = form.get('groupby')
-
+    institution, updateType, updateactionlabel = basicSetup(config)
     valid, error = validateParameters(form, config)
     if not valid: return html + error
+
+    groupby = form.get('groupby')
 
     dead,rare,qualifier = setFilters(form)
 
@@ -1604,7 +1570,7 @@ def doHierarchyView(form, config):
     lookup = {concept.PARENT: concept.PARENT}
     link = ''
     hostname = config.get('connect', 'hostname')
-    institution = config.get('info','institution')
+    institution, updateType, updateactionlabel = basicSetup(config)
     port = ''
     protocol = 'https'
     if query == 'taxonomy':
