@@ -40,13 +40,15 @@ except ImportError:
                 print("Failed to import ElementTree from any known place")
 
 
-def add2queue(requestType, uri, fieldset, updateItems, userdata):
+def add2queue(requestType, uri, fieldset, updateItems, form):
+    userdata = form['userdata']
     element = json.dumps((requestType, uri, userdata.username, userdata.cspace_password, fieldset, updateItems))
     DIRQ.add(element)
 
 
 def updateCspace(fieldset, updateItems, form, config, when2post):
     uri = 'collectionobjects' + '/' + updateItems['objectCsid']
+    writeLog(updateItems, uri, 'POST', form, config)
 
     if when2post == 'now':
         # get the XML for this object
@@ -56,10 +58,9 @@ def updateCspace(fieldset, updateItems, form, config, when2post):
         message, payload = updateXML(fieldset, updateItems, content)
         (url3, data, csid, elapsedtime) = postxml('PUT', uri, payload, form)
         sys.stderr.write("updated object with csid %s to REST API..." % updateItems['objectCsid'])
-        writeLog(updateItems, uri, 'POST', '', config)
         return ''
     elif when2post == 'queue':
-        add2queue("PUT", uri, fieldset, updateItems, form['userdata'])
+        add2queue("PUT", uri, fieldset, updateItems, form)
         return ''
     else:
         raise
@@ -67,15 +68,15 @@ def updateCspace(fieldset, updateItems, form, config, when2post):
 
 def createObject(objectinfo, config, form, when2post):
     uri = 'collectionobjects'
+    writeLog(objectinfo, uri, 'POST', form, config)
 
     if when2post == 'now':
         payload = createObjectXML(objectinfo)
         (url, data, csid, elapsedtime) = postxml('POST', uri, payload, form)
         sys.stderr.write("created new object with csid %s to REST API..." % csid)
-        writeLog(objectinfo, uri, 'POST', '', config)
         return 'created new object', csid
     elif when2post == 'queue':
-        add2queue("POST", uri, 'createobject', objectinfo, form['userdata'])
+        add2queue("POST", uri, 'createobject', objectinfo, form)
         return 'queued new object', ''
     else:
         raise
@@ -83,13 +84,13 @@ def createObject(objectinfo, config, form, when2post):
 
 def updateLocations(updateItems, config, form, when2post):
     uri = 'movements'
+    writeLog(updateItems, uri, 'POST', form, config)
 
     if when2post == 'now':
         makeMH2R(updateItems, config, form)
-        writeLog(updateItems, uri, 'POST', '', config)
         return 'moved', ''
     elif when2post == 'queue':
-        add2queue("POST", uri, 'movements', updateItems, form['userdata'])
+        add2queue("POST", uri, 'movements', updateItems, form)
         return 'queued move', ''
     else:
         raise
@@ -359,7 +360,7 @@ def makeMH2R(updateItems, config, form):
     payload = relationsPayload(updateItems)
     (url, data, ignorecsid, elapsedtime) = postxml('POST', uri, payload, form)
 
-    writeLog(updateItems, uri, 'POST', '', config)
+    writeLog(updateItems, uri, 'POST', form, config)
 
     # html += "<h3>Done w update!</h3>"
 
@@ -373,9 +374,14 @@ def postxml(requestType, uri, payload, form):
         # return "%s REST API post failed..." % uri
 
 
-def writeLog(updateItems, uri, httpAction, username, config):
+def writeLog(updateItems, uri, httpAction, form, config):
     auditFile = config.get('files', 'auditfile')
     updateType = config.get('info', 'updatetype')
+    try:
+        username = form['userdata']
+        username = username.username
+    except:
+        username = ''
     try:
         csvlogfh = csv.writer(codecs.open(auditFile, 'a', 'utf-8'), delimiter="\t")
         logrec = [httpAction, datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"), updateType, uri, username]
@@ -389,7 +395,6 @@ def writeLog(updateItems, uri, httpAction, username, config):
 
 
 def writeInfo2log(request, form, config, elapsedtime):
-    location1 = str(form.get("lo.location1"))
     action = str(form.get("action"))
     serverlabel = config.get('info', 'serverlabel')
     apptitle = config.get('info', 'apptitle')
@@ -399,7 +404,6 @@ def writeInfo2log(request, form, config, elapsedtime):
     # override updateType if we are just checking the server
     if checkServer == 'check server':
         updateType = checkServer
-    # sys.stderr.write('%-13s:: %-18s:: %-6s::%8.2f :: %-15s :: %s :: %s\n' % (updateType, action, request, elapsedtime, serverlabel))
     updateItems = {'app': apptitle, 'server': serverlabel, 'institution': institution,
                    'elapsedtime': '%8.2f' % elapsedtime, 'action': action}
-    writeLog(updateItems, '', request, '', config)
+    writeLog(updateItems, '', request, form, config)

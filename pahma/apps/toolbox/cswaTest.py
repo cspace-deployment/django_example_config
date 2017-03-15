@@ -17,7 +17,7 @@ if True:
     form = {'webapp': 'pahma_Keyinfo_Dev', 'action': 'Update Object Information',
             'fieldset': 'placeanddate',
             'csusername': 'import@pahma.cspace.berkeley.edu',
-            'cspassword': 'lash428!puck',
+            'cspassword': 'xxxxxx',
             #'fieldset': 'registration',
             'onm.70d40782-6d11-4346-bb9b-2f85f1e00e91': 'Cradle',
             'oox.70d40782-6d11-4346-bb9b-2f85f1e00e91': '1-1',
@@ -38,7 +38,7 @@ if False:
     form = {'webapp': 'pahma_Keyinfo_Dev', 'action': 'Update Object Information',
             'fieldset': 'namedesc',
             'csusername': 'import@pahma.cspace.berkeley.edu',
-            'cspassword': 'lash428!puck',
+            'cspassword': 'xxxxxx',
             #'fieldset': 'registration',
             'onm.70d40782-6d11-4346-bb9b-2f85f1e00e91': 'Cradle',
             'oox.70d40782-6d11-4346-bb9b-2f85f1e00e91': '1-1',
@@ -86,7 +86,7 @@ if False:
     realm = config.get('connect', 'realm')
     hostname = config.get('connect', 'hostname')
     username = 'import@bampfa.cspace.berkeley.edu'
-    password = 'bjeScwj2'
+    password = 'xxxxxx'
     institution = config.get('info', 'institution')
 
     #print relationsPayload(f)
