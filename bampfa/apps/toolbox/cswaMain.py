@@ -40,8 +40,6 @@ def main(request, updateType):
         html = selectWebapp(form, request)
         return html, None
 
-    #updateType  = config.get('info','updatetype')
-
     # if action has not been set, this is the first time through, and we need to set defaults. (only 2 right now!)
     if action == 'Login':
         form['dora'] = 'alive'

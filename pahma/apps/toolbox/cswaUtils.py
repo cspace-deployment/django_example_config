@@ -1052,7 +1052,7 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
         # html += 'place %s' % updateItems['pahmaFieldCollectionPlace']
 
     html += "\n</table>"
-    html += '<h4>%s of %s objects had information updated</h4>' % (numUpdated, row + 1)
+    html += '<h4 style="margin-top: 20px;">%s of %s objects had information updated</h4>' % (numUpdated, row + 1)
 
     return html
 
@@ -1128,7 +1128,7 @@ def doUpdateLocations(form, config):
             makeObjectLink(config, objectCsid, updateItems['objectNumber']), updateItems['objectStatus'], updateItems['inventoryNote'], msg)\
 
     html += "\n</table>"
-    html += '<h4>%s of %s objects had movements recorded</h4>' % (numUpdated, row + 1)
+    html += '<h4 style="margin-top: 20px">%s of %s objects had movements recorded</h4>' % (numUpdated, row + 1)
 
     return html
 

@@ -9,7 +9,7 @@ def makeObjectLink(config, csid, objectnumber):
     port = ''
     protocol = 'https'
     link = protocol + '://' + hostname + port + '/collectionspace/ui/' + institution + '/html/cataloging.html?csid=%s' % csid
-    return """<tr><td class="objno"><a target="cspace" href="%s">%s</a></td>""" % (link, objectnumber)
+    return """<a target="cspace" href="%s">%s</a>""" % (link, objectnumber)
 
 
 def handleTimeout(source, form):
@@ -641,7 +641,7 @@ def starthtml(form, config):
 
     staticurl = settings.STATIC_URL
     return cswaConstants.getStyle(schemacolor1) + '''
-    <div style="width:80px; ";" id="appstatus"><img height="60px" src="''' + staticurl + '''cspace_django_site/images/timer-animated.gif"></div>
+    <div style="width:150px;" id="appstatus"><img height="60px" src="''' + staticurl + '''cspace_django_site/images/timer-animated.gif" alt="Working..."><div style="float: right;margin-top: 20px; color: gray;" class="objno">Working...</div></div>
     <table width="100%">
         <tr>
         <th>
@@ -656,12 +656,14 @@ def starthtml(form, config):
 
 
 def endhtml(form, config, elapsedtime):
-    count = form.get('count')
-    connect_string = config.get('connect', 'connect_string')
-    focusSnippet = ""
     addenda = """
-d = document.getElementById('appstatus');
-d.innerHTML = '&nbsp;';
+    $('[name="action"]').click(function () {
+        $('#appstatus').css({ display: "block" });
+        // $('[name="action"]').css({ "background-color": "lightgray" });
+        // $('[name="action"]').prop('disabled', true);
+    });
+    $('#appstatus').css({ display: "none" });
+    $('[name="action"]').prop('disabled', false);
 });"""
 
     # for object details, clear out the input field on focus, for everything else, just focus
@@ -669,42 +671,6 @@ d.innerHTML = '&nbsp;';
         focusSnippet = '''$('input:text:first').focus().val("");'''
     else:
         focusSnippet = '''$('input:text:first').focus();'''
-    if config.get('info', 'updatetype') == 'collectionstats':
-        addenda = '''$(".dashboardcell").click(function() {
-		var paneid = $(this).attr('id') + 'pane';
-		$('#' + paneid).show();
-		$('#overlay').show();
-	});
-	$(".close").click(function() {
-		var closeid = $(this).attr('id').replace("close","pane");
-		$('#' + closeid).hide();
-		$('#overlay').hide();
-	});
-	$(".selimg").click(function() {
-		var showid = $(this).attr('id').replace("sel","");
-		if(showid.indexOf("close") != -1) {
-                    var closeid = showid.replace("close","pane");
-                    $('#' + closeid).hide();
-                    $('#overlay').hide();
-		} else if(showid.indexOf("chart") != -1) {
-			$('#' + showid.replace("chart", "table")).hide();
-			$('#' + showid.replace("chart", "time")).hide();
-			if (document.getElementById(showid).style.display == 'none'){
-				$('#' + showid).show(0)
-			} //else {
-				//$('#' + showid).hide();
-			//}
-		} else if(showid.indexOf("table") != -1) {
-			$('#' + showid.replace("table", "chart")).hide();
-			$('#' + showid.replace("table", "time")).hide();
-			$('#' + showid).show(0)
-		} else if(showid.indexOf("time") != -1) {
-			$('#' + showid.replace("time", "chart")).hide();
-			$('#' + showid.replace("time", "table")).hide();
-			$('#' + showid).show(0)
-		}
-	});
-});'''
 
     return '''
 </tbody></table>
