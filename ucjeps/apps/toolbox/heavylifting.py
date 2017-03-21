@@ -5,6 +5,11 @@ import dbqueries
 from toolbox import activity2db
 
 
+def select_cells(applayout, row):
+    newrow = []
+    return [row[i] for i in [3,4,5,6,7,8]]
+
+
 def extractTerms(context, dict, requestedField):
     field = None
     position = None
@@ -50,32 +55,40 @@ def doDemoQuery(query, fields):
     return data
 
 
-def doQuery(request):
+def doQuery(request, context):
     appname = request['appname']
 
     #if not dbqueries.validateParameters(form, config): return
 
-    try:
-        locationList = dbqueries.getloclist('range', request["lo.location.start"], request["lo.location.end"], 500)
-    except:
-        raise
-
-    totalobjects = 0
-    totallocations = 0
     objectdata = []
-    for location in locationList:
-
+    if appname in 'keyinfo packinglist inventory movecrate moveobject'.split(' '):
         try:
-            objects = dbqueries.getlocations(location[0], '', 1, appname)
+            locationList = dbqueries.getloclist('range', request["lo.location.start"], request["lo.location.end"], 500)
         except:
             raise
 
-        # objectdata.append(['subheader', location[0]])
-        totallocations += 1
-        for r in objects:
+        totalobjects = 0
+        totallocations = 0
+        for location in locationList:
 
-            totalobjects += 1
-            objectdata.append({'cells': r})
+            try:
+                objects = dbqueries.getlocations(location[0], '', 1, appname)
+            except:
+                raise
+
+            # objectdata.append(['subheader', location[0]])
+            totallocations += 1
+            for r in objects:
+                totalobjects += 1
+                r = select_cells(context['applayout'], r)
+                objectdata.append({'cells': r})
+
+    elif appname in 'objdetails objinfo'.split(' '):
+        pass
+
+    elif appname in 'grpinfo grpmove'.split(' '):
+        pass
+
 
     return objectdata
 
@@ -164,7 +177,7 @@ def doEnumerate(context, request):
 
 
 def doReview(context, request):
-    data = doQuery(request)
+    data = doQuery(request, context)
 
     context['items'] = data
     context['numberofitems'] = len(data)

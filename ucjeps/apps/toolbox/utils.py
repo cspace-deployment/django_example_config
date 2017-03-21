@@ -92,8 +92,7 @@ def handleJSONrequest(context, request):
         state = request['state']
         appname = request['appname']
         x = appLayout
-        context = {'applayout': appLayout[appname][state]}
-        context['appname'] = request['appname']
+        context = {'applayout': appLayout[appname][state],'appname': request['appname']}
         context = dispatch(request, context, state)
         # context['nextstate'] = appLayout[app][state]['nextstate']
     except:
