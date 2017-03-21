@@ -70,12 +70,12 @@ def doQuery(request):
         except:
             raise
 
-        objectdata.append(['subheader', location[0]])
+        # objectdata.append(['subheader', location[0]])
         totallocations += 1
         for r in objects:
 
             totalobjects += 1
-            objectdata.append(r)
+            objectdata.append({'cells': r})
 
     return objectdata
 

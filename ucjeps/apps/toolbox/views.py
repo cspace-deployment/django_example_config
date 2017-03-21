@@ -5,6 +5,7 @@ import operator
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, HttpResponse, redirect
 from django import forms
+from bson import json_util
 import json
 
 from utils import loginfo, handleJSONrequest, setconstants, APPS
@@ -57,6 +58,9 @@ def jsonrequest(request):
         context = handleJSONrequest(context, requestObject)
 
         loginfo(context['appname'], context, request)
-        return HttpResponse(json.dumps(context))
+        #if check_json(context):
+        return HttpResponse(json.dumps(context, default=json_util.default))
+        #else:
+        #    return HttpResponse(json.dumps(dump_errors(context))
     else:
         return HttpResponse(json.dumps({'error': 'form is not valid'}))
