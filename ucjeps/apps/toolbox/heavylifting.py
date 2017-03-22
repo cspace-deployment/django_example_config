@@ -60,7 +60,7 @@ def doQuery(request, context):
 
     #if not dbqueries.validateParameters(form, config): return
 
-    objectdata = []
+    table = []
     if appname in 'keyinfo packinglist inventory movecrate moveobject'.split(' '):
         try:
             locationList = dbqueries.getloclist('range', request["lo.location.start"], request["lo.location.end"], 500)
@@ -76,12 +76,15 @@ def doQuery(request, context):
             except:
                 raise
 
-            # objectdata.append(['subheader', location[0]])
+            chunk = {'subheader': location[0]}
             totallocations += 1
+            items = []
             for r in objects:
                 totalobjects += 1
                 r = select_cells(context['applayout'], r)
-                objectdata.append({'cells': r})
+                items.append({'csid': 'xxx', 'cells': r})
+            chunk['items'] = items
+            table.append(chunk)
 
     elif appname in 'objdetails objinfo'.split(' '):
         pass
@@ -89,8 +92,7 @@ def doQuery(request, context):
     elif appname in 'grpinfo grpmove'.split(' '):
         pass
 
-
-    return objectdata
+    return table
 
 
 def doSearch(context, request):
@@ -179,7 +181,7 @@ def doEnumerate(context, request):
 def doReview(context, request):
     data = doQuery(request, context)
 
-    context['items'] = data
+    context['table'] = data
     context['numberofitems'] = len(data)
 
     return context

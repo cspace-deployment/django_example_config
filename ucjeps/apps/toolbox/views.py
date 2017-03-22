@@ -59,6 +59,7 @@ def jsonrequest(request):
 
         loginfo(context['appname'], context, request)
         #if check_json(context):
+        # context['items'] = []
         return HttpResponse(json.dumps(context, default=json_util.default))
         #else:
         #    return HttpResponse(json.dumps(dump_errors(context))
