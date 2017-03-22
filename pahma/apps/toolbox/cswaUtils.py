@@ -1900,7 +1900,7 @@ def formatInfoReviewRow(form, link, rr, link2):
 <td class="zcell">
 <input type="hidden" name="oox.%s" value="%s">
 <input type="hidden" name="csid.%s" value="%s">
-<textarea cols="78" rows="1" name="bdx.%s">%s</textarea></td>
+<textarea cols="78" rows="5" name="bdx.%s">%s</textarea></td>
 </tr>""" % (link, cgi.escape(rr[3], True), rr[8], cgi.escape(rr[4], True), rr[8], cgi.escape(rr[3], True), rr[8], rr[8],
             rr[8], cgi.escape(rr[15], True))
     elif fieldSet == 'registration':
