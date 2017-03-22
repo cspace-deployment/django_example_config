@@ -94,8 +94,8 @@ def index(request):
                 if objectnumbers == '':
                     pass
                 else:
-                    objectnumbers_escaped = objectnumbers.replace(')','\)').replace('(','\(')
-                    objectnumbers_escaped = objectnumbers_escaped.split(' ')
+                    objectnumbers_escaped = objectnumbers.replace(')','\)').replace('(','\(').replace('+','\+')
+                    objectnumbers_escaped = objectnumbers_escaped.split(' ').replace('+','\+')
                     objectnumbers = objectnumbers.split(' ')
                     if len(objectnumbers) > 0:
                         queryterms.append('%s: (' % prmz.NUMBERFIELD + " OR ".join(objectnumbers_escaped) + ')')
