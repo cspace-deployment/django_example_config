@@ -251,7 +251,10 @@ def IsAlreadyPreferred(txt, elements):
     if elements == []: return False
     if type(elements) == type([]):
         a = txt.replace('\r','').replace('\n','')
-        b = elements[0].text.replace('\r','').replace('\n','')
+        try:
+            b = elements[0].text.replace('\r','').replace('\n','')
+        except:
+            b = ''
         if a == b:
             # html += "    found,skipping: ",txt
             return True
@@ -268,7 +271,10 @@ def alreadyExists(txt, elements):
     if type(elements) == type([]):
         for e in elements:
             a = txt.replace('\r','').replace('\n','')
-            b = e.text.replace('\r','').replace('\n','')
+            try:
+                b = e.text.replace('\r','').replace('\n','')
+            except:
+                b = ''
             if a == b:
                 # html += "    found,skipping: ",txt
                 return True

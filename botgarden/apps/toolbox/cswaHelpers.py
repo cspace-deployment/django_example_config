@@ -250,7 +250,12 @@ def viewLog(form, config):
 def IsAlreadyPreferred(txt, elements):
     if elements == []: return False
     if type(elements) == type([]):
-        if txt == str(elements[0].text):
+        a = txt.replace('\r','').replace('\n','')
+        try:
+            b = elements[0].text.replace('\r','').replace('\n','')
+        except:
+            b = ''
+        if a == b:
             # html += "    found,skipping: ",txt
             return True
         return False
@@ -265,8 +270,12 @@ def alreadyExists(txt, elements):
     if elements == []: return False
     if type(elements) == type([]):
         for e in elements:
-            # element = element[0]
-            if txt == str(e.text):
+            a = txt.replace('\r','').replace('\n','')
+            try:
+                b = e.text.replace('\r','').replace('\n','')
+            except:
+                b = ''
+            if a == b:
                 # html += "    found,skipping: ",txt
                 return True
         return False
