@@ -13,7 +13,10 @@ def select_cells(applayout, row):
             parts = field['name'].partition('.')
             fieldName = parts[2] or parts[0]
             #pick out value from the row for this fieldname
-            r.append(row[fieldName])
+            if fieldName in row:
+                r.append(row[fieldName])
+            else:
+                print "Key error: ensure fieldname specified in layout.csv (" + fieldName + ") matches fieldname specified in SELECT phrase in setquery.py"
     return r
 
 def extractTerms(context, dict, requestedField):
@@ -80,6 +83,7 @@ def doQuery(request, context):
             try:
                 objects = dbqueries.getlocations(location[0], '', 1, appname)
             except:
+                sys.stderr.write("getlocations error")
                 raise
 
             chunk = {'subheader': location[0]}
@@ -87,8 +91,7 @@ def doQuery(request, context):
             items = []
             for r in objects:
                 totalobjects += 1
-                r = select_cells(context['applayout'], r)
-                items.append({'csid': r['objectCsid'], 'cells': r})
+                items.append({'csid': r['objectcsid'], 'cells': select_cells(context['applayout'], r)})
             chunk['items'] = items
             table.append(chunk)
 

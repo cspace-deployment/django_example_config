@@ -92,7 +92,10 @@ def handleJSONrequest(context, request):
         state = request['state']
         appname = request['appname']
         x = appLayout
-        context = {'applayout': appLayout[appname][state],'appname': request['appname']}
+        if 'fieldset' in request and state == 'review':
+            context = {'applayout': appLayout[request['fieldset']][state], 'appname': request['appname']}
+        else:
+            context = {'applayout': appLayout[appname][state],'appname': request['appname']}
         context = dispatch(request, context, state)
         # context['nextstate'] = appLayout[app][state]['nextstate']
     except:
