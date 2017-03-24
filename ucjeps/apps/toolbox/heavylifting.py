@@ -6,9 +6,15 @@ from toolbox import activity2db
 
 
 def select_cells(applayout, row):
-    newrow = []
-    return [row[i] for i in [3,4,5,6,7,8]]
-
+    r = []
+    for field in applayout:
+        if field['type'] != 'button':
+            #strip out period delimited field name prefixes
+            parts = field['name'].partition('.')
+            fieldName = parts[2] or parts[0]
+            #pick out value from the row for this fieldname
+            r.append(row[fieldName])
+    return r
 
 def extractTerms(context, dict, requestedField):
     field = None
@@ -82,7 +88,7 @@ def doQuery(request, context):
             for r in objects:
                 totalobjects += 1
                 r = select_cells(context['applayout'], r)
-                items.append({'csid': 'xxx', 'cells': r})
+                items.append({'csid': r['objectCsid'], 'cells': r})
             chunk['items'] = items
             table.append(chunk)
 

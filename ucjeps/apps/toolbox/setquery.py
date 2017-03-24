@@ -63,9 +63,9 @@ SELECT distinct on (locationkey,sortableobjectnumber,h3.name)
 replace(concat(l.termdisplayName,
      ': ',regexp_replace(ca.computedcrate, '^.*\\)''(.*)''$', '\\1')),' ','0') AS locationkey,
 m.locationdate,
-cc.objectnumber objectnumber,
+cc.objectnumber museumnumber,
 (case when ong.objectName is NULL then '' else ong.objectName end) objectName,
-cc.numberofobjects objectCount,
+cc.numberofobjects count,
 case when (pfc.item is not null and pfc.item <> '') then
 substring(pfc.item, position(')''' IN pfc.item)+2, LENGTH(pfc.item)-position(')''' IN pfc.item)-2)
 end AS fieldcollectionplace,

@@ -3,6 +3,7 @@
 import time
 import sys
 import psycopg2
+import psycopg2.extras
 from setquery import setquery
 
 reload(sys)
@@ -15,7 +16,7 @@ from initialsetup import institution, connect_string
 sys.stderr.write('starting database connection: %s\n' % connect_string)
 try:
     dbconn = psycopg2.connect(connect_string)
-    cursor = dbconn.cursor()
+    cursor = dbconn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cursor.execute(timeoutcommand)
     sys.stderr.write('database connection started.\n')
 except:
@@ -65,7 +66,7 @@ def getlocations(location1, location2, num2ret, updateType):
             raise
 
         try:
-            rows = [list(item) for item in cursor.fetchall()]
+            rows = cursor.fetchall()
             sys.stderr.write("getloclist %s = %s\n" % (loc[0], len(rows)))
         except psycopg2.DatabaseError, e:
             sys.stderr.write("fetchall getlocations database error!")
