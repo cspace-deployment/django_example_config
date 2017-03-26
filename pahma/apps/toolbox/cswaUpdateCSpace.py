@@ -57,7 +57,7 @@ def updateCspace(fieldset, updateItems, form, config, when2post):
         url2, content, elapsedtime = connection.make_get_request(url)
         message, payload = updateXML(fieldset, updateItems, content)
         (url3, data, csid, elapsedtime) = postxml('PUT', uri, payload, form)
-        sys.stderr.write("updated object with csid %s to REST API..." % updateItems['objectCsid'])
+        # sys.stderr.write("updated object with csid %s to REST API..." % updateItems['objectCsid'])
         return ''
     elif when2post == 'queue':
         add2queue("PUT", uri, fieldset, updateItems, form)
@@ -73,7 +73,7 @@ def createObject(objectinfo, config, form, when2post):
     if when2post == 'now':
         payload = createObjectXML(objectinfo)
         (url, data, csid, elapsedtime) = postxml('POST', uri, payload, form)
-        sys.stderr.write("created new object with csid %s to REST API..." % csid)
+        # sys.stderr.write("created new object with csid %s to REST API..." % csid)
         return 'created new object', csid
     elif when2post == 'queue':
         add2queue("POST", uri, 'createobject', objectinfo, form)
@@ -204,7 +204,7 @@ def updateXML(fieldset, updateItems, xml):
                 else:
                     # exists, but not preferred. make it the preferred: remove it from where it is, insert it as 1st
                     for child in Entries:
-                        sys.stderr.write(' c: %s\n' % child.tag)
+                        # sys.stderr.write(' c: %s\n' % child.tag)
                         if child.text == updateItems[relationType]:
                             new_element = child
                             metadata.remove(child)
