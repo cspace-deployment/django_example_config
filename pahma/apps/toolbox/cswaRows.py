@@ -108,8 +108,8 @@ def formatInfoReviewRow(form, link, rr, link2):
 <td class="objno"><a target="cspace" href="%s">%s</a></td>
 <td class="objname"><input class="objname" type="text" name="onm.%s" value="%s"></td>
 <td width="0"></td>
-<td class="zcell">
 <input type="hidden" name="oox.%s" value="%s"><input type="hidden" name="csid.%s" value="%s">
+<td class="zcell">
 <textarea cols="78" rows="5" name="bdx.%s">%s</textarea></td>
 </tr>""" % (link, cgi.escape(rr[3], True), rr[8], cgi.escape(rr[4], True), rr[8], cgi.escape(rr[3], True), rr[8], rr[8],
             rr[8], cgi.escape(rr[15], True))
@@ -170,7 +170,6 @@ def formatInfoReviewRow(form, link, rr, link2):
 <td><input type="hidden" name="oox.%s" value="%s"><input type="hidden" name="csid.%s" value="%s">%s</td>
 <td>%s</td>
 <td><input class="xspan" type="text" size="26" name="cp.%s" value="%s"></td>
-<td><input type="checkbox"></td>
 </tr>""" % (link, cgi.escape(rr[3], True), rr[8], cgi.escape(rr[4], True),
             rr[8], rr[5],
             rr[8], cgi.escape(rr[3], True),
@@ -237,26 +236,109 @@ def formatInfoReviewRow(form, link, rr, link2):
             rr[8], cgi.escape(rr[33], True),
             rr[8], cgi.escape(rr[15], True))
     elif fieldSet == 'fullmonty':
+        collmans, selected = cswaConstants.getCollMan(form, rr[8], rr[27])
         return """<tr>
 <td class="objno"><a target="cspace" href="%s">%s</a></td>
 <input type="hidden" name="csid.%s" value="%s">
 <td class="objname"><input type="hidden" name="onm.%s" value="">%s</td>
-<td><input class="xspan" type="text" size="40" name="vfcp.%s" value="%s"></td>
-<td><input class="xspan" type="text" size="40" name="cd.%s" value="%s"></td>
-</tr><tr><td/><td/>
-<td><input class="xspan" type="text" size="40" name="ma.%s" value="%s"></td>
-<td><input class="xspan" type="text" size="40" name="ta.%s" value="%s"></td>
-<td><input class="xspan" type="text" size="40" name="pd.%s" value="%s"></td>
-</tr><tr><td/><td/>
-<td><input class="xspan" type="text" size="40" name="vfcp.%s" value="%s"></td>
-<td><input class="xspan" type="text" size="40" name="cp.%s" value="%s"></td>
-<td><input class="xspan" type="text" size="40" name="pp.%s" value="%s"></td>
-</tr><tr><td/><td/>
-<td class="zcell"><textarea cols="78" rows="5" name="bdx.%s">%s</textarea></td>
+<td>
+
+<table>
+
+<tr class="monty">
+
+<td>Count<br/>
+<input class="xspan" type="text" size="10" ></td>
+
+<td>Cultural Group<br/>
+<input class="xspan" type="text" size="40" ></td>
+
+<td>Ethnographic File Code<br/>
+<input class="xspan" type="text" size="40" ></td>
+
+</tr>
+
+<tr class="monty">
+
+<td>Alt Num<br/>
+<input class="xspan" type="text" size="40" ></td>
+
+<td>Alt Num Type<br/>
+<input class="xspan" type="text" size="40" ></td>
+
+<td>Field Collector<br/>
+<input class="xspan" type="text" size="40" ></td>
+
+</tr>
+
+<tr class="monty">
+
+<td>Object Type<br/>
+<input class="xspan" type="text" size="40"></td>
+
+<td>xxx<br/>
+<input class="xspan" type="text" size="40"></td>
+
+<td>Collection Manager<br/>
+%s
+</td>
+
+</tr>
+
+<tr class="monty">
+
+<td>Production date<br/>
+<input class="xspan" type="text" size="40" name="dprd.%s" value="%s"></td>
+
+<td>Date collected<br/>
+<input class="xspan" type="text" size="40" name="dcol.%s" value="%s"></td>
+
+<td>Date depicted<br/>
+<input class="xspan" type="text" size="40" name="ddep.%s" value="%s"></td>
+
+</tr>
+
+<tr class="monty">
+
+<td>Materials<br/>
+<input class="xspan" type="text" size="40" name="ma.%s" value="%s"></td>
+
+<td>Taxon<br/>
+<input class="xspan" type="text" size="40" name="ta.%s" value="%s"></td>
+
+<td>Verbatim field collection place<br/>
+<input class="xspan" type="text" size="40" name="vfcp.%s" value="%s"></td>
+
+</tr>
+
+<tr class="monty">
+
+<td>Field collection place<br/>
+<input class="xspan" type="text" size="40" name="cp.%s" value="%s"></td>
+
+<td>Production Place<br/>
+<input class="xspan" type="text" size="40" name="pp.%s" value="%s"></td>
+
+<td>Place depicted<br/>
+<input class="xspan" type="text" size="40" name="pd.%s" value="%s"></td>
+
+</tr>
+
+<tr>
+<td colspan="10">Brief Description<br/>
+<textarea cols="130" rows="5" name="bdx.%s">%s</textarea>
+</td>
+</tr>
+
+</table>
+
+</td>
 </tr>""" % (
         link, cgi.escape(rr[3], True), rr[8], rr[8], rr[8], cgi.escape(rr[4], True),
-        rr[8], cgi.escape(rr[28], True),
+        collmans,
+        rr[8], cgi.escape(rr[32], True),
         rr[8], cgi.escape(rr[29], True),
+        rr[8], cgi.escape(rr[34], True),
         rr[8], cgi.escape(rr[30], True),
         rr[8], cgi.escape(rr[33], True),
         rr[8], cgi.escape(rr[28], True),

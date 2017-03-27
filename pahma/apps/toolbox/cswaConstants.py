@@ -24,6 +24,7 @@ p { padding:10px 10px 10px 10px; }
 li { text-align: left; list-style-type: none; }
 a { text-decoration: none; }
 button { font-size: 150%; width:85px; text-align: center; text-transform: uppercase;}
+.monty { }
 .cell { line-height: 1.0; text-indent: 2px; color: #666666; font-size: 16px;}
 .enumerate { background-color: green; font-size:20px; color: #FFFFFF; font-weight:bold; vertical-align: middle; text-align: center; }
 img#logo { float:left; height:50px; padding:10px 10px 10px 10px;}
@@ -41,7 +42,7 @@ img#logo { float:left; height:50px; padding:10px 10px 10px 10px;}
 .subheader { background-color: ''' + schemacolor1 + '''; color: #FFFFFF; font-size: 24px; font-weight: bold; }
 .smallheader { background-color: ''' + schemacolor1 + '''; color: #FFFFFF; font-size: 12px; font-weight: bold; }
 .veryshortinput { width:60px; }
-.xspan { color: #000000; background-color: #FFFFFF; font-weight: bold; font-size: 12px; min-width:240px; }
+.xspan { color: #000000; background-color: #FFFFFF; font-weight: bold; font-size: 12px; }
 th[data-sort]{ cursor:pointer; }
 .littlebutton {color: #FFFFFF; background-color: gray; font-size: 11px; padding: 2px; cursor: pointer; }
 .imagecell { padding: 8px ; align: center; }
@@ -180,26 +181,7 @@ def infoHeaders(fieldSet):
     <table><tr>
       <th>Museum #</th>
       <th>Object name</th>
-      <th>Count</th>
-      <th>Cultural Group</th>
-      <th>Ethnographic File Code</th>
-      </tr><tr><td/><td/>
-      <th>Alt Num</th>
-      <th>Alt Num Type</th>
-      <th>Field Collector</th>
-      </tr><tr><td/><td/>
-      <th>Verbatim field collection place</th>
-      <th>Field collection place</th>
-      <th>Production Place</th>
-      </tr><tr><td/><td/>
-      <th>Object Type</th>
-      <th>Collection Manager</th>
-      <th>Place depicted</th>
-      </tr><tr><td/><td/>
-      <th>Materials</th>
-      <th>Taxon</th>
-      </tr><tr><td/><td/>
-      <th>Brief Description</th>
+      <th>Fields</th>
     </tr>"""
     else:
         return "<table><tr>DEBUG</tr>"
