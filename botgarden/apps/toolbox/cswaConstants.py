@@ -24,6 +24,7 @@ p { padding:10px 10px 10px 10px; }
 li { text-align: left; list-style-type: none; }
 a { text-decoration: none; }
 button { font-size: 150%; width:85px; text-align: center; text-transform: uppercase;}
+.monty { }
 .cell { line-height: 1.0; text-indent: 2px; color: #666666; font-size: 16px;}
 .enumerate { background-color: green; font-size:20px; color: #FFFFFF; font-weight:bold; vertical-align: middle; text-align: center; }
 img#logo { float:left; height:50px; padding:10px 10px 10px 10px;}
@@ -41,7 +42,7 @@ img#logo { float:left; height:50px; padding:10px 10px 10px 10px;}
 .subheader { background-color: ''' + schemacolor1 + '''; color: #FFFFFF; font-size: 24px; font-weight: bold; }
 .smallheader { background-color: ''' + schemacolor1 + '''; color: #FFFFFF; font-size: 12px; font-weight: bold; }
 .veryshortinput { width:60px; }
-.xspan { color: #000000; background-color: #FFFFFF; font-weight: bold; font-size: 12px; min-width:240px; }
+.xspan { color: #000000; background-color: #FFFFFF; font-weight: bold; font-size: 12px; }
 th[data-sort]{ cursor:pointer; }
 .littlebutton {color: #FFFFFF; background-color: gray; font-size: 11px; padding: 2px; cursor: pointer; }
 .imagecell { padding: 8px ; align: center; }
@@ -146,6 +147,41 @@ def infoHeaders(fieldSet):
       <th>Object name</th>
       <th>Verbatim field collection place</th>
       <th>Field collection date</th>
+    </tr>"""
+    elif fieldSet == 'places':
+        return """
+    <table><tr>
+      <th>Museum #</th>
+      <th>Object name</th>
+      <th>Verbatim field collection place</th>
+      <th>Field collection place</th>
+      <th>Production Place</th>
+      <th>Place depicted</th>
+    </tr>"""
+    elif fieldSet == 'dates':
+        return """
+    <table><tr>
+      <th>Museum #</th>
+      <th>Object name</th>
+      <th>Production date</th>
+      <th>Field collection date</th>
+      <th>Date depicted</th>
+    </tr>"""
+    elif fieldSet == 'mattax':
+        return """
+    <table><tr>
+      <th>Museum #</th>
+      <th>Object name</th>
+      <th>Materials</th>
+      <th>Taxon</th>
+      <th style="text-align:center">Brief Description</th>
+    </tr>"""
+    elif fieldSet == 'fullmonty':
+        return """
+    <table><tr>
+      <th>Museum #</th>
+      <th>Object name</th>
+      <th>Fields</th>
     </tr>"""
     else:
         return "<table><tr>DEBUG</tr>"
@@ -428,7 +464,10 @@ def getFieldset(form, institution):
             ("Registration", "registration"),
             ("HSR Info", "hsrinfo"),
             ("Object Type/CM", "objtypecm"),
-            ("Place and Date", "placeanddate"),
+            ("Places", "places"),
+            ("Dates", "dates"),
+            ("Material and Taxon", "mattax"),
+            ("Full Monty", "fullmonty"),
         ]
 
     fieldset = '''
@@ -1081,7 +1120,7 @@ if __name__ == '__main__':
         result += '</table>'
 
     result += '<h2>KIR/OIR/BOE Fieldset Headers</h2>'
-    for h in 'keyinfo namedesc hsrinfo registration'.split(' '):
+    for h in 'keyinfo namedesc hsrinfo objtypecm registration dates places mattax'.split(' '):
         result += '<h3>Header for %s</h3>' % h
         header = infoHeaders(h)
         result += header.replace('<table', '<table border="1" ')

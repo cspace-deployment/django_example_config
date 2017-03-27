@@ -962,7 +962,24 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
             updateItems['pahmaFieldCollectionPlace'] = refNames2find[form.get('cp.' + index)]
         elif fieldset == 'placeanddate':
             updateItems['pahmaFieldLocVerbatim'] = form.get('vfcp.' + index)
+            updateItems['pahmaFieldCollectionDate'] = form.get('dcol.' + index)
+        elif fieldset == 'places':
+            updateItems['pahmaFieldLocVerbatim'] = form.get('vfcp.' + index)
+            updateItems['pahmaFieldCollectionPlace'] = form.get('cp.' + index)
+            updateItems['objectProductionPlace'] = form.get('pp.' + index)
+            updateItems['contentPlace'] = form.get('pd.' + index)
+        elif fieldset == 'dates':
+            updateItems['objectProductionDate'] = form.get('dprd.' + index)
+            updateItems['pahmaFieldCollectionDate'] = form.get('dcol.' + index)
+            updateItems['contentDate'] = form.get('ddep.' + index)
+        elif fieldset == 'mattax':
+            updateItems['material'] = form.get('ma.' + index)
+            updateItems['taxon'] = form.get('ta.' + index)
+            updateItems['briefDescription'] = form.get('bdx.' + index)
+        elif fieldset == 'fullmonty':
+            updateItems['pahmaFieldLocVerbatim'] = form.get('vfcp.' + index)
             updateItems['pahmaFieldCollectionDate'] = form.get('cd.' + index)
+            updateItems['briefDescription'] = form.get('bdx.' + index)
         else:
             pass
             #error!

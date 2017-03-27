@@ -115,6 +115,14 @@ def updateXML(fieldset, updateItems, xml):
         fieldList = ('objectName', 'collection')
     elif fieldset == 'placeanddate':
         fieldList = ('pahmaFieldLocVerbatim', 'pahmaFieldCollectionDate')
+    elif fieldset == 'places':
+        fieldList = ('pahmaFieldLocVerbatim', 'pahmaFieldCollectionPlace', 'objectProductionPlace', 'contentPlace')
+    elif fieldset == 'dates':
+        fieldList = ('objectProductionDate', 'pahmaFieldCollectionDate', 'contentDate')
+    elif fieldset == 'mattax':
+        fieldList = ('material', 'taxon', 'briefDescription')
+    elif fieldset == 'fullmonty':
+        fieldList = ('pahmaFieldLocVerbatim', 'objectProductionDate')
 
     root = etree.fromstring(xml)
     # add the user's changes to the XML
@@ -127,7 +135,7 @@ def updateXML(fieldset, updateItems, xml):
         extra = ''
         if relationType in ['assocPeople', 'pahmaAltNum', 'pahmaFieldCollectionDate']:
             extra = 'Group'
-        elif relationType in ['briefDescription', 'fieldCollector', 'responsibleDepartment']:
+        elif relationType in ['briefDescription', 'fieldCollector', 'responsibleDepartment', 'contentPlace']:
             listSuffix = 's'
         elif relationType in ['collection', 'pahmaFieldLocVerbatim']:
             listSuffix = ''
@@ -192,7 +200,7 @@ def updateXML(fieldset, updateItems, xml):
                 apgType = metadata.find('.//' + relationType + 'Type')
                 apgType.text = updateItems[relationType + 'Type']
                 # sys.stderr.write('  updated: pahmaAltNumType to' + updateItems[relationType + 'Type'] + '\n' )
-        elif relationType in ['briefDescription', 'fieldCollector', 'responsibleDepartment']:
+        elif relationType in ['briefDescription', 'fieldCollector', 'responsibleDepartment', 'contentPlace']:
             Entries = metadata.findall('.//' + relationType)
             # for e in Entries:
             # html += '%s, %s<br>' % (e.tag, e.text)
@@ -222,10 +230,10 @@ def updateXML(fieldset, updateItems, xml):
                 metadata.insert(0, new_element)
                 message += "added preferred term %s as %s.<br/>" % (updateItems[relationType], relationType)
 
-        elif relationType in ['pahmaFieldCollectionDate']:
+        elif relationType in ['objectProductionDate', 'pahmaFieldCollectionDate', 'contentDate']:
             # we'll be replacing the entire structured date group
-            pahmaFieldCollectionDateGroup = metadata.find('.//pahmaFieldCollectionDateGroup')
-            newpahmaFieldCollectionDateGroup = etree.Element('pahmaFieldCollectionDateGroup')
+            pahmaFieldCollectionDateGroup = metadata.find('.//%sGroup' % relationType)
+            newpahmaFieldCollectionDateGroup = etree.Element('%sGroup' % relationType)
             new_element = etree.Element('dateDisplayDate')
             new_element.text = updateItems[relationType]
             newpahmaFieldCollectionDateGroup.insert(0, new_element)
