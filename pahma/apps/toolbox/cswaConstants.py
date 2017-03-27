@@ -147,6 +147,60 @@ def infoHeaders(fieldSet):
       <th>Verbatim field collection place</th>
       <th>Field collection date</th>
     </tr>"""
+    elif fieldSet == 'places':
+        return """
+    <table><tr>
+      <th>Museum #</th>
+      <th>Object name</th>
+      <th>Verbatim field collection place</th>
+      <th>Field collection place</th>
+      <th>Production Place</th>
+      <th>Place depicted</th>
+    </tr>"""
+    elif fieldSet == 'dates':
+        return """
+    <table><tr>
+      <th>Museum #</th>
+      <th>Object name</th>
+      <th>Production date</th>
+      <th>Field collection date</th>
+      <th>Date depicted</th>
+    </tr>"""
+    elif fieldSet == 'mattax':
+        return """
+    <table><tr>
+      <th>Museum #</th>
+      <th>Object name</th>
+      <th>Materials</th>
+      <th>Taxon</th>
+      <th style="text-align:center">Brief Description</th>
+    </tr>"""
+    elif fieldSet == 'fullmonty':
+        return """
+    <table><tr>
+      <th>Museum #</th>
+      <th>Object name</th>
+      <th>Count</th>
+      <th>Cultural Group</th>
+      <th>Ethnographic File Code</th>
+      </tr><tr><td/><td/>
+      <th>Alt Num</th>
+      <th>Alt Num Type</th>
+      <th>Field Collector</th>
+      </tr><tr><td/><td/>
+      <th>Verbatim field collection place</th>
+      <th>Field collection place</th>
+      <th>Production Place</th>
+      </tr><tr><td/><td/>
+      <th>Object Type</th>
+      <th>Collection Manager</th>
+      <th>Place depicted</th>
+      </tr><tr><td/><td/>
+      <th>Materials</th>
+      <th>Taxon</th>
+      </tr><tr><td/><td/>
+      <th>Brief Description</th>
+    </tr>"""
     else:
         return "<table><tr>DEBUG</tr>"
 
@@ -428,7 +482,10 @@ def getFieldset(form, institution):
             ("Registration", "registration"),
             ("HSR Info", "hsrinfo"),
             ("Object Type/CM", "objtypecm"),
-            ("Place and Date", "placeanddate"),
+            ("Places", "places"),
+            ("Dates", "dates"),
+            ("Material and Taxon", "mattax"),
+            ("Full Monty", "fullmonty"),
         ]
 
     fieldset = '''
@@ -1081,7 +1138,7 @@ if __name__ == '__main__':
         result += '</table>'
 
     result += '<h2>KIR/OIR/BOE Fieldset Headers</h2>'
-    for h in 'keyinfo namedesc hsrinfo registration'.split(' '):
+    for h in 'keyinfo namedesc hsrinfo objtypecm registration dates places mattax'.split(' '):
         result += '<h3>Header for %s</h3>' % h
         header = infoHeaders(h)
         result += header.replace('<table', '<table border="1" ')
