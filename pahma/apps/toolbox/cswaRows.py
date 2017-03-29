@@ -1,5 +1,6 @@
 import cgi
 import cswaConstants
+import cswaDB
 
 
 def formatRow(result, form, config):
@@ -15,11 +16,14 @@ def formatRow(result, form, config):
     except:
         csid = 'user'
     link = protocol + '://' + hostname + port + '/collectionspace/ui/' + institution + '/html/cataloging.html?csid=%s' % csid
+    link2 = ''
     if institution == 'bampfa':
         link = protocol + '://' + hostname + port + '/collectionspace/ui/' + institution + '/html/cataloging.html?csid=%s' % rr[2]
-        link2 = ''
     else:
-        link2 = protocol + '://' + hostname + port + '/collectionspace/ui/' + institution + '/html/acquisition.html?csid=%s' % rr[24]
+        try:
+            link2 = protocol + '://' + hostname + port + '/collectionspace/ui/' + institution + '/html/acquisition.html?csid=%s' % rr[24]
+        except:
+            pass
 
     if result['rowtype'] == 'subheader':
         return """<tr><td colspan="7" class="subheader">%s</td></tr>""" % result['data'][0]
@@ -123,7 +127,7 @@ def formatInfoReviewRow(form, link, rr, link2):
 <input type="hidden" name="csid.%s" value="%s">
 <input class="xspan" type="text" size="13" name="anm.%s" value="%s"></td>
 <td class="zcell">%s</td>
-<td class="zcell"><input class="xspan" type="text" size="26" name="pc.%s" value="%s"></td>
+<td class="zcell"><input class="xspan" type="text" size="26" name="cl.%s" value="%s"></td>
 <td class="zcell"><span style="font-size:8">%s</span></td>
 <td class="zcell"><a target="cspace" href="%s">%s</a></td>
 </tr>""" % (link, cgi.escape(rr[3], True), rr[8], cgi.escape(rr[4], True), rr[8], cgi.escape(rr[3], True), rr[8], rr[8],
@@ -203,11 +207,13 @@ def formatInfoReviewRow(form, link, rr, link2):
 <td><input class="xspan" type="text" size="40" name="dprd.%s" value="%s"></td>
 <td><input class="xspan" type="text" size="40" name="dcol.%s" value="%s"></td>
 <td><input class="xspan" type="text" size="40" name="ddep.%s" value="%s"></td>
+<td class="zcell"><textarea cols="78" rows="5" name="bdx.%s">%s</textarea></td>
 </tr>""" % (
         link, cgi.escape(rr[3], True), rr[8], rr[8], rr[8], cgi.escape(rr[4], True),
         rr[8], cgi.escape(rr[32], True),
         rr[8], cgi.escape(rr[29], True),
-        rr[8], cgi.escape(rr[34], True))
+        rr[8], cgi.escape(rr[34], True),
+        rr[8], cgi.escape(rr[15], True))
     elif fieldSet == 'places':
         return """<tr>
 <td class="objno"><a target="cspace" href="%s">%s</a></td>
@@ -237,6 +243,8 @@ def formatInfoReviewRow(form, link, rr, link2):
             rr[8], cgi.escape(rr[15], True))
     elif fieldSet == 'fullmonty':
         collmans, selected = cswaConstants.getCollMan(form, rr[8], rr[27])
+        objstatuses, selected = cswaConstants.getObjectStatuses(form, rr[8], rr[37])
+        objecttypes, selected = cswaConstants.getObjType(form, rr[8], rr[26])
         return """<tr>
 <td class="objno"><a target="cspace" href="%s">%s</a></td>
 <input type="hidden" name="csid.%s" value="%s">
@@ -248,38 +256,38 @@ def formatInfoReviewRow(form, link, rr, link2):
 <tr class="monty">
 
 <td>Count<br/>
-<input class="xspan" type="text" size="10" ></td>
+<input class="xspan" type="text" size="10" name="ocn.%s" value="%s"></td>
 
 <td>Cultural Group<br/>
-<input class="xspan" type="text" size="40" ></td>
+<input class="xspan" type="text" size="40" name="cg.%s" value="%s"></td>
 
 <td>Ethnographic File Code<br/>
-<input class="xspan" type="text" size="40" ></td>
+<input class="xspan" type="text" size="40" name="fc.%s" value="%s"></td></td>
 
 </tr>
 
 <tr class="monty">
 
 <td>Alt Num<br/>
-<input class="xspan" type="text" size="40" ></td>
+<input class="xspan" type="text" size="40" name="anm.%s" value="%s"></td>
 
 <td>Alt Num Type<br/>
-<input class="xspan" type="text" size="40" ></td>
+<input class="xspan" type="text" size="40" name="ant.%s" value="%s"></td>
 
 <td>Field Collector<br/>
-<input class="xspan" type="text" size="40" ></td>
+<input class="xspan" type="text" size="40" name="cl.%s" value="%s"></td>
 
 </tr>
 
 <tr class="monty">
 
-<td>Object Type<br/>
-<input class="xspan" type="text" size="40"></td>
+<td>Object type<br/>
+%s</td>
 
-<td>xxx<br/>
-<input class="xspan" type="text" size="40"></td>
+<td>Production person<br/>
+<input class="xspan" type="text" size="40" name="pe.%s" value="%s"></td>
 
-<td>Collection Manager<br/>
+<td>Object Status<br/>
 %s
 </td>
 
@@ -335,7 +343,15 @@ def formatInfoReviewRow(form, link, rr, link2):
 </td>
 </tr>""" % (
         link, cgi.escape(rr[3], True), rr[8], rr[8], rr[8], cgi.escape(rr[4], True),
-        collmans,
+        rr[8], rr[5],
+        rr[8], cgi.escape(rr[7], True),
+        rr[8], cgi.escape(rr[9], True),
+        rr[8], cgi.escape(rr[18], True),
+        rr[8], cgi.escape(rr[19], True),
+        rr[8], cgi.escape(rr[16], True),
+        objecttypes,
+        rr[8], cgi.escape(rr[36], True),
+        objstatuses,
         rr[8], cgi.escape(rr[32], True),
         rr[8], cgi.escape(rr[29], True),
         rr[8], cgi.escape(rr[34], True),
@@ -348,6 +364,51 @@ def formatInfoReviewRow(form, link, rr, link2):
         rr[8], cgi.escape(rr[15], True)
         )
 
+
+def setRefnames(refNames2find, fieldset, form, config, index):
+
+    if fieldset in ['namedesc', 'fullmonty']:
+        pass
+    if fieldset in ['registration', 'fullmonty']:
+        if not refNames2find.has_key(form.get('ant.' + index)):
+            refNames2find[form.get('ant.' + index)] = cswaDB.getrefname('pahmaaltnumgroup_type', form.get('ant.' + index), config)
+        if not refNames2find.has_key(form.get('cl.' + index)):
+            refNames2find[form.get('cl.' + index)] = cswaDB.getrefname('collectionobjects_common_fieldcollectors', form.get('cl.' + index), config)
+        if not refNames2find.has_key(form.get('pd.' + index)):
+            refNames2find[form.get('pd.' + index)] = cswaDB.getrefname('acquisitions_common_owners', form.get('pd.' + index), config)
+    if fieldset in ['keyinfo', 'fullmonty']:
+        if not refNames2find.has_key(form.get('cp.' + index)):
+            refNames2find[form.get('cp.' + index)] = cswaDB.getrefname('places_common', form.get('cp.' + index), config)
+        if not refNames2find.has_key(form.get('cg.' + index)):
+            refNames2find[form.get('cg.' + index)] = cswaDB.getrefname('concepts_common', form.get('cg.' + index), config)
+        if not refNames2find.has_key(form.get('fc.' + index)):
+            refNames2find[form.get('fc.' + index)] = cswaDB.getrefname('concepts_common', form.get('fc.' + index), config)
+    if fieldset in ['hsrinfo', 'fullmonty']:
+        if not refNames2find.has_key(form.get('cp.' + index)):
+            refNames2find[form.get('cp.' + index)] = cswaDB.getrefname('places_common', form.get('cp.' + index), config)
+    if fieldset in ['places', 'fullmonty']:
+        if not refNames2find.has_key(form.get('pp.' + index)):
+            refNames2find[form.get('pp.' + index)] = cswaDB.getrefname('places_common', form.get('pp.' + index), config)
+        if not refNames2find.has_key(form.get('cp.' + index)):
+            refNames2find[form.get('cp.' + index)] = cswaDB.getrefname('places_common', form.get('cp.' + index), config)
+        if not refNames2find.has_key(form.get('pd.' + index)):
+            refNames2find[form.get('pd.' + index)] = cswaDB.getrefname('places_common', form.get('pd.' + index), config)
+    if fieldset in ['objtypecm', 'fullmonty']:
+        if not refNames2find.has_key(form.get('cm.' + index)):
+            refNames2find[form.get('cm.' + index)] = cswaDB.getrefname('persons_common', form.get('cm.' + index), config)
+        if not refNames2find.has_key(form.get('cp.' + index)):
+            refNames2find[form.get('cp.' + index)] = cswaDB.getrefname('places_common', form.get('cp.' + index), config)
+    if fieldset in ['fullmonty', 'mattax']:
+        if not refNames2find.has_key(form.get('pe.' + index)):
+            refNames2find[form.get('pe.' + index)] = cswaDB.getrefname('persons_common', form.get('pe.' + index), config)
+        if not refNames2find.has_key(form.get('pp.' + index)):
+            refNames2find[form.get('pp.' + index)] = cswaDB.getrefname('places_common', form.get('pp.' + index), config)
+        if not refNames2find.has_key(form.get('pp.' + index)):
+            refNames2find[form.get('ma.' + index)] = cswaDB.getrefname('materials_common', form.get('ma.' + index), config)
+        if not refNames2find.has_key(form.get('ta.' + index)):
+            refNames2find[form.get('ta.' + index)] = cswaDB.getrefname('taxon_common', form.get('ta.' + index), config)
+
+    return refNames2find
 
 if __name__ == '__main__':
 

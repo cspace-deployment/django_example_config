@@ -45,7 +45,7 @@ import cswaConceptutils as concept
 from cswaHelpers import *
 # these are the three functions that do updates
 from cswaUpdateCSpace import updateCspace, createObject, updateLocations
-from cswaRows import formatRow, formatInfoReviewRow
+from cswaRows import formatRow, setRefnames
 from cspace_django_site.main import cspace_django_site
 
 MAINCONFIG = cspace_django_site.getConfig()
@@ -152,13 +152,13 @@ def doLocationSearch(form, config, displaytype):
     if not valid: return html + error
     updateType = config.get('info', 'updatetype')
 
+    if form.get('lo.location1') == '':
+        return '<h3 class="error">Please enter at least a starting location!</h3>'
+
     try:
         #If barcode print, assume empty end location is start location
         if updateType == "barcodeprint":
-            if form.get("lo.location2"):
-                rows = cswaDB.getloclist('range', form.get("lo.location1"), form.get("lo.location2"), 500, config)
-            else:
-                rows = cswaDB.getloclist('range', form.get("lo.location1"), form.get("lo.location1"), 500, config)
+            rows = cswaDB.getloclist('range', form.get("lo.location1"), form.get("lo.location2"), 500, config)
         else:
             rows = cswaDB.getloclist('range', form.get("lo.location1"), form.get("lo.location2"), MAXLOCATIONS, config)
     except:
@@ -196,10 +196,8 @@ def doObjectSearch(form, config, displaytype):
         toRefname = cswaDB.getrefname('locations_common', toLocation, config)
         toCrate = cswaDB.getrefname('locations_common', crate, config)
 
-    try:
-        rows = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 500, config)
-    except:
-        raise
+
+    rows, msg = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 500, config)
 
     if len(rows) == 0:
         return '<h3 class="error">No objects in this range! Sorry!</h3>'
@@ -235,13 +233,12 @@ def doOjectRangeSearch(form, config, displaytype=''):
     updateType = config.get('info', 'updatetype')
     updateactionlabel = config.get('info', 'updateactionlabel')
 
-    try:
-        if form.get('ob.objno2'):
-            objs = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 1000, config)
-        else:
-            objs = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno1"), 1000, config)
-    except:
-        raise
+
+    objs, msg = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 1000, config)
+
+    if len(objs) == 0:
+        return '<h3 class="error">No objects in this range! Sorry!</h3>'
+
     html += """
     <table><tr>
     <th>Object</th>
@@ -316,14 +313,9 @@ def listSearchResults(authority, config, displaytype, form, rows):
         if displaytype == 'select': rowtype = 'select'
         duplicates = []
         for r in rows:
-            #html += "<b>r = </b>",r
             if r[1] in duplicates:
                 hasDups = True
-                #r.append('')
-                # r.append('Duplicate!')
             else:
-                #r.append('')
-                #duplicates.append(r[1])
                 pass
             html += formatRow({'boxtype': authority, 'rowtype': rowtype, 'data': r}, form, config)
 
@@ -359,14 +351,7 @@ def doGroupSearch(form, config, displaytype):
     else:
         updateType = 'objinfo'
 
-    try:
-        #sys.stderr.write('group: %s\n' % form.get("gr.group"))
-        rows = cswaDB.getgrouplist(form.get("gr.group"), 3000, config)
-        #sys.stderr.write('group result: %s\n' % len(rows))
-    except:
-        #sys.stderr.write('group: %s\n' % form.get("gr.group"))
-        raise
-    #[sys.stderr.write('group member : %s\n' % x[2]) for x in rows]
+    rows, msg = cswaDB.getgrouplist(form.get("gr.group"), 3000, config)
 
     if len(rows) == 0:
         return '<h3 class="error">No objects in this group! Sorry!</h3>'
@@ -703,14 +688,10 @@ def doBulkEdit(form, config):
     updateType = config.get('info', 'updatetype')
     updateactionlabel = config.get('info', 'updateactionlabel')
 
-    try:
-        if form.get('ob.objno2'):
-            objs = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 3000, config)
-        else:
-            objs = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno1"), 3000, config)
-    except:
-        objs = []
+    objs, msg = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 1000, config)
 
+    if len(objs) == 0:
+        return '<h3 class="error">No objects in this range! Sorry!</h3>'
 
     CSIDs = []
     fieldset = form.get('fieldset')
@@ -718,33 +699,7 @@ def doBulkEdit(form, config):
         CSIDs.append(row[8])
 
     refNames2find = {}
-
-    index = 'user'
-    if fieldset == 'namedesc':
-        pass
-    elif fieldset == 'registration':
-        if not refNames2find.has_key(form.get('ant.' + index)):
-            refNames2find[form.get('ant.' + index)] = cswaDB.getrefname('pahmaaltnumgroup_type', form.get('ant.' + index), config)
-        if not refNames2find.has_key(form.get('pc.' + index)):
-            refNames2find[form.get('pc.' + index)] = cswaDB.getrefname('collectionobjects_common_fieldcollectors', form.get('pc.' + index), config)
-        if not refNames2find.has_key(form.get('pd.' + index)):
-            refNames2find[form.get('pd.' + index)] = cswaDB.getrefname('acquisitions_common_owners', form.get('pd.' + index), config)
-    elif fieldset == 'keyinfo':
-        if not refNames2find.has_key(form.get('cp.' + index)):
-            refNames2find[form.get('cp.' + index)] = cswaDB.getrefname('places_common', form.get('cp.' + index), config)
-        if not refNames2find.has_key(form.get('cg.' + index)):
-            refNames2find[form.get('cg.' + index)] = cswaDB.getrefname('concepts_common', form.get('cg.' + index), config)
-        if not refNames2find.has_key(form.get('fc.' + index)):
-            refNames2find[form.get('fc.' + index)] = cswaDB.getrefname('concepts_common', form.get('fc.' + index), config)
-    elif fieldset == 'hsrinfo':
-        if not refNames2find.has_key(form.get('cp.' + index)):
-            refNames2find[form.get('cp.' + index)] = cswaDB.getrefname('places_common', form.get('cp.' + index), config)
-    elif fieldset == 'objtypecm':
-        if not refNames2find.has_key(form.get('cp.' + index)):
-            refNames2find[form.get('cp.' + index)] = cswaDB.getrefname('places_common', form.get('cp.' + index), config)
-    else:
-        pass
-        #error! fieldset not set!
+    setRefnames(refNames2find, fieldset, form, config, 'user')
 
     return doTheUpdate(CSIDs, form, config, fieldset, refNames2find)
 
@@ -758,13 +713,8 @@ def doBulkEditForm(form, config, displaytype):
     updateType = config.get('info', 'updatetype')
     updateactionlabel = config.get('info', 'updateactionlabel')
 
-    try:
-        if form.get('ob.objno2'):
-            objs = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 3000, config)
-        else:
-            objs = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno1"), 3000, config)
-    except:
-        objs = []
+
+    objs, msg = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 1000, config)
 
     totalobjects = len(objs)
 
@@ -890,31 +840,7 @@ def doUpdateKeyinfo(form, config):
     for row, csid in enumerate(CSIDs):
 
         index = csid # for now, the index is the csid
-        if fieldset == 'namedesc':
-            pass
-        elif fieldset == 'registration':
-            if not refNames2find.has_key(form.get('ant.' + index)):
-                refNames2find[form.get('ant.' + index)] = cswaDB.getrefname('pahmaaltnumgroup_type', form.get('ant.' + index), config)
-            if not refNames2find.has_key(form.get('pc.' + index)):
-                refNames2find[form.get('pc.' + index)] = cswaDB.getrefname('collectionobjects_common_fieldcollectors', form.get('pc.' + index), config)
-            if not refNames2find.has_key(form.get('pd.' + index)):
-                refNames2find[form.get('pd.' + index)] = cswaDB.getrefname('acquisitions_common_owners', form.get('pd.' + index), config)
-        elif fieldset == 'keyinfo':
-            if not refNames2find.has_key(form.get('cp.' + index)):
-                refNames2find[form.get('cp.' + index)] = cswaDB.getrefname('places_common', form.get('cp.' + index), config)
-            if not refNames2find.has_key(form.get('cg.' + index)):
-                refNames2find[form.get('cg.' + index)] = cswaDB.getrefname('concepts_common', form.get('cg.' + index), config)
-            if not refNames2find.has_key(form.get('fc.' + index)):
-                refNames2find[form.get('fc.' + index)] = cswaDB.getrefname('concepts_common', form.get('fc.' + index), config)
-        elif fieldset == 'hsrinfo':
-            if not refNames2find.has_key(form.get('cp.' + index)):
-                refNames2find[form.get('cp.' + index)] = cswaDB.getrefname('places_common', form.get('cp.' + index), config)
-        elif fieldset == 'objtypecm':
-            if not refNames2find.has_key(form.get('cp.' + index)):
-                refNames2find[form.get('cp.' + index)] = cswaDB.getrefname('places_common', form.get('cp.' + index), config)
-        else:
-            pass
-            #error! fieldset not set!
+        setRefnames(refNames2find, fieldset, form, config, index)
 
     return doTheUpdate(CSIDs, form, config, fieldset, refNames2find)
 
@@ -941,7 +867,7 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
         elif fieldset == 'registration':
             updateItems['pahmaAltNum'] = form.get('anm.' + index)
             updateItems['pahmaAltNumType'] = form.get('ant.' + index)
-            updateItems['fieldCollector'] = refNames2find[form.get('pc.' + index)]
+            updateItems['fieldCollector'] = refNames2find[form.get('cl.' + index)]
         elif fieldset == 'keyinfo':
             if form.get('ocn.' + index) != '':
                 updateItems['objectCount'] = form.get('ocn.' + index)
@@ -965,9 +891,9 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
             updateItems['pahmaFieldCollectionDate'] = form.get('dcol.' + index)
         elif fieldset == 'places':
             updateItems['pahmaFieldLocVerbatim'] = form.get('vfcp.' + index)
-            updateItems['pahmaFieldCollectionPlace'] = form.get('cp.' + index)
-            updateItems['objectProductionPlace'] = form.get('pp.' + index)
-            updateItems['contentPlace'] = form.get('pd.' + index)
+            updateItems['pahmaFieldCollectionPlace'] = refNames2find[form.get('cp.' + index)]
+            updateItems['objectProductionPlace'] = refNames2find[form.get('pp.' + index)]
+            updateItems['contentPlace'] = refNames2find[form.get('pd.' + index)]
         elif fieldset == 'dates':
             updateItems['objectProductionDate'] = form.get('dprd.' + index)
             updateItems['pahmaFieldCollectionDate'] = form.get('dcol.' + index)
@@ -977,9 +903,31 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
             updateItems['taxon'] = form.get('ta.' + index)
             updateItems['briefDescription'] = form.get('bdx.' + index)
         elif fieldset == 'fullmonty':
+            if form.get('ocn.' + index) != '':
+                updateItems['objectCount'] = form.get('ocn.' + index)
             updateItems['pahmaFieldLocVerbatim'] = form.get('vfcp.' + index)
-            updateItems['pahmaFieldCollectionDate'] = form.get('cd.' + index)
             updateItems['briefDescription'] = form.get('bdx.' + index)
+
+            updateItems['assocPeople'] = refNames2find[form.get('cg.' + index)]
+            updateItems['collection'] = form.get('ot.' + index)
+            updateItems['contentDate'] = form.get('ddep.' + index)
+            updateItems['contentPlace'] = form.get('pd.' + index)
+            updateItems['fieldCollector'] = refNames2find[form.get('cl.' + index)]
+            updateItems['inventoryCount'] = form.get('ctn.' + index)
+            updateItems['material'] = form.get('ma.' + index)
+            updateItems['objectProductionDate'] = form.get('dprd.' + index)
+            updateItems['objectProductionPlace'] = refNames2find[form.get('pp.' + index)]
+            updateItems['objectstatus'] = form.get('obs.' + index)
+            updateItems['pahmaAltNum'] = form.get('anm.' + index)
+            updateItems['pahmaAltNumType'] = form.get('ant.' + index)
+            updateItems['pahmaEthnographicFileCode'] = refNames2find[form.get('fc.' + index)]
+            updateItems['pahmaFieldCollectionDate'] = form.get('dcol.' + index)
+            updateItems['pahmaFieldCollectionPlace'] = refNames2find[form.get('cp.' + index)]
+            updateItems['objectProductionPerson'] = refNames2find[form.get('pe.' + index)]
+            updateItems['pahmaFieldLocVerbatim'] = form.get('vfcp.' + index)
+            updateItems['responsibleDepartment'] = form.get('cm.' + index)
+            updateItems['taxon'] = form.get('ta.' + index)
+
         else:
             pass
             #error!
@@ -1010,8 +958,8 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
                     msg += '<span style="color:red;"> Object count: "%s" is not a valid number!</span>' % form.get('ocn.' + index)
                     del updateItems['objectCount']
         elif fieldset == 'registration':
-            if updateItems['fieldCollector'] == '' and form.get('pc.' + index):
-                msg += '<span style="color:red;"> Field Collector: term "%s" not found, field not updated.</span>' % form.get('pc.' + index)
+            if updateItems['fieldCollector'] == '' and form.get('cl.' + index):
+                msg += '<span style="color:red;"> Field Collector: term "%s" not found, field not updated.</span>' % form.get('cl.' + index)
         elif fieldset == 'hsrinfo':
             if updateItems['pahmaFieldCollectionPlace'] == '' and form.get('cp.' + index):
                 if form.get('cp.' + index) == cswaDB.getCSIDDetail(config, index, 'fieldcollectionplace'):
@@ -1392,13 +1340,11 @@ def doBarCodes(form, config):
                 'objectrange', len(o), labelFilename)
     #If the museum number field has input, html += by object
     elif form.get('ob.objno1') != '':
-        try:
-            if form.get('ob.objno2'):
-                objs = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 1000, config)
-            else:
-                objs = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno1"), 1000, config)
-        except:
-            raise
+        objs, msg = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 1000, config)
+
+        if len(objs) == 0:
+            return '<h3 class="error">No objects in this range! Sorry!</h3>'
+
         if action == 'Create Labels for Objects':
             totalobjects += len(objs)
             o = [o[0:8] + [o[9]] for o in objs]
@@ -1790,7 +1736,7 @@ def formatInfoReviewForm(form):
         return """<tr><th>Object name</th><td class="objname"><input class="objname" type="text"  size="60" name="onm.user"></td>
 </tr><tr><th>Alternate Number</th><td class="zcell"><input class="xspan" type="text" size="60" name="anm.user"></td>
 </tr><tr><th>Alternate Number Types</th><td class="zcell">%s</td>
-</tr><tr><th>Field Collector (person)</th><td class="zcell"><input class="xspan" type="text" size="60" name="pc.user"></td>
+</tr><tr><th>Field Collector (person)</th><td class="zcell"><input class="xspan" type="text" size="60" name="cl.user"></td>
 </tr>""" % altnumtypes
     elif fieldSet == 'keyinfo':
         return """<tr><th>Object name</th><td class="objname"><input class="objname" type="text"  size="60" name="onm.user"></td>

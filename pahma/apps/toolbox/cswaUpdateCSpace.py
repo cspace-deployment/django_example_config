@@ -54,10 +54,26 @@ def updateCspace(fieldset, updateItems, form, config, when2post):
         # get the XML for this object
         connection = cspace.connection.create_connection(MAINCONFIG, form['userdata'])
         url = "cspace-services/" + uri
-        url2, content, elapsedtime = connection.make_get_request(url)
-        message, payload = updateXML(fieldset, updateItems, content)
-        (url3, data, csid, elapsedtime) = postxml('PUT', uri, payload, form)
-        sys.stderr.write("updated object with csid %s to REST API..." % updateItems['objectCsid'])
+        try:
+            url2, content, elapsedtime = connection.make_get_request(url)
+        except:
+            sys.stderr.write("problem getting XML for %s" % url)
+            raise ValueError("problem getting XML for %s" % url)
+        if content is None:
+            sys.stderr.write("No XML returned from CSpace server for %s" % url)
+            raise ValueError("No XML returned from CSpace server for %s" % url)
+        try:
+            message, payload = updateXML(fieldset, updateItems, content)
+        except:
+            raise
+            sys.stderr.write("problem generating update XML for %s" % fieldset)
+            raise ValueError("problem generating update XML for %s" % fieldset)
+        try:
+            (url3, data, csid, elapsedtime) = postxml('PUT', uri, payload, form)
+        except:
+            sys.stderr.write("CSpace failed for update")
+            raise
+        sys.stderr.write("updated object with csid %s to REST API...\n" % updateItems['objectCsid'])
         return ''
     elif when2post == 'queue':
         add2queue("PUT", uri, fieldset, updateItems, form)
@@ -122,7 +138,10 @@ def updateXML(fieldset, updateItems, xml):
     elif fieldset == 'mattax':
         fieldList = ('material', 'taxon', 'briefDescription')
     elif fieldset == 'fullmonty':
-        fieldList = ('pahmaFieldLocVerbatim', 'objectProductionDate')
+        fieldList = ('assocPeople', 'briefDescription', 'collection', 'contentDate', 'contentPlace', 'fieldCollector', 'material',
+        'objectName', 'objectName', 'objectProductionPlace', 'pahmaAltNum', 'pahmaEthnographicFileCode',
+        'pahmaFieldCollectionDate', 'pahmaFieldCollectionPlace', 'pahmaFieldLocVerbatim', 'responsibleDepartment',
+        'taxon', 'material')
 
     root = etree.fromstring(xml)
     # add the user's changes to the XML
