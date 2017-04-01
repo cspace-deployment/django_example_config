@@ -899,8 +899,8 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
             updateItems['pahmaFieldCollectionDate'] = form.get('dcol.' + index)
             updateItems['contentDate'] = form.get('ddep.' + index)
         elif fieldset == 'mattax':
-            updateItems['material'] = form.get('ma.' + index)
-            updateItems['taxon'] = form.get('ta.' + index)
+            updateItems['material'] = refNames2find[form.get('ma.' + index)]
+            updateItems['taxon'] = refNames2find[form.get('ta.' + index)]
             updateItems['briefDescription'] = form.get('bdx.' + index)
         elif fieldset == 'fullmonty':
             if form.get('ocn.' + index) != '':
@@ -914,7 +914,7 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
             updateItems['contentPlace'] = form.get('pd.' + index)
             updateItems['fieldCollector'] = refNames2find[form.get('cl.' + index)]
             updateItems['inventoryCount'] = form.get('ctn.' + index)
-            updateItems['material'] = form.get('ma.' + index)
+            updateItems['material'] = refNames2find[form.get('ma.' + index)]
             updateItems['objectProductionDate'] = form.get('dprd.' + index)
             updateItems['objectProductionPlace'] = refNames2find[form.get('pp.' + index)]
             updateItems['objectstatus'] = form.get('obs.' + index)
@@ -926,7 +926,7 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
             updateItems['objectProductionPerson'] = refNames2find[form.get('pe.' + index)]
             updateItems['pahmaFieldLocVerbatim'] = form.get('vfcp.' + index)
             updateItems['responsibleDepartment'] = form.get('cm.' + index)
-            updateItems['taxon'] = form.get('ta.' + index)
+            updateItems['taxon'] = refNames2find[form.get('ta.' + index)]
 
         else:
             pass
@@ -937,7 +937,7 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
 
         #html += updateItems
         msg = 'updated. '
-        if fieldset == 'keyinfo':
+        if fieldset in ['keyinfo', 'fullmonty']:
             if updateItems['pahmaFieldCollectionPlace'] == '' and form.get('cp.' + index):
                 if form.get('cp.' + index) == cswaDB.getCSIDDetail(config, index, 'fieldcollectionplace'):
                     pass
@@ -957,10 +957,10 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
                 except ValueError:
                     msg += '<span style="color:red;"> Object count: "%s" is not a valid number!</span>' % form.get('ocn.' + index)
                     del updateItems['objectCount']
-        elif fieldset == 'registration':
+        if fieldset in ['registration', 'fullmonty']:
             if updateItems['fieldCollector'] == '' and form.get('cl.' + index):
                 msg += '<span style="color:red;"> Field Collector: term "%s" not found, field not updated.</span>' % form.get('cl.' + index)
-        elif fieldset == 'hsrinfo':
+        if fieldset in ['hsrinfo', 'fullmonty']:
             if updateItems['pahmaFieldCollectionPlace'] == '' and form.get('cp.' + index):
                 if form.get('cp.' + index) == cswaDB.getCSIDDetail(config, index, 'fieldcollectionplace'):
                     pass
@@ -973,7 +973,7 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
                 except ValueError:
                     msg += '<span style="color:red;"> Object count: "%s" is not a valid number!</span>' % form.get('ocn.' + index)
                     del updateItems['objectCount']
-        elif fieldset == 'objtypecm':
+        if fieldset in ['objtypecm', 'fullmonty']:
             if updateItems['pahmaFieldCollectionPlace'] == '' and form.get('cp.' + index):
                 if form.get('cp.' + index) == cswaDB.getCSIDDetail(config, index, 'fieldcollectionplace'):
                     pass
@@ -986,7 +986,7 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
                 except ValueError:
                     msg += '<span style="color:red;"> Object count: "%s" is not a valid number!</span>' % form.get('ocn.' + index)
                     del updateItems['objectCount']
-        elif fieldset == 'placeanddate':
+        if fieldset in ['placeanddate', 'fullmonty']:
             # msg += 'place and date'
             pass
 
@@ -1007,8 +1007,9 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
             #pass
             updateMsg += updateCspace(fieldset, updateItems, form, config, WHEN2POST)
             if updateMsg != '':
-                msg += '<span style="color:red;">%s</span>' % updateMsg
-            numUpdated += 1
+                msg = '<span style="color:red;">%s</span>' % updateMsg
+            if not 'ERROR' in updateMsg:
+                numUpdated += 1
         except:
             raise
             #msg += '<span style="color:red;">problem updating</span>'

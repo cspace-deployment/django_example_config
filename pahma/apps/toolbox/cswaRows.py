@@ -245,6 +245,7 @@ def formatInfoReviewRow(form, link, rr, link2):
         collmans, selected = cswaConstants.getCollMan(form, rr[8], rr[27])
         objstatuses, selected = cswaConstants.getObjectStatuses(form, rr[8], rr[37])
         objecttypes, selected = cswaConstants.getObjType(form, rr[8], rr[26])
+        altnumtypes, selected = cswaConstants.getAltNumTypes(form, rr[8], rr[19])
         return """<tr>
 <td class="objno"><a target="cspace" href="%s">%s</a></td>
 <input type="hidden" name="csid.%s" value="%s">
@@ -272,7 +273,7 @@ def formatInfoReviewRow(form, link, rr, link2):
 <input class="xspan" type="text" size="40" name="anm.%s" value="%s"></td>
 
 <td>Alt Num Type<br/>
-<input class="xspan" type="text" size="40" name="ant.%s" value="%s"></td>
+%s</td>
 
 <td>Field Collector<br/>
 <input class="xspan" type="text" size="40" name="cl.%s" value="%s"></td>
@@ -295,11 +296,11 @@ def formatInfoReviewRow(form, link, rr, link2):
 
 <tr class="monty">
 
-<td>Production date<br/>
-<input class="xspan" type="text" size="40" name="dprd.%s" value="%s"></td>
-
 <td>Date collected<br/>
 <input class="xspan" type="text" size="40" name="dcol.%s" value="%s"></td>
+
+<td>Production date<br/>
+<input class="xspan" type="text" size="40" name="dprd.%s" value="%s"></td>
 
 <td>Date depicted<br/>
 <input class="xspan" type="text" size="40" name="ddep.%s" value="%s"></td>
@@ -347,13 +348,13 @@ def formatInfoReviewRow(form, link, rr, link2):
         rr[8], cgi.escape(rr[7], True),
         rr[8], cgi.escape(rr[9], True),
         rr[8], cgi.escape(rr[18], True),
-        rr[8], cgi.escape(rr[19], True),
+        altnumtypes,
         rr[8], cgi.escape(rr[16], True),
         objecttypes,
         rr[8], cgi.escape(rr[36], True),
         objstatuses,
-        rr[8], cgi.escape(rr[32], True),
         rr[8], cgi.escape(rr[29], True),
+        rr[8], cgi.escape(rr[32], True),
         rr[8], cgi.escape(rr[34], True),
         rr[8], cgi.escape(rr[30], True),
         rr[8], cgi.escape(rr[33], True),
@@ -370,12 +371,8 @@ def setRefnames(refNames2find, fieldset, form, config, index):
     if fieldset in ['namedesc', 'fullmonty']:
         pass
     if fieldset in ['registration', 'fullmonty']:
-        if not refNames2find.has_key(form.get('ant.' + index)):
-            refNames2find[form.get('ant.' + index)] = cswaDB.getrefname('pahmaaltnumgroup_type', form.get('ant.' + index), config)
         if not refNames2find.has_key(form.get('cl.' + index)):
             refNames2find[form.get('cl.' + index)] = cswaDB.getrefname('collectionobjects_common_fieldcollectors', form.get('cl.' + index), config)
-        if not refNames2find.has_key(form.get('pd.' + index)):
-            refNames2find[form.get('pd.' + index)] = cswaDB.getrefname('acquisitions_common_owners', form.get('pd.' + index), config)
     if fieldset in ['keyinfo', 'fullmonty']:
         if not refNames2find.has_key(form.get('cp.' + index)):
             refNames2find[form.get('cp.' + index)] = cswaDB.getrefname('places_common', form.get('cp.' + index), config)
@@ -401,10 +398,8 @@ def setRefnames(refNames2find, fieldset, form, config, index):
     if fieldset in ['fullmonty', 'mattax']:
         if not refNames2find.has_key(form.get('pe.' + index)):
             refNames2find[form.get('pe.' + index)] = cswaDB.getrefname('persons_common', form.get('pe.' + index), config)
-        if not refNames2find.has_key(form.get('pp.' + index)):
-            refNames2find[form.get('pp.' + index)] = cswaDB.getrefname('places_common', form.get('pp.' + index), config)
-        if not refNames2find.has_key(form.get('pp.' + index)):
-            refNames2find[form.get('ma.' + index)] = cswaDB.getrefname('materials_common', form.get('ma.' + index), config)
+        if not refNames2find.has_key(form.get('ma.' + index)):
+            refNames2find[form.get('ma.' + index)] = cswaDB.getrefname('concepts_common', form.get('ma.' + index), config)
         if not refNames2find.has_key(form.get('ta.' + index)):
             refNames2find[form.get('ta.' + index)] = cswaDB.getrefname('taxon_common', form.get('ta.' + index), config)
 
