@@ -911,7 +911,7 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
             updateItems['assocPeople'] = refNames2find[form.get('cg.' + index)]
             updateItems['collection'] = form.get('ot.' + index)
             updateItems['contentDate'] = form.get('ddep.' + index)
-            updateItems['contentPlace'] = form.get('pd.' + index)
+            updateItems['contentPlace'] = refNames2find[form.get('pd.' + index)]
             updateItems['fieldCollector'] = refNames2find[form.get('cl.' + index)]
             updateItems['inventoryCount'] = form.get('ctn.' + index)
             updateItems['material'] = refNames2find[form.get('ma.' + index)]
@@ -936,7 +936,7 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
             updateItems[i] = form.get(i)
 
         #html += updateItems
-        msg = 'updated. '
+        msg = 'updated. ' if WHEN2POST == 'now' else 'queued. '
         if fieldset in ['keyinfo', 'fullmonty']:
             if updateItems['pahmaFieldCollectionPlace'] == '' and form.get('cp.' + index):
                 if form.get('cp.' + index) == cswaDB.getCSIDDetail(config, index, 'fieldcollectionplace'):

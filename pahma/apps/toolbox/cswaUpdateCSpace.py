@@ -44,6 +44,7 @@ def add2queue(requestType, uri, fieldset, updateItems, form):
     userdata = form['userdata']
     element = json.dumps((requestType, uri, userdata.username, userdata.cspace_password, fieldset, updateItems))
     DIRQ.add(element)
+    return ''
 
 
 def updateCspace(fieldset, updateItems, form, config, when2post):
@@ -68,23 +69,24 @@ def updateCspace(fieldset, updateItems, form, config, when2post):
         try:
             message, payload = updateXML(fieldset, updateItems, content)
         except:
-            sys.stderr.write("ERROR generating update XML for %s" % fieldset)
-            raise ValueError("ERROR generating update XML for %s" % fieldset)
+            sys.stderr.write("ERROR generating update XML for fieldset %s" % fieldset)
+            sys.stderr.write("ERROR: payload for %s: \n%s" % (url, payload))
+            return "ERROR generating update XML for fieldset %s" % fieldset
         try:
             (url3, data, httpcode, elapsedtime) = postxml('PUT', uri, payload, form)
         except:
             sys.stderr.write("ERROR: failed PUT payload for %s: \n%s" % (url, payload))
-            raise
+            return "ERROR: failed PUT payload for %s: \n%s" % (url, payload)
         if data is None:
             sys.stderr.write("ERROR: failed PUT payload for %s: \n%s" % (url, payload))
             sys.stderr.write("ERROR: HTTP response code %s for  %s" % (httpcode, url))
             return "ERROR: Bad HTTP response code %s for  %s" % (httpcode, url)
-        sys.stderr.write("payload for %s: \n%s" % (url, payload))
+        # sys.stderr.write("payload for %s: \n%s" % (url, payload))
         sys.stderr.write("updated object with csid %s to REST API...\n" % updateItems['objectCsid'])
-        return ''
+        return message
     elif when2post == 'queue':
-        add2queue("PUT", uri, fieldset, updateItems, form)
-        return ''
+        message = add2queue("PUT", uri, fieldset, updateItems, form)
+        return message
     else:
         raise
 
@@ -145,8 +147,8 @@ def updateXML(fieldset, updateItems, xml):
     elif fieldset == 'mattax':
         fieldList = ('material', 'taxon', 'briefDescription')
     elif fieldset == 'fullmonty':
-        fieldList = ('assocPeople', 'briefDescription', 'collection', 'cxntentDate', 'contentPlace', 'fieldCollector', 'material',
-        'objectName', 'objectName', 'objectProductionPlace', 'pahmaAltNum', 'pahmaEthnographicFileCode',
+        fieldList = ('assocPeople', 'briefDescription', 'collection', 'contentDate', 'contentPlace', 'fieldCollector', 'material',
+        'objectName', 'objectName', 'objectProductionDate', 'objectProductionPlace', 'objectProductionPerson', 'pahmaAltNum', 'pahmaEthnographicFileCode',
         'pahmaFieldCollectionDate', 'pahmaFieldCollectionPlace', 'pahmaFieldLocVerbatim', 'responsibleDepartment',
         'taxon', 'material')
 
@@ -169,11 +171,11 @@ def updateXML(fieldset, updateItems, xml):
             pass
             # html += ">>> ",'.//'+relationType+extra+'List'
         # sys.stderr.write('tag2: %s\n' % (relationType + extra + listSuffix))
-
         if relationType == 'taxon':
-            metadata = root.findall('.//' + 'taxonomicIdent' + extra + listSuffix)
+            tmprelationType = 'taxonomicIdent'
         else:
-            metadata = root.findall('.//' + relationType + extra + listSuffix)
+            tmprelationType = relationType
+        metadata = root.findall('.//' + tmprelationType + extra + listSuffix)
         if 'objectNumber' in updateItems and updateItems['objectNumber'] == '':
             updateItems['objectNumber'] = root.find('.//objectNumber').text
         try:
@@ -189,10 +191,7 @@ def updateXML(fieldset, updateItems, xml):
             # sys.stderr.write('  updateItem: ' + relationType + ':: ' + updateItems[relationType] + '\n' )
             Entries = metadata.findall('.//' + relationType)
             if not alreadyExists(updateItems[relationType], Entries):
-                if relationType == 'taxon':
-                    newElement = etree.Element('taxonomicIdentGroup')
-                else:
-                    newElement = etree.Element(relationType + 'Group')
+                newElement = etree.Element(tmprelationType + 'Group')
                 leafElement = etree.Element(relationType)
                 leafElement.text = updateItems[relationType]
                 newElement.append(leafElement)
@@ -207,7 +206,7 @@ def updateXML(fieldset, updateItems, xml):
                     # html += '<br>before',etree.tostring(metadata).replace('<','&lt;').replace('>','&gt;')
                     for child in metadata:
                         # html += '<br>tag: ', child.tag
-                        if child.tag == relationType + 'Group':
+                        if child.tag == tmprelationType + 'Group':
                             # html += '<br> found it! ',child.tag
                             metadata.remove(child)
                     metadata.insert(0, newElement)
@@ -220,7 +219,7 @@ def updateXML(fieldset, updateItems, xml):
                 else:
                     # exists, but not preferred. make it the preferred: remove it from where it is, insert it as 1st
                     for child in metadata:
-                        if child.tag == relationType + 'Group':
+                        if child.tag == tmprelationType + 'Group':
                             checkval = child.find('.//' + relationType)
                             if checkval.text == updateItems[relationType]:
                                 savechild = child
@@ -264,11 +263,12 @@ def updateXML(fieldset, updateItems, xml):
 
         elif relationType in ['objectProductionDate', 'pahmaFieldCollectionDate', 'contentDate']:
             # we'll be replacing the entire structured date group
-            DateGroup = metadata.find('.//%sGroup' % relationType)
             newDateGroup = etree.Element('%sGroup' % relationType)
             new_element = etree.Element('dateDisplayDate')
             new_element.text = updateItems[relationType]
             newDateGroup.insert(0, new_element)
+
+            DateGroup = metadata.find('.//%sGroup' % relationType)
             if DateGroup is not None:
                 metadata.remove(DateGroup)
             # one of many special cases...
