@@ -917,7 +917,7 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
             updateItems['material'] = refNames2find[form.get('ma.' + index)]
             updateItems['objectProductionDate'] = form.get('dprd.' + index)
             updateItems['objectProductionPlace'] = refNames2find[form.get('pp.' + index)]
-            updateItems['objectstatus'] = form.get('obs.' + index)
+            updateItems['pahmaObjectStatus'] = form.get('obs.' + index)
             updateItems['pahmaAltNum'] = form.get('anm.' + index)
             updateItems['pahmaAltNumType'] = form.get('ant.' + index)
             updateItems['pahmaEthnographicFileCode'] = refNames2find[form.get('fc.' + index)]

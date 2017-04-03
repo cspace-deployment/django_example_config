@@ -149,7 +149,7 @@ def updateXML(fieldset, updateItems, xml):
     elif fieldset == 'fullmonty':
         fieldList = ('assocPeople', 'briefDescription', 'collection', 'contentDate', 'contentPlace', 'fieldCollector', 'material',
         'objectName', 'objectName', 'objectProductionDate', 'objectProductionPlace', 'objectProductionPerson', 'pahmaAltNum', 'pahmaEthnographicFileCode',
-        'pahmaFieldCollectionDate', 'pahmaFieldCollectionPlace', 'pahmaFieldLocVerbatim', 'responsibleDepartment',
+        'pahmaFieldCollectionDate', 'pahmaFieldCollectionPlace', 'pahmaFieldLocVerbatim', 'pahmaObjectStatus', 'responsibleDepartment',
         'taxon', 'material')
 
     root = etree.fromstring(xml)
@@ -309,7 +309,6 @@ def updateXML(fieldset, updateItems, xml):
             collectionobjects_pahma.insert(0, inventoryCount)
         inventoryCount.text = updateItems['inventoryCount']
     # print(etree.tostring(root, pretty_print=True))
-
     if 'pahmaFieldLocVerbatim' in updateItems:
         pahmaFieldLocVerbatim = root.find('.//pahmaFieldLocVerbatim')
         if pahmaFieldLocVerbatim is None:
