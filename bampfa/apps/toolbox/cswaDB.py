@@ -332,9 +332,17 @@ ac.id accID,
 h9.name accCSID,
 cp.inventoryCount,
 cc.collection,
-rd.item,
+rd.item responsibledepartment,
 cp.pahmafieldlocverbatim,
-fcd.datedisplaydate
+fcd.datedisplaydate fcdate,
+REGEXP_REPLACE(matg.material, '^.*\\)''(.*)''$', '\\1') material,
+REGEXP_REPLACE(opp.objectProductionPlace, '^.*\\)''(.*)''$', '\\1') productionplace,
+pd.datedisplaydate productiondate,
+REGEXP_REPLACE(tig.taxon, '^.*\\)''(.*)''$', '\\1') taxon,
+ddep.datedisplaydate contentDateGroup,
+REGEXP_REPLACE(conp.item, '^.*\\)''(.*)''$', '\\1') contentPlace,
+REGEXP_REPLACE(ope.objectProductionPerson, '^.*\\)''(.*)''$', '\\1') productionperson,
+pobs.item objectstatus
 
 FROM loctermgroup l
 
@@ -355,31 +363,49 @@ left outer join collectionobjects_anthropology ca on (ca.id=cc.id)
 left outer join collectionobjects_pahma cp on (cp.id=cc.id)
 left outer join collectionobjects_pahma_pahmafieldcollectionplacelist pfc on (pfc.id=cc.id and (pfc.pos=0 or pfc.pos is null))
 left outer join collectionobjects_pahma_pahmaethnographicfilecodelist pef on (pef.id=cc.id and (pef.pos=0 or pef.pos is null))
+left outer join collectionobjects_pahma_pahmaobjectstatuslist pobs ON (pobs.id = cc.id and pobs.pos=0)
 
 left outer join hierarchy h5 on (cc.id=h5.parentid and h5.primarytype = 'assocPeopleGroup' and (h5.pos=0 or h5.pos is null))
 left outer join assocpeoplegroup apg on (apg.id=h5.id)
  
 left outer join collectionobjects_common_briefdescriptions bd on (bd.id=cc.id and bd.pos=0)
+left outer join collectionobjects_common_contentplaces conp on (conp.id=cc.id and conp.pos=0)
 left outer join collectionobjects_common_fieldcollectors pc on (pc.id=cc.id and pc.pos=0)
 
-FULL OUTER JOIN hierarchy h6 ON (h6.id = cc.id)
-FULL OUTER JOIN relations_common rc6 ON (rc6.subjectcsid = h6.name AND rc6.objectdocumenttype = 'Acquisition')
-
+FULL OUTER JOIN relations_common rc6 ON (rc6.subjectcsid = h1.name AND rc6.objectdocumenttype = 'Acquisition')
 FULL OUTER JOIN hierarchy h7 ON (h7.name = rc6.objectcsid)
 FULL OUTER JOIN acquisitions_common ac ON (ac.id = h7.id)
 FULL OUTER JOIN hierarchy h9 ON (ac.id = h9.id)
 FULL OUTER JOIN acquisitions_common_owners donor ON (ac.id = donor.id AND (donor.pos = 0 OR donor.pos IS NULL))
 FULL OUTER JOIN misc msac ON (ac.id = msac.id AND msac.lifecyclestate <> 'deleted')
 
-FULL OUTER JOIN hierarchy h10 ON (h10.parentid = cc.id AND h10.pos = 0 AND h10.name = 'collectionobjects_pahma:pahmaFieldCollectionDateGroupList')
-FULL OUTER JOIN structureddategroup fcd ON (fcd.id = h10.id)
-
 FULL OUTER JOIN hierarchy h8 ON (cc.id = h8.parentid AND h8.name = 'collectionobjects_pahma:pahmaAltNumGroupList' AND (h8.pos = 0 OR h8.pos IS NULL))
 FULL OUTER JOIN pahmaaltnumgroup an ON (h8.id = an.id)
 
-join misc ms on (cc.id=ms.id and ms.lifecyclestate <> 'deleted')
+FULL OUTER JOIN hierarchy h10 ON (h10.parentid = cc.id AND h10.pos = 0 AND h10.name = 'collectionobjects_pahma:pahmaFieldCollectionDateGroupList')
+FULL OUTER JOIN structureddategroup fcd ON (fcd.id = h10.id)
+
+FULL OUTER JOIN hierarchy h11 ON (cc.id=h11.parentid AND h11.name='collectionobjects_common:objectProductionPlaceGroupList' AND (h11.pos=0 OR h11.pos IS NULL))
+FULL OUTER JOIN objectproductionplacegroup opp ON (h11.id=opp.id)
+
+FULL OUTER JOIN hierarchy h12 ON (h12.parentid = cc.id AND h12.name = 'collectionobjects_common:objectProductionDateGroupList'  AND (h12.pos=0 OR h12.pos IS NULL))
+FULL OUTER JOIN structureddategroup pd ON (pd.id = h12.id)
+
+FULL OUTER JOIN hierarchy h13 ON (h13.parentid = cc.id AND h13.name='collectionobjects_common:materialGroupList' AND (h13.pos=0 OR h13.pos IS NULL))
+FULL OUTER JOIN materialgroup matg ON (h13.id = matg.id)
+
+FULL OUTER JOIN hierarchy htig on (cc.id = htig.parentid AND htig.name = 'collectionobjects_naturalhistory:taxonomicIdentGroupList' AND (htig.pos=0 OR htig.pos IS NULL))
+FULL OUTER JOIN taxonomicIdentGroup tig ON (tig.id = htig.id)
+
+FULL OUTER JOIN hierarchy h14 ON (h14.parentid = cc.id AND h14.name = 'collectionobjects_common:contentDateGroup'  AND (h14.pos=0 OR h14.pos IS NULL))
+FULL OUTER JOIN structureddategroup ddep ON (ddep.id = h14.id)
+
+FULL OUTER JOIN hierarchy h15 ON (cc.id=h15.parentid AND h15.name='collectionobjects_common:objectProductionPersonGroupList' AND (h15.pos=0 OR h15.pos IS NULL))
+FULL OUTER JOIN objectproductionpersongroup ope ON (h15.id=ope.id)
 
 left outer join collectionobjects_common_responsibledepartments rd on (rd.id=cc.id and rd.pos=0)
+
+join misc ms on (cc.id=ms.id and ms.lifecyclestate <> 'deleted')
 
 WHERE 
    l.termdisplayName = '""" + str(location) + """'
@@ -591,7 +617,15 @@ cp.inventoryCount,
 cc.collection,
 rd.item,
 cp.pahmafieldlocverbatim,
-fcd.datedisplaydate
+fcd.datedisplaydate fcdate,
+REGEXP_REPLACE(matg.material, '^.*\\)''(.*)''$', '\\1') material,
+REGEXP_REPLACE(opp.objectProductionPlace, '^.*\\)''(.*)''$', '\\1') productionplace,
+pd.datedisplaydate productiondate,
+REGEXP_REPLACE(tig.taxon, '^.*\\)''(.*)''$', '\\1') taxon,
+ddep.datedisplaydate contentDateGroup,
+REGEXP_REPLACE(conp.item, '^.*\\)''(.*)''$', '\\1') contentPlace,
+REGEXP_REPLACE(ope.objectProductionPerson, '^.*\\)''(.*)''$', '\\1') productionperson,
+pobs.item objectstatus
 
 FROM groups_common gc
 
@@ -602,19 +636,19 @@ JOIN hierarchy hx2 ON (rc1.objectcsid=hx2.name)
 JOIN collectionobjects_common cc ON (hx2.id=cc.id)
 JOIN collectionobjects_pahma cp on(cp.id = cc.id)
 
-left outer join hierarchy h4 on (cc.id = h4.parentid and h4.name =
-'collectionobjects_common:objectNameList' and (h4.pos=0 or h4.pos is null))
+left outer join hierarchy h4 on (cc.id = h4.parentid and h4.name = 'collectionobjects_common:objectNameList' and (h4.pos=0 or h4.pos is null))
 left outer join objectnamegroup ong on (ong.id=h4.id)
 
 left outer join collectionobjects_anthropology ca on (ca.id=cc.id)
 left outer join collectionobjects_pahma_pahmafieldcollectionplacelist pfc on (pfc.id=cc.id and pfc.pos=0)
 left outer join collectionobjects_pahma_pahmaethnographicfilecodelist pef on (pef.id=cc.id and pef.pos=0)
+left outer join collectionobjects_pahma_pahmaobjectstatuslist pobs ON (pobs.id = cc.id and pobs.pos=0)
 
-left outer join hierarchy h5 on (cc.id=h5.parentid and h5.primarytype =
-'assocPeopleGroup' and (h5.pos=0 or h5.pos is null))
+left outer join hierarchy h5 on (cc.id=h5.parentid and h5.primarytype = 'assocPeopleGroup' and (h5.pos=0 or h5.pos is null))
 left outer join assocpeoplegroup apg on (apg.id=h5.id)
 
 left outer join collectionobjects_common_briefdescriptions bd on (bd.id=cc.id and bd.pos=0)
+left outer join collectionobjects_common_contentplaces conp on (conp.id=cc.id and conp.pos=0)
 left outer join collectionobjects_common_fieldcollectors pc on (pc.id=cc.id and pc.pos=0)
 
 FULL OUTER JOIN relations_common rc6 ON (rc6.subjectcsid = h1.name AND rc6.objectdocumenttype = 'Acquisition')
@@ -630,9 +664,28 @@ FULL OUTER JOIN pahmaaltnumgroup an ON (h8.id = an.id)
 FULL OUTER JOIN hierarchy h10 ON (h10.parentid = cc.id AND h10.pos = 0 AND h10.name = 'collectionobjects_pahma:pahmaFieldCollectionDateGroupList')
 FULL OUTER JOIN structureddategroup fcd ON (fcd.id = h10.id)
 
-join misc ms on (cc.id=ms.id and ms.lifecyclestate <> 'deleted')
+FULL OUTER JOIN hierarchy h11 ON (cc.id=h11.parentid AND h11.name='collectionobjects_common:objectProductionPlaceGroupList' AND (h11.pos=0 OR h11.pos IS NULL))
+FULL OUTER JOIN objectproductionplacegroup opp ON (h11.id=opp.id)
+
+FULL OUTER JOIN hierarchy h12 ON (h12.parentid = cc.id AND h12.name = 'collectionobjects_common:objectProductionDateGroupList'  AND (h12.pos=0 OR h12.pos IS NULL))
+FULL OUTER JOIN structureddategroup pd ON (pd.id = h12.id)
+
+FULL OUTER JOIN hierarchy h13 ON (h13.parentid = cc.id AND h13.name='collectionobjects_common:materialGroupList' AND (h13.pos=0 OR h13.pos IS NULL))
+FULL OUTER JOIN materialgroup matg ON (h13.id = matg.id)
+
+FULL OUTER JOIN hierarchy htig on (cc.id = htig.parentid AND htig.name = 'collectionobjects_naturalhistory:taxonomicIdentGroupList' AND (htig.pos=0 OR htig.pos IS NULL))
+FULL OUTER JOIN taxonomicIdentGroup tig ON (tig.id = htig.id)
+
+FULL OUTER JOIN hierarchy h14 ON (h14.parentid = cc.id AND h14.name = 'collectionobjects_common:contentDateGroup'  AND (h14.pos=0 OR h14.pos IS NULL))
+FULL OUTER JOIN structureddategroup ddep ON (ddep.id = h14.id)
+
+FULL OUTER JOIN hierarchy h15 ON (cc.id=h15.parentid AND h15.name='collectionobjects_common:objectProductionPersonGroupList' AND (h15.pos=0 OR h15.pos IS NULL))
+FULL OUTER JOIN objectproductionpersongroup ope ON (h15.id=ope.id)
 
 left outer join collectionobjects_common_responsibledepartments rd on (rd.id=cc.id and rd.pos=0)
+
+join misc ms on (cc.id=ms.id and ms.lifecyclestate <> 'deleted')
+
 WHERE
    gc.title='""" + group + """'
 limit """ + str(num2ret)
@@ -642,9 +695,9 @@ limit """ + str(num2ret)
         objects = setupcursor(config, getobjects)
         #for object in objects.fetchall():
         #print object
-        return [list(item) for item in objects.fetchall()]
+        return [list(item) for item in objects.fetchall()], ''
     except:
-        raise
+        return [], 'problem with group query'
 
 
 def getloclist(searchType, location1, location2, num2ret, config):
@@ -702,10 +755,13 @@ WHERE
     if int(num2ret) > 1000: num2ret = 1000
     if int(num2ret) < 1:    num2ret = 1
 
-    objects = setupcursor(config, query1 % object1)
-    (object1, sortkey1) = objects.fetchone()
-    objects = setupcursor(config, query1 % object2)
-    (object2, sortkey2) = objects.fetchone()
+    try:
+        objects = setupcursor(config, query1 % object1)
+        (object1, sortkey1) = objects.fetchone()
+        objects = setupcursor(config, query1 % object2)
+        (object2, sortkey2) = objects.fetchone()
+    except:
+        return [], 'problem'
 
     # 'set' means 'next num2ret objects', otherwise prefix match
     if searchType == 'set':
@@ -760,26 +816,34 @@ cp.inventoryCount,
 cc.collection,
 rd.item,
 cp.pahmafieldlocverbatim,
-fcd.datedisplaydate
+fcd.datedisplaydate fcdate,
+REGEXP_REPLACE(matg.material, '^.*\\)''(.*)''$', '\\1') material,
+REGEXP_REPLACE(opp.objectProductionPlace, '^.*\\)''(.*)''$', '\\1') productionplace,
+pd.datedisplaydate productiondate,
+REGEXP_REPLACE(tig.taxon, '^.*\\)''(.*)''$', '\\1') taxon,
+ddep.datedisplaydate contentDateGroup,
+REGEXP_REPLACE(conp.item, '^.*\\)''(.*)''$', '\\1') contentPlace,
+REGEXP_REPLACE(ope.objectProductionPerson, '^.*\\)''(.*)''$', '\\1') productionperson,
+pobs.item objectstatus
 
 FROM collectionobjects_pahma cp
 left outer join collectionobjects_common cc on (cp.id=cc.id)
 
 left outer join hierarchy h1 on (cp.id = h1.id)
 
-left outer join hierarchy h4 on (cc.id = h4.parentid and h4.name =
-'collectionobjects_common:objectNameList' and (h4.pos=0 or h4.pos is null))
+left outer join hierarchy h4 on (cc.id = h4.parentid and h4.name = 'collectionobjects_common:objectNameList' and (h4.pos=0 or h4.pos is null))
 left outer join objectnamegroup ong on (ong.id=h4.id)
 
 left outer join collectionobjects_anthropology ca on (ca.id=cc.id)
 left outer join collectionobjects_pahma_pahmafieldcollectionplacelist pfc on (pfc.id=cc.id and pfc.pos=0)
 left outer join collectionobjects_pahma_pahmaethnographicfilecodelist pef on (pef.id=cc.id and pef.pos=0)
+FULL OUTER JOIN collectionobjects_pahma_pahmaobjectstatuslist pobs ON (pobs.id = cc.id and pobs.pos=0)
 
-left outer join hierarchy h5 on (cc.id=h5.parentid and h5.primarytype =
-'assocPeopleGroup' and (h5.pos=0 or h5.pos is null))
+left outer join hierarchy h5 on (cc.id=h5.parentid and h5.primarytype = 'assocPeopleGroup' and (h5.pos=0 or h5.pos is null))
 left outer join assocpeoplegroup apg on (apg.id=h5.id)
  
 left outer join collectionobjects_common_briefdescriptions bd on (bd.id=cc.id and bd.pos=0)
+left outer join collectionobjects_common_contentplaces conp on (conp.id=cc.id and conp.pos=0)
 left outer join collectionobjects_common_fieldcollectors pc on (pc.id=cc.id and pc.pos=0)
 
 FULL OUTER JOIN relations_common rc6 ON (rc6.subjectcsid = h1.name AND rc6.objectdocumenttype = 'Acquisition')
@@ -794,10 +858,28 @@ FULL OUTER JOIN pahmaaltnumgroup an ON (h8.id = an.id)
 
 FULL OUTER JOIN hierarchy h10 ON (h10.parentid = cc.id AND h10.pos = 0 AND h10.name = 'collectionobjects_pahma:pahmaFieldCollectionDateGroupList')
 FULL OUTER JOIN structureddategroup fcd ON (fcd.id = h10.id)
- 
-join misc ms on (cc.id=ms.id and ms.lifecyclestate <> 'deleted')
+
+FULL OUTER JOIN hierarchy h11 ON (cc.id=h11.parentid AND h11.name='collectionobjects_common:objectProductionPlaceGroupList' AND (h11.pos=0 OR h11.pos IS NULL))
+FULL OUTER JOIN objectproductionplacegroup opp ON (h11.id=opp.id)
+
+FULL OUTER JOIN hierarchy h12 ON (h12.parentid = cc.id AND h12.name = 'collectionobjects_common:objectProductionDateGroupList'  AND (h12.pos=0 OR h12.pos IS NULL))
+FULL OUTER JOIN structureddategroup pd ON (pd.id = h12.id)
+
+FULL OUTER JOIN hierarchy h13 ON (h13.parentid = cc.id AND h13.name='collectionobjects_common:materialGroupList' AND (h13.pos=0 OR h13.pos IS NULL))
+FULL OUTER JOIN materialgroup matg ON (h13.id = matg.id)
+
+FULL OUTER JOIN hierarchy htig on (cc.id = htig.parentid AND htig.name = 'collectionobjects_naturalhistory:taxonomicIdentGroupList' AND (htig.pos=0 OR htig.pos IS NULL))
+FULL OUTER JOIN taxonomicIdentGroup tig ON (tig.id = htig.id)
+
+FULL OUTER JOIN hierarchy h14 ON (h14.parentid = cc.id AND h14.name = 'collectionobjects_common:contentDateGroup'  AND (h14.pos=0 OR h14.pos IS NULL))
+FULL OUTER JOIN structureddategroup ddep ON (ddep.id = h14.id)
+
+FULL OUTER JOIN hierarchy h15 ON (cc.id=h15.parentid AND h15.name='collectionobjects_common:objectProductionPersonGroupList' AND (h15.pos=0 OR h15.pos IS NULL))
+FULL OUTER JOIN objectproductionpersongroup ope ON (h15.id=ope.id)
 
 left outer join collectionobjects_common_responsibledepartments rd on (rd.id=cc.id and rd.pos=0)
+
+join misc ms on (cc.id=ms.id and ms.lifecyclestate <> 'deleted')
 """ + whereclause + """
 ORDER BY sortableobjectnumber
 limit """ + str(num2ret)
@@ -806,7 +888,7 @@ limit """ + str(num2ret)
     #for object in objects.fetchall():
     #print object
     # return objects.fetchall()
-    return [list(item) for item in objects.fetchall()]
+    return [list(item) for item in objects.fetchall()], None
 
 
 def findcurrentlocation(csid, config):

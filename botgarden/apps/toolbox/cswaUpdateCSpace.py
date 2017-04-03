@@ -44,6 +44,7 @@ def add2queue(requestType, uri, fieldset, updateItems, form):
     userdata = form['userdata']
     element = json.dumps((requestType, uri, userdata.username, userdata.cspace_password, fieldset, updateItems))
     DIRQ.add(element)
+    return ''
 
 
 def updateCspace(fieldset, updateItems, form, config, when2post):
@@ -54,14 +55,38 @@ def updateCspace(fieldset, updateItems, form, config, when2post):
         # get the XML for this object
         connection = cspace.connection.create_connection(MAINCONFIG, form['userdata'])
         url = "cspace-services/" + uri
-        url2, content, elapsedtime = connection.make_get_request(url)
-        message, payload = updateXML(fieldset, updateItems, content)
-        (url3, data, csid, elapsedtime) = postxml('PUT', uri, payload, form)
-        sys.stderr.write("updated object with csid %s to REST API..." % updateItems['objectCsid'])
-        return ''
+        try:
+            url2, content, httpcode, elapsedtime = connection.make_get_request(url)
+        except:
+            sys.stderr.write("ERROR: problem GETting XML for %s" % url)
+            raise ValueError("ERROR: problem getting XML for %s" % url)
+        if httpcode != 200:
+            sys.stderr.write("ERROR: HTTP response code %s for  %s" % (httpcode, url))
+            raise ValueError("ERROR: HTTP response code %s for  %s" % (httpcode, url))
+        if content is None:
+            sys.stderr.write("ERROR: No XML returned from CSpace server for %s" % url)
+            raise ValueError("ERROR: No XML returned from CSpace server for %s" % url)
+        try:
+            message, payload = updateXML(fieldset, updateItems, content)
+        except:
+            sys.stderr.write("ERROR generating update XML for fieldset %s" % fieldset)
+            sys.stderr.write("ERROR: payload for %s: \n%s" % (url, payload))
+            return "ERROR generating update XML for fieldset %s" % fieldset
+        try:
+            (url3, data, httpcode, elapsedtime) = postxml('PUT', uri, payload, form)
+        except:
+            sys.stderr.write("ERROR: failed PUT payload for %s: \n%s" % (url, payload))
+            return "ERROR: failed PUT payload for %s: \n%s" % (url, payload)
+        if data is None:
+            sys.stderr.write("ERROR: failed PUT payload for %s: \n%s" % (url, payload))
+            sys.stderr.write("ERROR: HTTP response code %s for  %s" % (httpcode, url))
+            return "ERROR: Bad HTTP response code %s for  %s" % (httpcode, url)
+        # sys.stderr.write("payload for %s: \n%s" % (url, payload))
+        sys.stderr.write("updated object with csid %s to REST API...\n" % updateItems['objectCsid'])
+        return message
     elif when2post == 'queue':
-        add2queue("PUT", uri, fieldset, updateItems, form)
-        return ''
+        message = add2queue("PUT", uri, fieldset, updateItems, form)
+        return message
     else:
         raise
 
@@ -122,7 +147,10 @@ def updateXML(fieldset, updateItems, xml):
     elif fieldset == 'mattax':
         fieldList = ('material', 'taxon', 'briefDescription')
     elif fieldset == 'fullmonty':
-        fieldList = ('pahmaFieldLocVerbatim', 'objectProductionDate')
+        fieldList = ('assocPeople', 'briefDescription', 'collection', 'contentDate', 'contentPlace', 'fieldCollector', 'material',
+        'objectName', 'objectName', 'objectProductionDate', 'objectProductionPlace', 'objectProductionPerson', 'pahmaAltNum', 'pahmaEthnographicFileCode',
+        'pahmaFieldCollectionDate', 'pahmaFieldCollectionPlace', 'pahmaFieldLocVerbatim', 'pahmaObjectStatus', 'responsibleDepartment',
+        'taxon', 'material')
 
     root = etree.fromstring(xml)
     # add the user's changes to the XML
@@ -133,17 +161,21 @@ def updateXML(fieldset, updateItems, xml):
             continue
         listSuffix = 'List'
         extra = ''
-        if relationType in ['assocPeople', 'pahmaAltNum', 'pahmaFieldCollectionDate']:
+        if relationType in ['assocPeople', 'pahmaAltNum', 'pahmaFieldCollectionDate', 'objectProductionDate', 'objectProductionPlace', 'objectProductionPerson', 'contentDate', 'material', 'taxon']:
             extra = 'Group'
         elif relationType in ['briefDescription', 'fieldCollector', 'responsibleDepartment', 'contentPlace']:
             listSuffix = 's'
-        elif relationType in ['collection', 'pahmaFieldLocVerbatim']:
+        if relationType in ['collection', 'pahmaFieldLocVerbatim', 'contentDate']:
             listSuffix = ''
         else:
             pass
             # html += ">>> ",'.//'+relationType+extra+'List'
         # sys.stderr.write('tag2: %s\n' % (relationType + extra + listSuffix))
-        metadata = root.findall('.//' + relationType + extra + listSuffix)
+        if relationType == 'taxon':
+            tmprelationType = 'taxonomicIdent'
+        else:
+            tmprelationType = relationType
+        metadata = root.findall('.//' + tmprelationType + extra + listSuffix)
         if 'objectNumber' in updateItems and updateItems['objectNumber'] == '':
             updateItems['objectNumber'] = root.find('.//objectNumber').text
         try:
@@ -154,19 +186,18 @@ def updateXML(fieldset, updateItems, xml):
             continue
         # print(etree.tostring(metadata))
         # html += ">>> ",relationType,':',updateItems[relationType]
-        if relationType in ['assocPeople', 'objectName', 'pahmaAltNum']:
+        if relationType in ['assocPeople', 'objectName', 'pahmaAltNum', 'material', 'taxon', 'objectProductionPerson', 'objectProductionPlace']:
             # group = metadata.findall('.//'+relationType+'Group')
             # sys.stderr.write('  updateItem: ' + relationType + ':: ' + updateItems[relationType] + '\n' )
             Entries = metadata.findall('.//' + relationType)
             if not alreadyExists(updateItems[relationType], Entries):
-                newElement = etree.Element(relationType + 'Group')
+                newElement = etree.Element(tmprelationType + 'Group')
                 leafElement = etree.Element(relationType)
                 leafElement.text = updateItems[relationType]
                 newElement.append(leafElement)
                 if relationType in ['assocPeople', 'pahmaAltNum']:
                     apgType = etree.Element(relationType + 'Type')
-                    apgType.text = updateItems[
-                        relationType + 'Type'].lower() if relationType == 'pahmaAltNum' else 'made by'
+                    apgType.text = updateItems[relationType + 'Type'].lower() if relationType == 'pahmaAltNum' else 'made by'
                     # sys.stderr.write(relationType + 'Type:' + updateItems[relationType + 'Type'])
                     newElement.append(apgType)
                 if len(Entries) == 1 and Entries[0].text is None:
@@ -175,7 +206,7 @@ def updateXML(fieldset, updateItems, xml):
                     # html += '<br>before',etree.tostring(metadata).replace('<','&lt;').replace('>','&gt;')
                     for child in metadata:
                         # html += '<br>tag: ', child.tag
-                        if child.tag == relationType + 'Group':
+                        if child.tag == tmprelationType + 'Group':
                             # html += '<br> found it! ',child.tag
                             metadata.remove(child)
                     metadata.insert(0, newElement)
@@ -188,7 +219,7 @@ def updateXML(fieldset, updateItems, xml):
                 else:
                     # exists, but not preferred. make it the preferred: remove it from where it is, insert it as 1st
                     for child in metadata:
-                        if child.tag == relationType + 'Group':
+                        if child.tag == tmprelationType + 'Group':
                             checkval = child.find('.//' + relationType)
                             if checkval.text == updateItems[relationType]:
                                 savechild = child
@@ -232,15 +263,21 @@ def updateXML(fieldset, updateItems, xml):
 
         elif relationType in ['objectProductionDate', 'pahmaFieldCollectionDate', 'contentDate']:
             # we'll be replacing the entire structured date group
-            pahmaFieldCollectionDateGroup = metadata.find('.//%sGroup' % relationType)
-            newpahmaFieldCollectionDateGroup = etree.Element('%sGroup' % relationType)
+            newDateGroup = etree.Element('%sGroup' % relationType)
             new_element = etree.Element('dateDisplayDate')
             new_element.text = updateItems[relationType]
-            newpahmaFieldCollectionDateGroup.insert(0, new_element)
-            if pahmaFieldCollectionDateGroup is not None:
-                metadata.remove(pahmaFieldCollectionDateGroup)
-            metadata.insert(0, newpahmaFieldCollectionDateGroup)
+            newDateGroup.insert(0, new_element)
 
+            DateGroup = metadata.find('.//%sGroup' % relationType)
+            if DateGroup is not None:
+                metadata.remove(DateGroup)
+            # one of many special cases...
+            if relationType == 'contentDate':
+                DateGroup = metadata.findall('.//*')
+                [metadata.remove(d) for d in DateGroup]
+                metadata.insert(0, new_element)
+            else:
+                metadata.insert(0, newDateGroup)
         else:
             # check if value is already present. if so, skip
             if alreadyExists(updateItems[relationType], metadata.findall('.//' + relationType)):
@@ -272,7 +309,6 @@ def updateXML(fieldset, updateItems, xml):
             collectionobjects_pahma.insert(0, inventoryCount)
         inventoryCount.text = updateItems['inventoryCount']
     # print(etree.tostring(root, pretty_print=True))
-
     if 'pahmaFieldLocVerbatim' in updateItems:
         pahmaFieldLocVerbatim = root.find('.//pahmaFieldLocVerbatim')
         if pahmaFieldLocVerbatim is None:
@@ -375,11 +411,7 @@ def makeMH2R(updateItems, config, form):
 
 def postxml(requestType, uri, payload, form):
     connection = cspace.connection.create_connection(MAINCONFIG, form['userdata'])
-    try:
-        return connection.postxml(uri="cspace-services/" + uri, payload=payload, requesttype=requestType)
-    except:
-        raise
-        # return "%s REST API post failed..." % uri
+    return connection.postxml(uri="cspace-services/" + uri, payload=payload, requesttype=requestType)
 
 
 def writeLog(updateItems, uri, httpAction, form, config):

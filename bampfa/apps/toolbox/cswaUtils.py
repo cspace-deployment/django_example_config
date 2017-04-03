@@ -45,6 +45,7 @@ import cswaConceptutils as concept
 from cswaHelpers import *
 # these are the three functions that do updates
 from cswaUpdateCSpace import updateCspace, createObject, updateLocations
+from cswaRows import formatRow, setRefnames
 from cspace_django_site.main import cspace_django_site
 
 MAINCONFIG = cspace_django_site.getConfig()
@@ -151,13 +152,13 @@ def doLocationSearch(form, config, displaytype):
     if not valid: return html + error
     updateType = config.get('info', 'updatetype')
 
+    if form.get('lo.location1') == '':
+        return '<h3 class="error">Please enter at least a starting location!</h3>'
+
     try:
         #If barcode print, assume empty end location is start location
         if updateType == "barcodeprint":
-            if form.get("lo.location2"):
-                rows = cswaDB.getloclist('range', form.get("lo.location1"), form.get("lo.location2"), 500, config)
-            else:
-                rows = cswaDB.getloclist('range', form.get("lo.location1"), form.get("lo.location1"), 500, config)
+            rows = cswaDB.getloclist('range', form.get("lo.location1"), form.get("lo.location2"), 500, config)
         else:
             rows = cswaDB.getloclist('range', form.get("lo.location1"), form.get("lo.location2"), MAXLOCATIONS, config)
     except:
@@ -195,10 +196,8 @@ def doObjectSearch(form, config, displaytype):
         toRefname = cswaDB.getrefname('locations_common', toLocation, config)
         toCrate = cswaDB.getrefname('locations_common', crate, config)
 
-    try:
-        rows = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 500, config)
-    except:
-        raise
+
+    rows, msg = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 500, config)
 
     if len(rows) == 0:
         return '<h3 class="error">No objects in this range! Sorry!</h3>'
@@ -234,13 +233,12 @@ def doOjectRangeSearch(form, config, displaytype=''):
     updateType = config.get('info', 'updatetype')
     updateactionlabel = config.get('info', 'updateactionlabel')
 
-    try:
-        if form.get('ob.objno2'):
-            objs = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 1000, config)
-        else:
-            objs = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno1"), 1000, config)
-    except:
-        raise
+
+    objs, msg = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 1000, config)
+
+    if len(objs) == 0:
+        return '<h3 class="error">No objects in this range! Sorry!</h3>'
+
     html += """
     <table><tr>
     <th>Object</th>
@@ -315,14 +313,9 @@ def listSearchResults(authority, config, displaytype, form, rows):
         if displaytype == 'select': rowtype = 'select'
         duplicates = []
         for r in rows:
-            #html += "<b>r = </b>",r
             if r[1] in duplicates:
                 hasDups = True
-                #r.append('')
-                # r.append('Duplicate!')
             else:
-                #r.append('')
-                #duplicates.append(r[1])
                 pass
             html += formatRow({'boxtype': authority, 'rowtype': rowtype, 'data': r}, form, config)
 
@@ -358,14 +351,7 @@ def doGroupSearch(form, config, displaytype):
     else:
         updateType = 'objinfo'
 
-    try:
-        #sys.stderr.write('group: %s\n' % form.get("gr.group"))
-        rows = cswaDB.getgrouplist(form.get("gr.group"), 3000, config)
-        #sys.stderr.write('group result: %s\n' % len(rows))
-    except:
-        #sys.stderr.write('group: %s\n' % form.get("gr.group"))
-        raise
-    #[sys.stderr.write('group member : %s\n' % x[2]) for x in rows]
+    rows, msg = cswaDB.getgrouplist(form.get("gr.group"), 3000, config)
 
     if len(rows) == 0:
         return '<h3 class="error">No objects in this group! Sorry!</h3>'
@@ -702,14 +688,10 @@ def doBulkEdit(form, config):
     updateType = config.get('info', 'updatetype')
     updateactionlabel = config.get('info', 'updateactionlabel')
 
-    try:
-        if form.get('ob.objno2'):
-            objs = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 3000, config)
-        else:
-            objs = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno1"), 3000, config)
-    except:
-        objs = []
+    objs, msg = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 1000, config)
 
+    if len(objs) == 0:
+        return '<h3 class="error">No objects in this range! Sorry!</h3>'
 
     CSIDs = []
     fieldset = form.get('fieldset')
@@ -717,33 +699,7 @@ def doBulkEdit(form, config):
         CSIDs.append(row[8])
 
     refNames2find = {}
-
-    index = 'user'
-    if fieldset == 'namedesc':
-        pass
-    elif fieldset == 'registration':
-        if not refNames2find.has_key(form.get('ant.' + index)):
-            refNames2find[form.get('ant.' + index)] = cswaDB.getrefname('pahmaaltnumgroup_type', form.get('ant.' + index), config)
-        if not refNames2find.has_key(form.get('pc.' + index)):
-            refNames2find[form.get('pc.' + index)] = cswaDB.getrefname('collectionobjects_common_fieldcollectors', form.get('pc.' + index), config)
-        if not refNames2find.has_key(form.get('pd.' + index)):
-            refNames2find[form.get('pd.' + index)] = cswaDB.getrefname('acquisitions_common_owners', form.get('pd.' + index), config)
-    elif fieldset == 'keyinfo':
-        if not refNames2find.has_key(form.get('cp.' + index)):
-            refNames2find[form.get('cp.' + index)] = cswaDB.getrefname('places_common', form.get('cp.' + index), config)
-        if not refNames2find.has_key(form.get('cg.' + index)):
-            refNames2find[form.get('cg.' + index)] = cswaDB.getrefname('concepts_common', form.get('cg.' + index), config)
-        if not refNames2find.has_key(form.get('fc.' + index)):
-            refNames2find[form.get('fc.' + index)] = cswaDB.getrefname('concepts_common', form.get('fc.' + index), config)
-    elif fieldset == 'hsrinfo':
-        if not refNames2find.has_key(form.get('cp.' + index)):
-            refNames2find[form.get('cp.' + index)] = cswaDB.getrefname('places_common', form.get('cp.' + index), config)
-    elif fieldset == 'objtypecm':
-        if not refNames2find.has_key(form.get('cp.' + index)):
-            refNames2find[form.get('cp.' + index)] = cswaDB.getrefname('places_common', form.get('cp.' + index), config)
-    else:
-        pass
-        #error! fieldset not set!
+    setRefnames(refNames2find, fieldset, form, config, 'user')
 
     return doTheUpdate(CSIDs, form, config, fieldset, refNames2find)
 
@@ -757,13 +713,8 @@ def doBulkEditForm(form, config, displaytype):
     updateType = config.get('info', 'updatetype')
     updateactionlabel = config.get('info', 'updateactionlabel')
 
-    try:
-        if form.get('ob.objno2'):
-            objs = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 3000, config)
-        else:
-            objs = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno1"), 3000, config)
-    except:
-        objs = []
+
+    objs, msg = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 1000, config)
 
     totalobjects = len(objs)
 
@@ -889,31 +840,7 @@ def doUpdateKeyinfo(form, config):
     for row, csid in enumerate(CSIDs):
 
         index = csid # for now, the index is the csid
-        if fieldset == 'namedesc':
-            pass
-        elif fieldset == 'registration':
-            if not refNames2find.has_key(form.get('ant.' + index)):
-                refNames2find[form.get('ant.' + index)] = cswaDB.getrefname('pahmaaltnumgroup_type', form.get('ant.' + index), config)
-            if not refNames2find.has_key(form.get('pc.' + index)):
-                refNames2find[form.get('pc.' + index)] = cswaDB.getrefname('collectionobjects_common_fieldcollectors', form.get('pc.' + index), config)
-            if not refNames2find.has_key(form.get('pd.' + index)):
-                refNames2find[form.get('pd.' + index)] = cswaDB.getrefname('acquisitions_common_owners', form.get('pd.' + index), config)
-        elif fieldset == 'keyinfo':
-            if not refNames2find.has_key(form.get('cp.' + index)):
-                refNames2find[form.get('cp.' + index)] = cswaDB.getrefname('places_common', form.get('cp.' + index), config)
-            if not refNames2find.has_key(form.get('cg.' + index)):
-                refNames2find[form.get('cg.' + index)] = cswaDB.getrefname('concepts_common', form.get('cg.' + index), config)
-            if not refNames2find.has_key(form.get('fc.' + index)):
-                refNames2find[form.get('fc.' + index)] = cswaDB.getrefname('concepts_common', form.get('fc.' + index), config)
-        elif fieldset == 'hsrinfo':
-            if not refNames2find.has_key(form.get('cp.' + index)):
-                refNames2find[form.get('cp.' + index)] = cswaDB.getrefname('places_common', form.get('cp.' + index), config)
-        elif fieldset == 'objtypecm':
-            if not refNames2find.has_key(form.get('cp.' + index)):
-                refNames2find[form.get('cp.' + index)] = cswaDB.getrefname('places_common', form.get('cp.' + index), config)
-        else:
-            pass
-            #error! fieldset not set!
+        setRefnames(refNames2find, fieldset, form, config, index)
 
     return doTheUpdate(CSIDs, form, config, fieldset, refNames2find)
 
@@ -940,7 +867,7 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
         elif fieldset == 'registration':
             updateItems['pahmaAltNum'] = form.get('anm.' + index)
             updateItems['pahmaAltNumType'] = form.get('ant.' + index)
-            updateItems['fieldCollector'] = refNames2find[form.get('pc.' + index)]
+            updateItems['fieldCollector'] = refNames2find[form.get('cl.' + index)]
         elif fieldset == 'keyinfo':
             if form.get('ocn.' + index) != '':
                 updateItems['objectCount'] = form.get('ocn.' + index)
@@ -961,7 +888,46 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
             updateItems['pahmaFieldCollectionPlace'] = refNames2find[form.get('cp.' + index)]
         elif fieldset == 'placeanddate':
             updateItems['pahmaFieldLocVerbatim'] = form.get('vfcp.' + index)
-            updateItems['pahmaFieldCollectionDate'] = form.get('cd.' + index)
+            updateItems['pahmaFieldCollectionDate'] = form.get('dcol.' + index)
+        elif fieldset == 'places':
+            updateItems['pahmaFieldLocVerbatim'] = form.get('vfcp.' + index)
+            updateItems['pahmaFieldCollectionPlace'] = refNames2find[form.get('cp.' + index)]
+            updateItems['objectProductionPlace'] = refNames2find[form.get('pp.' + index)]
+            updateItems['contentPlace'] = refNames2find[form.get('pd.' + index)]
+        elif fieldset == 'dates':
+            updateItems['objectProductionDate'] = form.get('dprd.' + index)
+            updateItems['pahmaFieldCollectionDate'] = form.get('dcol.' + index)
+            updateItems['contentDate'] = form.get('ddep.' + index)
+        elif fieldset == 'mattax':
+            updateItems['material'] = refNames2find[form.get('ma.' + index)]
+            updateItems['taxon'] = refNames2find[form.get('ta.' + index)]
+            updateItems['briefDescription'] = form.get('bdx.' + index)
+        elif fieldset == 'fullmonty':
+            if form.get('ocn.' + index) != '':
+                updateItems['objectCount'] = form.get('ocn.' + index)
+            updateItems['pahmaFieldLocVerbatim'] = form.get('vfcp.' + index)
+            updateItems['briefDescription'] = form.get('bdx.' + index)
+
+            updateItems['assocPeople'] = refNames2find[form.get('cg.' + index)]
+            updateItems['collection'] = form.get('ot.' + index)
+            updateItems['contentDate'] = form.get('ddep.' + index)
+            updateItems['contentPlace'] = refNames2find[form.get('pd.' + index)]
+            updateItems['fieldCollector'] = refNames2find[form.get('cl.' + index)]
+            updateItems['inventoryCount'] = form.get('ctn.' + index)
+            updateItems['material'] = refNames2find[form.get('ma.' + index)]
+            updateItems['objectProductionDate'] = form.get('dprd.' + index)
+            updateItems['objectProductionPlace'] = refNames2find[form.get('pp.' + index)]
+            updateItems['pahmaObjectStatus'] = form.get('obs.' + index)
+            updateItems['pahmaAltNum'] = form.get('anm.' + index)
+            updateItems['pahmaAltNumType'] = form.get('ant.' + index)
+            updateItems['pahmaEthnographicFileCode'] = refNames2find[form.get('fc.' + index)]
+            updateItems['pahmaFieldCollectionDate'] = form.get('dcol.' + index)
+            updateItems['pahmaFieldCollectionPlace'] = refNames2find[form.get('cp.' + index)]
+            updateItems['objectProductionPerson'] = refNames2find[form.get('pe.' + index)]
+            updateItems['pahmaFieldLocVerbatim'] = form.get('vfcp.' + index)
+            updateItems['responsibleDepartment'] = form.get('cm.' + index)
+            updateItems['taxon'] = refNames2find[form.get('ta.' + index)]
+
         else:
             pass
             #error!
@@ -970,8 +936,8 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
             updateItems[i] = form.get(i)
 
         #html += updateItems
-        msg = 'updated. '
-        if fieldset == 'keyinfo':
+        msg = 'updated. ' if WHEN2POST == 'now' else 'queued. '
+        if fieldset in ['keyinfo', 'fullmonty']:
             if updateItems['pahmaFieldCollectionPlace'] == '' and form.get('cp.' + index):
                 if form.get('cp.' + index) == cswaDB.getCSIDDetail(config, index, 'fieldcollectionplace'):
                     pass
@@ -991,10 +957,10 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
                 except ValueError:
                     msg += '<span style="color:red;"> Object count: "%s" is not a valid number!</span>' % form.get('ocn.' + index)
                     del updateItems['objectCount']
-        elif fieldset == 'registration':
-            if updateItems['fieldCollector'] == '' and form.get('pc.' + index):
-                msg += '<span style="color:red;"> Field Collector: term "%s" not found, field not updated.</span>' % form.get('pc.' + index)
-        elif fieldset == 'hsrinfo':
+        if fieldset in ['registration', 'fullmonty']:
+            if updateItems['fieldCollector'] == '' and form.get('cl.' + index):
+                msg += '<span style="color:red;"> Field Collector: term "%s" not found, field not updated.</span>' % form.get('cl.' + index)
+        if fieldset in ['hsrinfo', 'fullmonty']:
             if updateItems['pahmaFieldCollectionPlace'] == '' and form.get('cp.' + index):
                 if form.get('cp.' + index) == cswaDB.getCSIDDetail(config, index, 'fieldcollectionplace'):
                     pass
@@ -1007,7 +973,7 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
                 except ValueError:
                     msg += '<span style="color:red;"> Object count: "%s" is not a valid number!</span>' % form.get('ocn.' + index)
                     del updateItems['objectCount']
-        elif fieldset == 'objtypecm':
+        if fieldset in ['objtypecm', 'fullmonty']:
             if updateItems['pahmaFieldCollectionPlace'] == '' and form.get('cp.' + index):
                 if form.get('cp.' + index) == cswaDB.getCSIDDetail(config, index, 'fieldcollectionplace'):
                     pass
@@ -1020,7 +986,7 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
                 except ValueError:
                     msg += '<span style="color:red;"> Object count: "%s" is not a valid number!</span>' % form.get('ocn.' + index)
                     del updateItems['objectCount']
-        elif fieldset == 'placeanddate':
+        if fieldset in ['placeanddate', 'fullmonty']:
             # msg += 'place and date'
             pass
 
@@ -1041,8 +1007,9 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
             #pass
             updateMsg += updateCspace(fieldset, updateItems, form, config, WHEN2POST)
             if updateMsg != '':
-                msg += '<span style="color:red;">%s</span>' % updateMsg
-            numUpdated += 1
+                msg = '<span style="color:red;">%s</span>' % updateMsg
+            if not 'ERROR' in updateMsg:
+                numUpdated += 1
         except:
             raise
             #msg += '<span style="color:red;">problem updating</span>'
@@ -1374,13 +1341,11 @@ def doBarCodes(form, config):
                 'objectrange', len(o), labelFilename)
     #If the museum number field has input, html += by object
     elif form.get('ob.objno1') != '':
-        try:
-            if form.get('ob.objno2'):
-                objs = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 1000, config)
-            else:
-                objs = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno1"), 1000, config)
-        except:
-            raise
+        objs, msg = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 1000, config)
+
+        if len(objs) == 0:
+            return '<h3 class="error">No objects in this range! Sorry!</h3>'
+
         if action == 'Create Labels for Objects':
             totalobjects += len(objs)
             o = [o[0:8] + [o[9]] for o in objs]
@@ -1760,242 +1725,6 @@ def doUploadUpdateLocs(data, line, id2ref, form, config):
     return numUpdated,html
 
 
-def formatRow(result, form, config):
-    hostname = config.get('connect', 'hostname')
-    institution = config.get('info', 'institution')
-    port = ''
-    protocol = 'https'
-    rr = result['data']
-    rr = [x if x != None else '' for x in rr]
-
-    if result['rowtype'] == 'subheader':
-        #return """<tr><td colspan="4" class="subheader">%s</td><td>%s</td></tr>""" % result['data'][0:1]
-        return """<tr><td colspan="7" class="subheader">%s</td></tr>""" % result['data'][0]
-    elif result['rowtype'] == 'location':
-        return '''<tr><td class="objno"><a href="#" onclick="formSubmit('%s')">%s</a> <span style="color:red;">%s</span></td><td/></tr>''' % (
-            result['data'][0], result['data'][0], '')
-            #result['data'][0], result['data'][0], result['data'][-1])
-    elif result['rowtype'] == 'select':
-        rr = result['data']
-        boxType = result['boxtype']
-        return '''<li class="xspan"><input type="checkbox" name="%s.%s" value="%s" checked> <a href="#" onclick="formSubmit('%s')">%s</a></li>''' % (
-            (boxType,) + (rr[0],) * 4)
-        #return '''<tr><td class="xspan"><input type="checkbox" name="%s.%s" value="%s" checked> <a href="#" onclick="formSubmit('%s')">%s</a></td><td/></tr>''' % ((boxType,) + (rr[0],) * 4)
-    elif result['rowtype'] == 'bedlist':
-        groupby = str(form.get("groupby"))
-        rare = 'Yes' if rr[8] == 'true' else 'No'
-        dead = 'Yes' if rr[9] == 'true' else 'No'
-        link = protocol + '://' + hostname + port + '/collectionspace/ui/'+institution+'/html/cataloging.html?csid=%s' % rr[7]
-        if groupby == 'none':
-            location = '<td class="zcell">%s</td>' % rr[0]
-        else:
-            location = ''
-            # 3 recordstatus | 4 Accession number | 5 Determination | 6 Family | 7 object csid | 8 rare | 9 dead
-        return '''<tr><td class="objno"><a target="cspace" href="%s">%s</a</td><td class="zcell">%s</td><td class="zcell">%s</td><td class="zcell">%s</td><td class="zcell">%s</td>%s</tr>''' % (
-            link, rr[4], rr[6], rr[5], rare, dead,location)
-    elif result['rowtype'] in ['locreport','holdings','advsearch']:
-        rare = 'Yes' if rr[7] == 'true' else 'No'
-        dead = 'Yes' if rr[8] == 'true' else 'No'
-        link = protocol + '://' + hostname + port + '/collectionspace/ui/'+institution+'/html/cataloging.html?csid=%s' % rr[6]
-        #  0 objectnumber, 1 determination, 2 family, 3 gardenlocation, 4 dataQuality, 5 locality, 6 csid, 7 rare , 8 dead , 9 determination (no author)
-        return '''<tr><td class="zcell"><a target="cspace" href="%s">%s</a></td><td class="zcell">%s</td><td class="zcell">%s</td><td class="zcell">%s</td><td class="zcell">%s</td><td class="zcell">%s</td><td class="zcell">%s</td></tr>''' % (
-            link, rr[0], rr[1], rr[2], rr[3], rr[5], rare, dead)
-    elif result['rowtype'] == 'was.advsearch':
-        link = protocol + '://' + hostname + port + '/collectionspace/ui/'+institution+'/html/cataloging.html?csid=%s' % rr[7]
-        # 3 recordstatus | 4 Accession number | 5 Determination | 6 Family | 7 object csid
-        #### 3 Accession number | 4 Data quality | 5 Taxonomic name | 6 Family | 7 object csid
-        return '''<tr><td class="objno"><a target="cspace" href="%s">%s</a</td><td class="zcell">%s</td><td class="zcell">%s</td><td class="zcell">%s</td></tr>''' % (
-            link, rr[4], rr[3], rr[5], rr[6])
-    elif result['rowtype'] == 'inventory':
-        link = protocol + '://' + hostname + port + '/collectionspace/ui/'+institution+'/html/cataloging.html?csid=%s' % rr[8]
-        # loc 0 | lockey 1 | locdate 2 | objnumber 3 | objcount 4 | objname 5| movecsid 6 | locrefname 7 | objcsid 8 | objrefname 9
-        # f/nf | objcsid | locrefname | [loccsid] | objnum
-        if institution == 'bampfa':
-            return """<tr><td class="objno"><a target="cspace" href="%s">%s</a></td><td class="objname">%s</td><td>%s</td><td class="rdo" ><input type="radio" id="sel-move" name="r.%s" value="found|%s|%s|%s|%s|%s" checked></td><td class="rdo" ><input type="radio" id="sel-nomove" name="r.%s" value="not found|%s|%s|%s|%s|%s"/></td><td class="zcell"><input class="xspan" type="text" size="65" name="n.%s"></td></tr>""" % (
-            link, rr[3], rr[5], rr[16], rr[3], rr[8], rr[7], rr[6], rr[3], rr[14], rr[3], rr[8], rr[7], rr[6], rr[3], rr[14],
-            rr[3])
-        else:
-            return """<tr><td class="objno"><a target="cspace" href="%s">%s</a></td><td class="objname">%s</td><td class="rdo" ><input type="radio" id="sel-move" name="r.%s" value="found|%s|%s|%s|%s|%s" checked></td><td class="rdo" ><input type="radio" id="sel-nomove" name="r.%s" value="not found|%s|%s|%s|%s|%s"/></td><td class="zcell"><input class="xspan" type="text" size="65" name="n.%s"></td></tr>""" % (
-            link, rr[3], rr[5], rr[3], rr[8], rr[7], rr[6], rr[3], rr[14], rr[3], rr[8], rr[7], rr[6], rr[3], rr[14],
-            rr[3])
-    elif result['rowtype'] == 'powermove':
-        link = protocol + '://' + hostname + port + '/collectionspace/ui/'+institution+'/html/cataloging.html?csid=%s' % rr[8]
-        # loc 0 | lockey 1 | locdate 2 | objnumber 3 | objcount 4 | objname 5| movecsid 6 | locrefname 7 | objcsid 8 | objrefname 9
-        # f/nf | objcsid | locrefname | [loccsid] | objnum
-        if institution == 'bampfa':
-            return """<tr><td class="objno"><a target="cspace" href="%s">%s</a></td><td class="objname">%s</td><td>%s</td><td class="rdo" ><input type="radio" id="sel-move" name="r.%s" value="found|%s|%s|%s|%s|%s"></td><td class="rdo" ><input type="radio" id="sel-nomove" name="r.%s" value="do not move|%s|%s|%s|%s|%s" checked/></td><td class="zcell"><input class="xspan" type="text" size="65" name="n.%s"></td></tr>""" % (
-            link, rr[3], rr[5], rr[16], rr[3], rr[8], rr[7], rr[6], rr[3], rr[14], rr[3], rr[8], rr[7], rr[6], rr[3], rr[14],
-            rr[3])
-        return """<tr><td class="objno"><a target="cspace" href="%s">%s</a></td><td class="objname">%s</td><td class="rdo" ><input type="radio" id="sel-move" name="r.%s" value="move|%s|%s|%s|%s|%s"></td><td class="rdo" ><input type="radio" id="sel-nomove" name="r.%s" value="do not move|%s|%s|%s|%s|%s" checked/></td><td class="zcell"><input class="xspan" type="text" size="65" name="n.%s"></td></tr>""" % (
-            link, rr[3], rr[5], rr[3], rr[8], rr[7], rr[6], rr[3], rr[14], rr[3], rr[8], rr[7], rr[6], rr[3], rr[14],
-            rr[3])
-    elif result['rowtype'] == 'moveobject':
-        link = protocol + '://' + hostname + port + '/collectionspace/ui/'+institution+'/html/cataloging.html?csid=%s' % rr[8]
-        # 0 storageLocation | 1 lockey | 2 locdate | 3 objectnumber | 4 objectName | 5 objectCount | 6 fieldcollectionplace | 7 culturalgroup |
-        # 8 objectCsid | 9 ethnographicfilecode | 10 fcpRefName | 11 cgRefName | 12 efcRefName | 13 computedcraterefname | 14 computedcrate
-        # f/nf | objcsid | locrefname | [loccsid] | objnum
-        return """<tr><td class="rdo" ><input type="checkbox" name="r.%s" value="moved|%s|%s|%s|%s|%s" checked></td><td class="objno"><a target="cspace" href="%s">%s</a></td><td class="objname">%s</td><td class="zcell">%s</td><td class="zcell">%s</td></tr>""" % (
-            rr[3], rr[8], rr[1], '', rr[3], rr[13], link, rr[3], rr[4], rr[5], rr[0])
-    elif result['rowtype'] == 'keyinfo' or result['rowtype'] == 'objinfo':
-        if institution == 'bampfa':
-            link = protocol + '://' + hostname + port + '/collectionspace/ui/'+institution+'/html/cataloging.html?csid=%s' % rr[2]
-            link2 = ''
-        else:
-            link = protocol + '://' + hostname + port + '/collectionspace/ui/'+institution+'/html/cataloging.html?csid=%s' % rr[8]
-            link2 = protocol + '://' + hostname + port + '/collectionspace/ui/'+institution+'/html/acquisition.html?csid=%s' % rr[24]
-        # loc 0 | lockey 1 | locdate 2 | objnumber 3 | objname 4 | objcount 5| fieldcollectionplace 6 | culturalgroup 7 | objcsid 8 | ethnographicfilecode 9
-        # f/nf | objcsid | locrefname | [loccsid] | objnum
-        return formatInfoReviewRow(form, link, rr, link2)
-    elif result['rowtype'] == 'packinglist':
-        if institution == 'bampfa':
-            link = protocol + '://' + hostname + port + '/collectionspace/ui/'+institution+'/html/cataloging.html?csid=%s' % rr[2]
-            return """
-            <tr>
-<td class="objno"><a target="cspace" href="%s">%s</a></td>
-<td class="objname" name="ti.%s">%s</td>
-<td class="ncell" name="ar.%s">%s</td>
-<td class="ncell" name="me.%s">%s</td>
-<td class="ncell" name="di.%s">%s</td>
-<td class="ncell" name="cl.%s">%s</td>
-</tr>""" % (link, rr[1], rr[2], rr[3], rr[2], rr[4], rr[2], rr[6], rr[2], rr[7], rr[2], rr[9])
-
-        link = protocol + '://' + hostname + port + '/collectionspace/ui/'+institution+'/html/cataloging.html?csid=%s' % rr[8]
-        # loc 0 | lockey 1 | locdate 2 | objnumber 3 | objname 4 | objcount 5| fieldcollectionplace 6 | culturalgroup 7 | objcsid 8 | ethnographicfilecode 9
-        # f/nf | objcsid | locrefname | [loccsid] | objnum
-        return """<tr>
-<td class="objno"><a target="cspace" href="%s">%s</a></td>
-<td class="objname" name="onm.%s">%s</td>
-<td class="xspan" name="ocn.%s">%s</td>
-<td class="xspan" name="cp.%s">%s</td>
-<td class="xspan" name="cg.%s">%s</td>
-<td class="xspan" name="fc.%s">%s</td>
-</tr>""" % (link, rr[3], rr[8], rr[4], rr[8], rr[5], rr[8], rr[6], rr[8], rr[7], rr[8], rr[9])
-
-    elif result['rowtype'] == 'packinglistbyculture':
-        link = protocol + '://' + hostname + port + '/collectionspace/ui/'+institution+'/html/cataloging.html?csid=%s' % rr[8]
-        # loc 0 | lockey 1 | locdate 2 | objnumber 3 | objname 4 | objcount 5| fieldcollectionplace 6 | culturalgroup 7x | objcsid 8 | ethnographicfilecode 9x
-        # f/nf | objcsid | locrefname | [loccsid] | objnum
-        return """<tr>
-<td class="objno"><a target="cspace" href="%s">%s</a></td>
-<td class="objname" name="onm.%s">%s</td>
-<td class="xspan" name="ocn.%s">%s</td>
-<td class="xspan">%s</td>
-<td class="xspan" name="fc.%s">%s</td>
-</tr>""" % (link, rr[3], rr[8], rr[4], rr[8], rr[5], rr[7], rr[8], rr[6])
-
-
-def formatInfoReviewRow(form, link, rr, link2):
-    """[0 Location, 1 Location Key, 2 Timestamp, 3 Museum Number, 4 Name, 5 Count, 6 Collection Place, 7 Culture, 8 csid,
-        9 Ethnographic File Code, 10 Place Ref Name, 11 Culture Ref Name, 12 Ethnographic File Code Ref Name, 13 Crate Ref Name,
-        14 Computed Crate 15 Description, 16 Collector, 17 Donor, 18 Alt Num, 19 Alt Num Type, 20 Collector Ref Name,
-        21 Accession Number, 22 Donor Ref Name, 23 Acquisition ID, 24 Acquisition CSID]"""
-    fieldSet = form.get("fieldset")
-    if fieldSet == 'namedesc':
-        return """<tr>
-<td class="objno"><a target="cspace" href="%s">%s</a></td>
-<td class="objname">
-<input class="objname" type="text" name="onm.%s" value="%s">
-</td>
-<td width="0"></td>
-<td class="zcell">
-<input type="hidden" name="oox.%s" value="%s">
-<input type="hidden" name="csid.%s" value="%s">
-<textarea cols="78" rows="1" name="bdx.%s">%s</textarea></td>
-</tr>""" % (link, cgi.escape(rr[3], True), rr[8], cgi.escape(rr[4], True), rr[8], cgi.escape(rr[3], True), rr[8], rr[8],
-            rr[8], cgi.escape(rr[15], True))
-    elif fieldSet == 'registration':
-        altnumtypes, selected = cswaConstants.getAltNumTypes(form, rr[8], rr[19])
-        return """<tr>
-<td class="objno"><a target="cspace" href="%s">%s</a></td>
-<td class="objname">
-<input class="objname" type="text" name="onm.%s" value="%s">
-</td>
-<td class="zcell">
-<input type="hidden" name="oox.%s" value="%s">
-<input type="hidden" name="csid.%s" value="%s">
-<input class="xspan" type="text" size="13" name="anm.%s" value="%s"></td>
-<td class="zcell">%s</td>
-<td class="zcell"><input class="xspan" type="text" size="26" name="pc.%s" value="%s"></td>
-<td class="zcell"><span style="font-size:8">%s</span></td>
-<td class="zcell"><a target="cspace" href="%s">%s</a></td>
-</tr>""" % (link, cgi.escape(rr[3], True), rr[8], cgi.escape(rr[4], True), rr[8], cgi.escape(rr[3], True), rr[8], rr[8],
-            rr[8], cgi.escape(rr[18], True), altnumtypes, rr[8], cgi.escape(rr[16], True),
-            cgi.escape(rr[17], True), link2, cgi.escape(rr[21], True))
-    elif fieldSet == 'keyinfo':
-        return """<tr>
-<td class="objno"><a target="cspace" href="%s">%s</a></td>
-<td class="objname">
-<input class="objname" type="text" name="onm.%s" value="%s">
-</td>
-<td class="veryshortinput">
-<input class="veryshortinput" type="text" name="ocn.%s" value="%s">
-</td>
-<td class="zcell">
-<input type="hidden" name="oox.%s" value="%s">
-<input type="hidden" name="csid.%s" value="%s">
-<input class="xspan" type="text" size="26" name="cp.%s" value="%s"></td>
-<td class="zcell"><input class="xspan" type="text" size="26" name="cg.%s" value="%s"></td>
-<td class="zcell"><input class="xspan" type="text" size="26" name="fc.%s" value="%s"></td>
-</tr>""" % (link, cgi.escape(rr[3], True), rr[8], cgi.escape(rr[4], True), rr[8], rr[5], rr[8], cgi.escape(rr[3], True),
-            rr[8], rr[8], rr[8], cgi.escape(rr[6], True), rr[8], cgi.escape(rr[7], True), rr[8], cgi.escape(rr[9], True))
-    elif fieldSet == 'hsrinfo':
-        return """<tr>
-<td class="objno"><a target="cspace" href="%s">%s</a></td>
-<td class="objname">
-<input class="objname" type="text" name="onm.%s" value="%s">
-</td>
-<td class="veryshortinput">
-<input class="veryshortinput" type="text" name="ocn.%s" value="%s">
-</td>
-<td class="zcell">
-<input type="hidden" name="oox.%s" value="%s">
-<input type="hidden" name="csid.%s" value="%s">
-<input class="xspan" type="text" size="20" name="ctn.%s" value="%s"></td>
-<td class="zcell"><input class="xspan" type="text" size="26" name="cp.%s" value="%s"></td>
-<td class="zcell"><textarea cols="60" rows="1" name="bdx.%s">%s</textarea></td>
-</tr>""" % (link, cgi.escape(rr[3], True), rr[8], cgi.escape(rr[4], True), rr[8], rr[5], rr[8], cgi.escape(rr[3], True),
-            rr[8], rr[8], rr[8], cgi.escape(rr[25], True), rr[8], cgi.escape(rr[6], True), rr[8], cgi.escape(rr[15], True))
-    elif fieldSet == 'objtypecm':
-        objtypes, selected = cswaConstants.getObjType(form, rr[8], rr[26])
-        collmans, selected = cswaConstants.getCollMan(form, rr[8], rr[27])
-        return """<tr>
-<td class="objno"><a target="cspace" href="%s">%s</a></td>
-<td class="objname">
-<input class="objname" type="text" name="onm.%s" value="%s">
-</td>
-<td class="veryshortinput">
-<input class="veryshortinput" type="text" name="ocn.%s" value="%s">
-</td>
-<td>
-<input type="hidden" name="oox.%s" value="%s">
-<input type="hidden" name="csid.%s" value="%s">
-%s</td>
-<td>%s</td>
-<td><input class="xspan" type="text" size="26" name="cp.%s" value="%s"></td>
-<td><input type="checkbox"></td>
-</tr>""" % (link, cgi.escape(rr[3], True), rr[8], cgi.escape(rr[4], True), rr[8], rr[5], rr[8], cgi.escape(rr[3], True),
-                  rr[8], rr[8], objtypes, collmans, rr[8], cgi.escape(rr[6], True))
-    elif fieldSet == 'collection':
-                return """<tr>
-<td class="objno"><a target="cspace" href="%s">%s</a></td>
-<td class="objname">
-<input type="hidden" name="onm.%s" value="">
-%s
-</td>
-<input type="hidden" name="clnx.%s" value="%s">
-<input type="hidden" name="csid.%s" value="%s">
-<td><input class="xspan" type="text" size="40" name="cln.%s" value="%s"></td>
-</tr>""" % (link, cgi.escape(rr[1], True), rr[2], cgi.escape(rr[3], True), rr[2], rr[22], rr[2], rr[2], rr[2], cgi.escape(rr[8], True))
-    elif fieldSet == 'placeanddate':
-                return """<tr>
-<td class="objno"><a target="cspace" href="%s">%s</a></td>
-<input type="hidden" name="csid.%s" value="%s">
-<td class="objname"><input type="hidden" name="onm.%s" value="">%s</td>
-<td><input class="xspan" type="text" size="40" name="vfcp.%s" value="%s"></td>
-<td><input class="xspan" type="text" size="40" name="cd.%s" value="%s"></td>
-</tr>""" % (link, cgi.escape(rr[3], True), rr[8], rr[8], rr[8], cgi.escape(rr[4], True), rr[8], cgi.escape(rr[28], True), rr[8], cgi.escape(rr[29], True))
-
-
 def formatInfoReviewForm(form):
     fieldSet = form.get("fieldset")
 
@@ -2008,7 +1737,7 @@ def formatInfoReviewForm(form):
         return """<tr><th>Object name</th><td class="objname"><input class="objname" type="text"  size="60" name="onm.user"></td>
 </tr><tr><th>Alternate Number</th><td class="zcell"><input class="xspan" type="text" size="60" name="anm.user"></td>
 </tr><tr><th>Alternate Number Types</th><td class="zcell">%s</td>
-</tr><tr><th>Field Collector (person)</th><td class="zcell"><input class="xspan" type="text" size="60" name="pc.user"></td>
+</tr><tr><th>Field Collector (person)</th><td class="zcell"><input class="xspan" type="text" size="60" name="cl.user"></td>
 </tr>""" % altnumtypes
     elif fieldSet == 'keyinfo':
         return """<tr><th>Object name</th><td class="objname"><input class="objname" type="text"  size="60" name="onm.user"></td>

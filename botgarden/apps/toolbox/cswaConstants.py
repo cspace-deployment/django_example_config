@@ -464,6 +464,7 @@ def getFieldset(form, institution):
             ("Registration", "registration"),
             ("HSR Info", "hsrinfo"),
             ("Object Type/CM", "objtypecm"),
+            ("Place and Date", "placeanddate"),
             ("Places", "places"),
             ("Dates", "dates"),
             ("Material and Taxon", "mattax"),
@@ -556,6 +557,59 @@ def getAltNumTypes(form, csid, ant):
 
     altnumtypes += '\n      </select>'
     return altnumtypes, selected
+
+
+def getObjectStatuses(form, csid, ant):
+    selected = form.get('objectstatus')
+
+    objectstatuslist = [
+        ("(none selected)", "(none selected)"),
+        ("(unknown)", "(unknown)"),
+        ("accession status unclear", "accession status unclear"),
+        ("accessioned", "accessioned"),
+        ("culturally affiliated", "culturally affiliated"),
+        ("culturally unaffiliated", "culturally unaffiliated"),
+        ("deaccessioned", "deaccessioned"),
+        ("destroyed", "destroyed"),
+        ("destructive analysis", "destructive analysis"),
+        ("discarded", "discarded"),
+        ("exchanged", "exchanged"),
+        ("intended for repatriation", "intended for repatriation"),
+        ("intended for transfer", "intended for transfer"),
+        ("irregular Museum number", "irregular Museum number"),
+        ("missing", "missing"),
+        ("missing in inventory", "missing in inventory"),
+        ("not cataloged", "not cataloged"),
+        ("not located", "not located"),
+        ("not received", "not received"),
+        ("number not used", "number not used"),
+        ("object mount", "object mount"),
+        ("on loan (=borrowed)", "on loan (=borrowed)"),
+        ("partially deaccessioned", "partially deaccessioned"),
+        ("partially exchanged", "partially exchanged"),
+        ("partially recataloged", "partially recataloged"),
+        ("pending repatriation", "pending repatriation"),
+        ("recataloged", "recataloged"),
+        ("red-lined", "red-lined"),
+        ("repatriated", "repatriated"),
+        ("returned loan object", "returned loan object"),
+        ("sold", "sold"),
+        ("stolen", "stolen"),
+        ("transferred", "transferred")
+    ]
+
+    objectstatuses = '''<select class="cell" name="obs.''' + csid + '''">'''
+
+    for objectstatus in objectstatuslist:
+        if objectstatus[0] == ant:
+            objectstatusOption = """<option value="%s" selected>%s</option>""" % (objectstatus[0], objectstatus[1])
+        else:
+            objectstatusOption = """<option value="%s">%s</option>""" % (objectstatus[0], objectstatus[1])
+        objectstatuses = objectstatuses + objectstatusOption
+
+    objectstatuses += '\n      </select>'
+    return objectstatuses, selected
+
 
 def getObjType(form, csid, ot):
     selected = form.get('objectType')

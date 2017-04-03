@@ -131,17 +131,18 @@ def main(request, updateType):
                 print "<h3>Sorry not implemented yet! Please try again tomorrow!</h3>"
             else:
                 pass
-                #print "<h3>Unimplemented action %s!</h3>" % str(action)
+                # print "<h3>Unimplemented action %s!</h3>" % str(action)
 
-    except:
+    except Exception, e:
         sys.stderr.write("error! %s" % traceback.format_exc())
-        html += '''<h3><span class="error">Sorry! An error occurred; it has been logged and will be investigated.<br/>
-            However, it may take some days before the log is reviewed, so please contact John Lowe jblowe@berkeley.edu directly
-            if you have even the <i>slightest</i> concern about getting this issue resolved.
-            <br/>If there is a traceback below, please include the text!
-            <br/>
-            Finally, please record the time and what you were doing when this unfortunate event happened. Screenshots, are helpful, too.
-            </span></h3><p/>''' + traceback.format_exc()
+        # formatted_lines = traceback.format_exc().splitlines()
+        # error_message = formatted_lines[-1]
+        html += '''<h3><span class="error">So sorry! we have encountered a problem:</span></h3>
+        <p>Can you please email <a href="mailto:cspace-support@lists.berkeley.edu?Subject=Webapp error: %s">cspace-support@lists.berkeley.edu</a> and let them know?
+        Include the following error message and details of what you were doing (values entered in the page, etc.)</>
+        <p><b>%s</b></p>
+        ''' % (2 * (e.message.strip(),))
+        sys.stderr.write('error message: %s' % (e.message.strip()))
 
     elapsedtime = time.time() - elapsedtime
 

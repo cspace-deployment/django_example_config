@@ -24,6 +24,7 @@ p { padding:10px 10px 10px 10px; }
 li { text-align: left; list-style-type: none; }
 a { text-decoration: none; }
 button { font-size: 150%; width:85px; text-align: center; text-transform: uppercase;}
+.monty { }
 .cell { line-height: 1.0; text-indent: 2px; color: #666666; font-size: 16px;}
 .enumerate { background-color: green; font-size:20px; color: #FFFFFF; font-weight:bold; vertical-align: middle; text-align: center; }
 img#logo { float:left; height:50px; padding:10px 10px 10px 10px;}
@@ -41,7 +42,7 @@ img#logo { float:left; height:50px; padding:10px 10px 10px 10px;}
 .subheader { background-color: ''' + schemacolor1 + '''; color: #FFFFFF; font-size: 24px; font-weight: bold; }
 .smallheader { background-color: ''' + schemacolor1 + '''; color: #FFFFFF; font-size: 12px; font-weight: bold; }
 .veryshortinput { width:60px; }
-.xspan { color: #000000; background-color: #FFFFFF; font-weight: bold; font-size: 12px; min-width:240px; }
+.xspan { color: #000000; background-color: #FFFFFF; font-weight: bold; font-size: 12px; }
 th[data-sort]{ cursor:pointer; }
 .littlebutton {color: #FFFFFF; background-color: gray; font-size: 11px; padding: 2px; cursor: pointer; }
 .imagecell { padding: 8px ; align: center; }
@@ -146,6 +147,41 @@ def infoHeaders(fieldSet):
       <th>Object name</th>
       <th>Verbatim field collection place</th>
       <th>Field collection date</th>
+    </tr>"""
+    elif fieldSet == 'places':
+        return """
+    <table><tr>
+      <th>Museum #</th>
+      <th>Object name</th>
+      <th>Verbatim field collection place</th>
+      <th>Field collection place</th>
+      <th>Production Place</th>
+      <th>Place depicted</th>
+    </tr>"""
+    elif fieldSet == 'dates':
+        return """
+    <table><tr>
+      <th>Museum #</th>
+      <th>Object name</th>
+      <th>Production date</th>
+      <th>Field collection date</th>
+      <th>Date depicted</th>
+    </tr>"""
+    elif fieldSet == 'mattax':
+        return """
+    <table><tr>
+      <th>Museum #</th>
+      <th>Object name</th>
+      <th>Materials</th>
+      <th>Taxon</th>
+      <th style="text-align:center">Brief Description</th>
+    </tr>"""
+    elif fieldSet == 'fullmonty':
+        return """
+    <table><tr>
+      <th>Museum #</th>
+      <th>Object name</th>
+      <th>Fields</th>
     </tr>"""
     else:
         return "<table><tr>DEBUG</tr>"
@@ -429,6 +465,10 @@ def getFieldset(form, institution):
             ("HSR Info", "hsrinfo"),
             ("Object Type/CM", "objtypecm"),
             ("Place and Date", "placeanddate"),
+            ("Places", "places"),
+            ("Dates", "dates"),
+            ("Material and Taxon", "mattax"),
+            ("Full Monty", "fullmonty"),
         ]
 
     fieldset = '''
@@ -517,6 +557,59 @@ def getAltNumTypes(form, csid, ant):
 
     altnumtypes += '\n      </select>'
     return altnumtypes, selected
+
+
+def getObjectStatuses(form, csid, ant):
+    selected = form.get('objectstatus')
+
+    objectstatuslist = [
+        ("(none selected)", "(none selected)"),
+        ("(unknown)", "(unknown)"),
+        ("accession status unclear", "accession status unclear"),
+        ("accessioned", "accessioned"),
+        ("culturally affiliated", "culturally affiliated"),
+        ("culturally unaffiliated", "culturally unaffiliated"),
+        ("deaccessioned", "deaccessioned"),
+        ("destroyed", "destroyed"),
+        ("destructive analysis", "destructive analysis"),
+        ("discarded", "discarded"),
+        ("exchanged", "exchanged"),
+        ("intended for repatriation", "intended for repatriation"),
+        ("intended for transfer", "intended for transfer"),
+        ("irregular Museum number", "irregular Museum number"),
+        ("missing", "missing"),
+        ("missing in inventory", "missing in inventory"),
+        ("not cataloged", "not cataloged"),
+        ("not located", "not located"),
+        ("not received", "not received"),
+        ("number not used", "number not used"),
+        ("object mount", "object mount"),
+        ("on loan (=borrowed)", "on loan (=borrowed)"),
+        ("partially deaccessioned", "partially deaccessioned"),
+        ("partially exchanged", "partially exchanged"),
+        ("partially recataloged", "partially recataloged"),
+        ("pending repatriation", "pending repatriation"),
+        ("recataloged", "recataloged"),
+        ("red-lined", "red-lined"),
+        ("repatriated", "repatriated"),
+        ("returned loan object", "returned loan object"),
+        ("sold", "sold"),
+        ("stolen", "stolen"),
+        ("transferred", "transferred")
+    ]
+
+    objectstatuses = '''<select class="cell" name="obs.''' + csid + '''">'''
+
+    for objectstatus in objectstatuslist:
+        if objectstatus[0] == ant:
+            objectstatusOption = """<option value="%s" selected>%s</option>""" % (objectstatus[0], objectstatus[1])
+        else:
+            objectstatusOption = """<option value="%s">%s</option>""" % (objectstatus[0], objectstatus[1])
+        objectstatuses = objectstatuses + objectstatusOption
+
+    objectstatuses += '\n      </select>'
+    return objectstatuses, selected
+
 
 def getObjType(form, csid, ot):
     selected = form.get('objectType')
@@ -1081,7 +1174,7 @@ if __name__ == '__main__':
         result += '</table>'
 
     result += '<h2>KIR/OIR/BOE Fieldset Headers</h2>'
-    for h in 'keyinfo namedesc hsrinfo registration'.split(' '):
+    for h in 'keyinfo namedesc hsrinfo objtypecm registration dates places mattax'.split(' '):
         result += '<h3>Header for %s</h3>' % h
         header = infoHeaders(h)
         result += header.replace('<table', '<table border="1" ')
