@@ -82,7 +82,10 @@ def updateCspace(fieldset, updateItems, form, config):
             message, payload = updateXML(fieldset, updateItems, content)
         except:
             sys.stderr.write("ERROR generating update XML for fieldset %s" % fieldset)
-            sys.stderr.write("ERROR: payload for %s: \n%s" % (url, payload))
+            try:
+                sys.stderr.write("ERROR: payload for %s: \n%s" % (url, payload))
+            except:
+                sys.stderr.write("ERROR: could not write payload for %s: \n%s" % url)
             return when2post, "ERROR generating update XML for fieldset %s" % fieldset
         try:
             (url3, data, httpcode, elapsedtime) = postxml('PUT', uri, payload, form)
@@ -325,12 +328,11 @@ def updateXML(fieldset, updateItems, xml):
     # print(etree.tostring(root, pretty_print=True))
     if 'pahmaFieldLocVerbatim' in updateItems:
         pahmaFieldLocVerbatim = root.find('.//pahmaFieldLocVerbatim')
-        if pahmaFieldLocVerbatim is None and updateItems['pahmaFieldLocVerbatim'] != '':
+        if pahmaFieldLocVerbatim is None:
             pahmaFieldLocVerbatim = etree.Element('pahmaFieldLocVerbatim')
-            pahmaFieldLocVerbatimobjects_common = root.find(
-                './/{http://collectionspace.org/services/collectionobject/local/pahma}collectionobjects_pahma')
+            pahmaFieldLocVerbatimobjects_common = root.find('.//{http://collectionspace.org/services/collectionobject/local/pahma}collectionobjects_pahma')
             pahmaFieldLocVerbatimobjects_common.insert(0, pahmaFieldLocVerbatim)
-            message += "%s added as &lt;%s&gt;.<br/>" % (updateItems['pahmaFieldLocVerbatim'], 'pahmaFieldLocVerbatim')
+            # message += "%s added as &lt;%s&gt;.<br/>" % (updateItems['pahmaFieldLocVerbatim'], 'pahmaFieldLocVerbatim')
         pahmaFieldLocVerbatim.text = updateItems['pahmaFieldLocVerbatim']
 
     collection = root.find('.//collection')
