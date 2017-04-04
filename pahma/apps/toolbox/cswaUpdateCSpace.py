@@ -11,6 +11,8 @@ from dirq.QueueSimple import QueueSimple
 
 from cswaHelpers import *
 from common import cspace
+from common.utils import deURN
+
 from cspace_django_site.main import cspace_django_site
 
 MAINCONFIG = cspace_django_site.getConfig()
@@ -39,6 +41,15 @@ except ImportError:
             except ImportError:
                 print("Failed to import ElementTree from any known place")
 
+def getWhen2Post(config):
+
+    try:
+        when2post = config.get('info', 'when2post')
+    except:
+        # default is update immediately
+        when2post = 'update'
+
+    return when2post
 
 def add2queue(requestType, uri, fieldset, updateItems, form):
     userdata = form['userdata']
@@ -47,11 +58,12 @@ def add2queue(requestType, uri, fieldset, updateItems, form):
     return ''
 
 
-def updateCspace(fieldset, updateItems, form, config, when2post):
+def updateCspace(fieldset, updateItems, form, config):
     uri = 'collectionobjects' + '/' + updateItems['objectCsid']
+    when2post = getWhen2Post(config)
     writeLog(updateItems, uri, 'POST', form, config)
 
-    if when2post == 'now':
+    if when2post == 'update':
         # get the XML for this object
         connection = cspace.connection.create_connection(MAINCONFIG, form['userdata'])
         url = "cspace-services/" + uri
@@ -71,31 +83,32 @@ def updateCspace(fieldset, updateItems, form, config, when2post):
         except:
             sys.stderr.write("ERROR generating update XML for fieldset %s" % fieldset)
             sys.stderr.write("ERROR: payload for %s: \n%s" % (url, payload))
-            return "ERROR generating update XML for fieldset %s" % fieldset
+            return when2post, "ERROR generating update XML for fieldset %s" % fieldset
         try:
             (url3, data, httpcode, elapsedtime) = postxml('PUT', uri, payload, form)
         except:
             sys.stderr.write("ERROR: failed PUT payload for %s: \n%s" % (url, payload))
-            return "ERROR: failed PUT payload for %s: \n%s" % (url, payload)
+            return when2post, "ERROR: failed PUT payload for %s: \n%s" % (url, payload)
         if data is None:
             sys.stderr.write("ERROR: failed PUT payload for %s: \n%s" % (url, payload))
             sys.stderr.write("ERROR: HTTP response code %s for  %s" % (httpcode, url))
-            return "ERROR: Bad HTTP response code %s for  %s" % (httpcode, url)
+            return when2post, "ERROR: Bad HTTP response code %s for  %s" % (httpcode, url)
         # sys.stderr.write("payload for %s: \n%s" % (url, payload))
         sys.stderr.write("updated object with csid %s to REST API...\n" % updateItems['objectCsid'])
-        return message
+        return when2post, message
     elif when2post == 'queue':
         message = add2queue("PUT", uri, fieldset, updateItems, form)
-        return message
+        return when2post, message
     else:
         raise
 
 
-def createObject(objectinfo, config, form, when2post):
+def createObject(objectinfo, config, form):
     uri = 'collectionobjects'
+    when2post = getWhen2Post(config)
     writeLog(objectinfo, uri, 'POST', form, config)
 
-    if when2post == 'now':
+    if when2post == 'update':
         payload = createObjectXML(objectinfo)
         (url, data, csid, elapsedtime) = postxml('POST', uri, payload, form)
         sys.stderr.write("created new object with csid %s to REST API..." % csid)
@@ -107,11 +120,12 @@ def createObject(objectinfo, config, form, when2post):
         raise
 
 
-def updateLocations(updateItems, config, form, when2post):
+def updateLocations(updateItems, config, form):
     uri = 'movements'
+    when2post = getWhen2Post(config)
     writeLog(updateItems, uri, 'POST', form, config)
 
-    if when2post == 'now':
+    if when2post == 'update':
         makeMH2R(updateItems, config, form)
         return 'moved', ''
     elif when2post == 'queue':
@@ -249,7 +263,7 @@ def updateXML(fieldset, updateItems, xml):
                             metadata.remove(child)
                             # message += '%s removed. len = %s<br/>' % (child.text, len(Entries))
                     metadata.insert(0, new_element)
-                    message += " %s exists in %s, now preferred.<br/>" % (updateItems[relationType], relationType)
+                    message += " %s exists in %s, now preferred.<br/>" % (deURN(updateItems[relationType]), relationType)
                     # html += 'already exists: %s<br>' % updateItems[relationType]
             # check if the existing element is empty; if so, use it, don't add a new element
             else:
@@ -259,7 +273,7 @@ def updateXML(fieldset, updateItems, xml):
                 new_element = etree.Element(relationType)
                 new_element.text = updateItems[relationType]
                 metadata.insert(0, new_element)
-                message += "added preferred term %s as %s.<br/>" % (updateItems[relationType], relationType)
+                message += "added '%s' as the preferred term in %s.<br/>" % (deURN(updateItems[relationType]), relationType)
 
         elif relationType in ['objectProductionDate', 'pahmaFieldCollectionDate', 'contentDate']:
             # we'll be replacing the entire structured date group
@@ -284,8 +298,8 @@ def updateXML(fieldset, updateItems, xml):
                 if IsAlreadyPreferred(updateItems[relationType], metadata.findall('.//' + relationType)):
                     continue
                 else:
-                    message += "%s: %s already exists. Now duplicated with this as preferred.<br/>" % (
-                        relationType, updateItems[relationType])
+                    message += "'%s' already exists as an NPT in %s: This value has been inserted as the PT and in doing so is now duplicated.<br/>" % (
+                        deURN(updateItems[relationType]), relationType)
                     pass
             newElement = etree.Element(relationType)
             newElement.text = updateItems[relationType]
@@ -311,12 +325,12 @@ def updateXML(fieldset, updateItems, xml):
     # print(etree.tostring(root, pretty_print=True))
     if 'pahmaFieldLocVerbatim' in updateItems:
         pahmaFieldLocVerbatim = root.find('.//pahmaFieldLocVerbatim')
-        if pahmaFieldLocVerbatim is None:
+        if pahmaFieldLocVerbatim is None and updateItems['pahmaFieldLocVerbatim'] != '':
             pahmaFieldLocVerbatim = etree.Element('pahmaFieldLocVerbatim')
             pahmaFieldLocVerbatimobjects_common = root.find(
                 './/{http://collectionspace.org/services/collectionobject/local/pahma}collectionobjects_pahma')
             pahmaFieldLocVerbatimobjects_common.insert(0, pahmaFieldLocVerbatim)
-            message += " %s added as &lt;%s&gt;.<br/>" % (updateItems['pahmaFieldLocVerbatim'], 'pahmaFieldLocVerbatim')
+            message += "%s added as &lt;%s&gt;.<br/>" % (updateItems['pahmaFieldLocVerbatim'], 'pahmaFieldLocVerbatim')
         pahmaFieldLocVerbatim.text = updateItems['pahmaFieldLocVerbatim']
 
     collection = root.find('.//collection')
@@ -326,7 +340,7 @@ def updateXML(fieldset, updateItems, xml):
             collectionobjects_common = root.find(
                 './/{http://collectionspace.org/services/collectionobject}collectionobjects_common')
             collectionobjects_common.insert(0, collection)
-            message += " %s added as &lt;%s&gt;.<br/>" % (updateItems['collection'], 'collection')
+            message += " %s added as &lt;%s&gt;.<br/>" % (deURN(updateItems['collection']), 'collection')
         collection.text = updateItems['collection']
 
     payload = '<?xml version="1.0" encoding="UTF-8"?>\n' + etree.tostring(root, encoding='utf-8')
