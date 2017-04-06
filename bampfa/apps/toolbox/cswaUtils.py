@@ -15,8 +15,6 @@ import cswaSMBclient
 from django.http import HttpResponse
 
 MAXLOCATIONS = 1000
-GLOBALWHEN2POST = 'now'
-WHEN2POST = 'now'
 
 try:
     import xml.etree.ElementTree as etree
@@ -57,10 +55,6 @@ def basicSetup(config):
             parms.append(config.get('info',parm))
         except:
             parms.append('')
-    try:
-        WHEN2POST = config.get('info','when2post')
-    except:
-        WHEN2POST = GLOBALWHEN2POST
     return parms
 
 def getConfig(request):
@@ -806,7 +800,7 @@ def doCreateObjects(form, config):
                 sortableobjectnumber = '%0.10d.%0.10d.%0.10d' % (year, accession, sequence + seq)
                 objectinfo = {'objectNumber': objectNumber}
                 objectinfo['sortableObjectNumber'] = sortableobjectnumber
-                message,csid = createObject(objectinfo, config, form, WHEN2POST)
+                message,csid = createObject(objectinfo, config, form)
                 html += "<tr><td>%s</td><td>%s</td></tr>" % (objectNumber, csid)
             html += "<tr><td>%s</td><td>%s</td></tr>" % ('created objects', count)
         else:
@@ -936,7 +930,7 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
             updateItems[i] = form.get(i)
 
         #html += updateItems
-        msg = 'updated. ' if WHEN2POST == 'now' else 'queued. '
+        msg = ''
         if fieldset in ['keyinfo', 'fullmonty']:
             if updateItems['pahmaFieldCollectionPlace'] == '' and form.get('cp.' + index):
                 if form.get('cp.' + index) == cswaDB.getCSIDDetail(config, index, 'fieldcollectionplace'):
@@ -990,7 +984,6 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
             # msg += 'place and date'
             pass
 
-        updateMsg = ''
         for item in updateItems.keys():
             if updateItems[item] == 'None' or updateItems[item] is None:
                 if item in 'collection inventoryCount objectCount'.split(' '):
@@ -1005,18 +998,16 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
 
         try:
             #pass
-            updateMsg += updateCspace(fieldset, updateItems, form, config, WHEN2POST)
+            when2post, updateMsg  = updateCspace(fieldset, updateItems, form, config)
             if updateMsg != '':
                 msg = '<span style="color:red;">%s</span>' % updateMsg
             if not 'ERROR' in updateMsg:
                 numUpdated += 1
         except:
             raise
-            #msg += '<span style="color:red;">problem updating</span>'
-        #html += ('<tr>' + (3 * '<td class="ncell">%s</td>') + '</tr>\n') % (
-        #    updateItems['objectNumber'], updateItems['objectCsid'], msg)
-        html += ('<tr>' + (3 * '<td class="ncell">%s</td>') + '</tr>\n') % (makeObjectLink(config, csid, updateItems['objectNumber']),updateItems['objectCsid'], msg)
-        # html += 'place %s' % updateItems['pahmaFieldCollectionPlace']
+
+        msg = '%sd. %s' % (when2post, msg)
+        html += ('<tr>' + (3 * '<td class="ncell">%s</td>') + '</tr>\n') % (makeObjectLink(config, csid, updateItems['objectNumber']), msg, updateItems['objectCsid'])
 
     html += "\n</table>"
     html += '<h4 style="margin-top: 20px;">%s of %s objects had information updated</h4>' % (numUpdated, row + 1)
@@ -1087,7 +1078,7 @@ def doUpdateLocations(form, config):
             if "not moved" in msg:
                 pass
             else:
-                updateLocations(updateItems, config, form, WHEN2POST)
+                updateLocations(updateItems, config, form)
                 numUpdated += 1
         except:
             msg = '<span style="color:red;">location update failed!</span>'

@@ -879,8 +879,8 @@ def getHeader(updateType, institution):
     <table width="100%" border="1">
     <tr>
       <th>Museum #</th>
-      <th>CSID</th>
       <th>Status</th>
+      <th>CSID</th>
     </tr>"""
     elif updateType == 'inventoryResult':
         return """

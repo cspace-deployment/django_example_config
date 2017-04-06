@@ -266,7 +266,7 @@ def updateXML(fieldset, updateItems, xml):
                             metadata.remove(child)
                             # message += '%s removed. len = %s<br/>' % (child.text, len(Entries))
                     metadata.insert(0, new_element)
-                    message += " %s exists in %s, now preferred.<br/>" % (deURN(updateItems[relationType]), relationType)
+                    message += "'%s' exists in %s, now preferred.<br/>" % (deURN(updateItems[relationType]), relationType)
                     # html += 'already exists: %s<br>' % updateItems[relationType]
             # check if the existing element is empty; if so, use it, don't add a new element
             else:

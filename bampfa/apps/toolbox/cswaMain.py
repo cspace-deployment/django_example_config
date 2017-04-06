@@ -10,6 +10,7 @@ from cswaUpdateCSpace import writeInfo2log
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+
 def main(request, updateType):
 
     # NB we convert FieldStorage to a dict, but we need the actual form for barcode upload...
@@ -33,6 +34,7 @@ def main(request, updateType):
     config  = getConfig(request)
     # we don't do anything with debug now, but it is a comfort to have
     debug = form.get("debug")
+
     html = ''
 
     # bail if we don't know which webapp to be...(i.e. no config object passed in from cswaMain)
