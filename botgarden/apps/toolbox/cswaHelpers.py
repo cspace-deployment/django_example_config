@@ -368,7 +368,7 @@ def starthtml(form, config):
         otherfields += '''
         <tr></tr>'''
 
-    elif updateType == 'bulkedit' or updateType == 'objinfo':
+    elif updateType == 'objinfo':
         objno1 = str(form.get("ob.objno1")) if form.get("ob.objno1") else ''
         objno2 = str(form.get("ob.objno2")) if form.get("ob.objno2") else ''
         fieldset, selected = cswaConstants.getFieldset(form, institution)
@@ -382,6 +382,38 @@ def starthtml(form, config):
         '''
         otherfields += '''
         <tr></tr>'''
+
+    elif updateType == 'bulkedit':
+        fieldset, selected = cswaConstants.getFieldset(form, institution)
+
+        location1 = str(form.get("lo.location1")) if form.get("lo.location1") else ''
+        location2 = str(form.get("lo.location2")) if form.get("lo.location2") else ''
+
+        grpinfo = str(form.get("gr.group")) if form.get("gr.group") else ''
+        objno1 = str(form.get("ob.objno1")) if form.get("ob.objno1") else ''
+        objno2 = str(form.get("ob.objno2")) if form.get("ob.objno2") else ''
+
+        otherfields = '''
+        <tr>
+        <th><span class="cell">start location:</span></th>
+	    <th><input id="lo.location1" class="cell" type="text" size="40" name="lo.location1" value="''' + location1 + '''" class="xspan"></th>
+        <th><span class="cell">end location:</span></th>
+        <th><input id="lo.location2" class="cell" type="text" size="40" name="lo.location2" value="''' + location2 + '''" class="xspan"></th>
+        <th><th><span class="cell">set:</span></th><th>''' + fieldset + '''</th>
+        </tr>
+
+        <tr>
+        <th><span class="cell">first museum number:</span></th>
+        <th><input id="ob.objno1" class="cell" type="text" size="40" name="ob.objno1" value="''' + objno1 + '''" class="xspan"></th>
+        <th><span class="cell">last museum number:</span></th>
+        <th><input id="ob.objno2" class="cell" type="text" size="40" name="ob.objno2" value="''' + objno2 + '''" class="xspan">
+        </tr>
+        <tr>
+        <th><span class="cell">group:</span></th>
+        <th><input id="gr.group" class="cell" type="text" size="40" name="gr.group" value="''' + grpinfo + '''" class="xspan"></th>
+        <th colspan="4"><i>NB: object number range supersedes location range, if entered;</i><br/>
+        <i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;group identifier supercedes both, if entered.</i></th>
+        </tr>'''
 
     elif updateType == 'objdetails':
         objectnumber = str(form.get('ob.objectnumber')) if form.get('ob.objectnumber') else ''

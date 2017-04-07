@@ -71,13 +71,13 @@ def updateCspace(fieldset, updateItems, form, config):
             url2, content, httpcode, elapsedtime = connection.make_get_request(url)
         except:
             sys.stderr.write("ERROR: problem GETting XML for %s" % url)
-            raise ValueError("ERROR: problem getting XML for %s" % url)
+            raise
         if httpcode != 200:
             sys.stderr.write("ERROR: HTTP response code %s for  %s" % (httpcode, url))
-            raise ValueError("ERROR: HTTP response code %s for  %s" % (httpcode, url))
+            raise
         if content is None:
             sys.stderr.write("ERROR: No XML returned from CSpace server for %s" % url)
-            raise ValueError("ERROR: No XML returned from CSpace server for %s" % url)
+            raise
         try:
             message, payload = updateXML(fieldset, updateItems, content)
         except:
@@ -326,7 +326,7 @@ def updateXML(fieldset, updateItems, xml):
             collectionobjects_pahma.insert(0, inventoryCount)
         inventoryCount.text = updateItems['inventoryCount']
     # print(etree.tostring(root, pretty_print=True))
-    if 'pahmaFieldLocVerbatim' in updateItems:
+    if 'pahmaFieldLocVerbatim' in updateItems and updateItems['pahmaFieldLocVerbatim'] != '':
         pahmaFieldLocVerbatim = root.find('.//pahmaFieldLocVerbatim')
         if pahmaFieldLocVerbatim is None:
             pahmaFieldLocVerbatim = etree.Element('pahmaFieldLocVerbatim')

@@ -673,6 +673,28 @@ def doCheckPowerMove(form, config):
 
     return html
 
+def getTrio(form, config):
+    # If the group field has input, use that
+    msg = ''
+    if form.get("gr.group") != '':
+        # sys.stderr.write('group: %s\n' % form.get("gr.group"))
+        objs, msg = cswaDB.getgrouplist(form.get("gr.group"), 5000, config)
+    # If the museum number field has input, html += by object
+    elif form.get('ob.objno1') != '':
+        objs, msg = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 1000, config)
+    elif form.get('ob.objno1') != 'lo.location1':
+        rows = cswaDB.getloclist('range', form.get("lo.location1"), form.get("lo.location2"), 500, config)
+        objs = []
+        seen = {}
+        for r in rows:
+            objects = cswaDB.getlocations(r[0], '', 1, config, 'keyinfo', 'pahma')
+            for o in objects:
+                if not (o[3] + o[4] in seen):
+                    objs.append(o)
+                    seen[o[3] + o[4]] = 1
+
+
+    return objs, msg, len(objs)
 
 def doBulkEdit(form, config):
 
@@ -682,10 +704,10 @@ def doBulkEdit(form, config):
     updateType = config.get('info', 'updatetype')
     updateactionlabel = config.get('info', 'updateactionlabel')
 
-    objs, msg = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 1000, config)
+    objs, msg, totalobjects = getTrio(form, config)
 
-    if len(objs) == 0:
-        return '<h3 class="error">No objects in this range! Sorry!</h3>'
+    if totalobjects == 0:
+        return '<h3 class="error">No objects found! Sorry!</h3>'
 
     CSIDs = []
     fieldset = form.get('fieldset')
@@ -707,10 +729,7 @@ def doBulkEditForm(form, config, displaytype):
     updateType = config.get('info', 'updatetype')
     updateactionlabel = config.get('info', 'updateactionlabel')
 
-
-    objs, msg = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 1000, config)
-
-    totalobjects = len(objs)
+    objs, msg, totalobjects = getTrio(form, config)
 
     if totalobjects == 0:
         return '<h3 class="error">No objects found! Sorry!</h3>'
@@ -980,6 +999,11 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
                 except ValueError:
                     msg += '<span style="color:red;"> Object count: "%s" is not a valid number!</span>' % form.get('ocn.' + index)
                     del updateItems['objectCount']
+        if fieldset in ['mattax', 'fullmonty']:
+            if updateItems['material'] == '' and form.get('ma.' + index):
+                msg += '<span style="color:red;"> Materials: term "%s" not found, field not updated.</span>' % form.get('ma.' + index)
+            if updateItems['taxon'] == '' and form.get('ta.' + index):
+                msg += '<span style="color:red;"> Taxon: term "%s" not found, field not updated.</span>' % form.get('ta.' + index)
         if fieldset in ['placeanddate', 'fullmonty']:
             # msg += 'place and date'
             pass
@@ -1322,7 +1346,7 @@ def doBarCodes(form, config):
     totalobjects = 0
     #If the group field has input, use that
     if form.get("gr.group") != '':
-        sys.stderr.write('group: %s\n' % form.get("gr.group"))
+        # sys.stderr.write('group: %s\n' % form.get("gr.group"))
         objs = cswaDB.getgrouplist(form.get("gr.group"), 5000, config)
         if action == 'Create Labels for Objects':
             totalobjects += len(objs)
@@ -1767,4 +1791,118 @@ def formatInfoReviewForm(form):
 </tr>"<tr><th>Collection Date</th>
 <td><input class="xspan" type="text" size="60" name="cd.user"></td>
 </tr>"""
+    elif fieldSet == 'dates':
+        return """<tr>
+<tr><th>Production date</th><td><input class="xspan" type="text" size="40" name="dprd.user"></td></tr>
+<tr><th>Collection date</th><td><input class="xspan" type="text" size="40" name="dcol.user"></td></tr>
+<tr><th>Date depicted</th><td><input class="xspan" type="text" size="40" name="ddep.user"></td></tr>
+<tr><th>Brief description</th><td class="zcell"><textarea cols="78" rows="5" name="bdx.user"></textarea></td></tr>
+</tr>"""
+    elif fieldSet == 'places':
+        return """<tr>
+<tr><th>FCP Verbatim</th><td><input class="xspan" type="text" size="40" name="vfcp.user"></td></tr>
+<tr><th>Field collection place</th><td><input class="xspan" type="text" size="40" name="cp.user"></td></tr>
+<tr><th>Production place</th><td><input class="xspan" type="text" size="40" name="pp.user"></td></tr>
+<tr><th>Place depicted</th><td><input class="xspan" type="text" size="40" name="pd.user"></td></tr>
+</tr>"""
+    elif fieldSet == 'mattax':
+        return """<tr>
+<tr><th>Material</th><td><input class="xspan" type="text" size="40" name="ma.user"></td></tr>
+<tr><th>Taxon</th><td><input class="xspan" type="text" size="40" name="ta.user"></td></tr>
+<tr><th>Brief description</th><td class="zcell"><textarea cols="78" rows="5" name="bdx.user"></textarea></td></tr>
+</tr>"""
+    elif fieldSet == 'fullmonty':
+        collmans, selected = cswaConstants.getCollMan(form, 'user', '')
+        objstatuses, selected = cswaConstants.getObjectStatuses(form, 'user', '')
+        objecttypes, selected = cswaConstants.getObjType(form, 'user', '')
+        altnumtypes, selected = cswaConstants.getAltNumTypes(form, 'user', '')
+        return """
+<table>
 
+<tr class="monty">
+
+<td>Count<br/>
+<input class="xspan" type="text" size="10" name="ocn.user"></td>
+
+<td>Cultural Group<br/>
+<input class="xspan" type="text" size="40" name="cg.user"></td>
+
+<td>Ethnographic File Code<br/>
+<input class="xspan" type="text" size="40" name="fc.user"></td></td>
+
+</tr>
+
+<tr class="monty">
+
+<td>Alt Num<br/>
+<input class="xspan" type="text" size="40" name="anm.user"></td>
+
+<td>Alt Num Type<br/>
+""" + altnumtypes + """</td>
+
+<td>Field Collector<br/>
+<input class="xspan" type="text" size="40" name="cl.user"></td>
+
+</tr>
+
+<tr class="monty">
+
+<td>Object type<br/>
+""" + objecttypes + """</td>
+
+<td>Production person<br/>
+<input class="xspan" type="text" size="40" name="pe.user"></td>
+
+<td>Object Status<br/>
+""" + objstatuses + """</td>
+</td>
+
+</tr>
+
+<tr class="monty">
+
+<td>Date collected<br/>
+<input class="xspan" type="text" size="40" name="dcol.user"></td>
+
+<td>Production date<br/>
+<input class="xspan" type="text" size="40" name="dprd.user"></td>
+
+<td>Date depicted<br/>
+<input class="xspan" type="text" size="40" name="ddep.user"></td>
+
+</tr>
+
+<tr class="monty">
+
+<td>Materials<br/>
+<input class="xspan" type="text" size="40" name="ma.user"></td>
+
+<td>Taxon<br/>
+<input class="xspan" type="text" size="40" name="ta.user"></td>
+
+<td>Verbatim field collection place<br/>
+<input class="xspan" type="text" size="40" name="vfcp.user"></td>
+
+</tr>
+
+<tr class="monty">
+
+<td>Field collection place<br/>
+<input class="xspan" type="text" size="40" name="cp.user"></td>
+
+<td>Production Place<br/>
+<input class="xspan" type="text" size="40" name="pp.user"></td>
+
+<td>Place depicted<br/>
+<input class="xspan" type="text" size="40" name="pd.user"></td>
+
+</tr>
+
+<tr>
+<td colspan="10">Brief Description<br/>
+<textarea cols="130" rows="5" name="bdx.user"></textarea>
+</td>
+</tr>
+
+</table>
+"""
