@@ -1151,6 +1151,10 @@ WHERE h1.name = '%s'""" % csid
 FROM collectionobjects_common cc
 left outer join hierarchy h1 on (cc.id=h1.id)
 WHERE h1.name = '%s'""" % csid
+    elif detail == 'material':
+        pass
+    elif detail == 'taxon':
+        pass
     else:
         return ''
     try:
