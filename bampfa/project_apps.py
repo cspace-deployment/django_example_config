@@ -24,6 +24,7 @@ INSTALLED_APPS = (
     #'batchuploadimages',
     # 'standard' apps
     #'adhocreports',
+    'grouper',
     'imagebrowser',
     'imageserver',
     'imaginator',

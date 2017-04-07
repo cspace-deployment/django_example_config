@@ -24,6 +24,7 @@ INSTALLED_APPS = (
     #'batchuploadimages',
     # 'standard' apps
     #'asura',
+    'grouper',
     'imagebrowser',
     'imageserver',
     'imaginator',

@@ -38,6 +38,7 @@ urlpatterns = patterns('',
                        # these are user-facing (i.e. present a UI to the caller)
                        #url(r'^asura/', include('asura.urls', namespace='asura')),
                        #url(r'^batchuploadimages/', include('batchuploadimages.urls', namespace='batchuploadimages')),
+                       url(r'^grouper/?', include('grouper.urls', namespace='grouper')),
                        url(r'^imagebrowser/?', include('imagebrowser.urls', namespace='imagebrowser')),
                        url(r'^imaginator/?', include('imaginator.urls', namespace='imaginator')),
                        url(r'^internal/', include('internal.urls', namespace='internal')),

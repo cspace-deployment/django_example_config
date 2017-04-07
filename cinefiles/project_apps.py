@@ -26,6 +26,7 @@ INSTALLED_APPS = (
     # 'standard' apps
     #'asura',
     #'imagebrowser',
+    #'grouper',
     'imageserver',
     #'imaginator',
     #'internal',
