@@ -1789,7 +1789,7 @@ def formatInfoReviewForm(form):
 <tr><th>FCP verbatim</th>
 <td><input class="xspan" type="text" size="60" name="vfcp.user"></td>
 </tr>"<tr><th>Collection Date</th>
-<td><input class="xspan" type="text" size="60" name="cd.user"></td>
+<td><input class="xspan" type="text" size="60" name="dcol.user"></td>
 </tr>"""
     elif fieldSet == 'dates':
         return """<tr>
