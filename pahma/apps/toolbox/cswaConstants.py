@@ -563,7 +563,6 @@ def getObjectStatuses(form, csid, ant):
     selected = form.get('objectstatus')
 
     objectstatuslist = [
-        ("(none selected)", "(none selected)"),
         ("(unknown)", "(unknown)"),
         ("accession status unclear", "accession status unclear"),
         ("accessioned", "accessioned"),
@@ -598,7 +597,8 @@ def getObjectStatuses(form, csid, ant):
         ("transferred", "transferred")
     ]
 
-    objectstatuses = '''<select class="cell" name="obs.''' + csid + '''">'''
+    objectstatuses = '''<select class="cell" name="obs.''' + csid + '''">
+        <option value="None">Select an object status</option>'''
 
     for objectstatus in objectstatuslist:
         if objectstatus[0] == ant:
