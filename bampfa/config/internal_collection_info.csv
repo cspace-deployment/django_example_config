@@ -49,6 +49,7 @@ field	34	currentcrate	Current crate	currentcrate_s		lo	keyword								20	x
 field	35	blobs	blobs	blob_ss			blob									x
 field	36	keyword	Keyword	text			keyword	1,1								x
 field	37	status	Status	status_s			dropdown	5,3			14				13	x
-field	38	hasimage	Show only items with images	blob_ss			present	6,3								x
+field	38	group	Group Name	grouptitle_ss			keyword	5,2			20				21	x
+field	39	hasimage	Show only items with images	blob_ss			present	6,3								x
 #	for now, we need a dummy location value in this file.															x
-field	39	latlong	LatLong	latlong_p			location									x
+field	40	latlong	LatLong	latlong_p			location									x
