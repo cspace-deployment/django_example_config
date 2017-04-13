@@ -156,7 +156,7 @@ def updateXML(fieldset, updateItems, xml):
     elif fieldset == 'collection':
         fieldList = ('objectName', 'collection')
     elif fieldset == 'placeanddate':
-        fieldList = ('pahmaFieldLocVerbatim', 'pahmaFieldCollectionDate')
+        fieldList = ('objectName', 'pahmaFieldLocVerbatim', 'pahmaFieldCollectionDate')
     elif fieldset == 'places':
         fieldList = ('pahmaFieldLocVerbatim', 'pahmaFieldCollectionPlace', 'objectProductionPlace', 'contentPlace')
     elif fieldset == 'dates':
