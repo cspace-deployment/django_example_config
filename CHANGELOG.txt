@@ -1,0 +1,246 @@
+CHANGELOG for the cspace_django_webapps
+
+OK, it is not a *real* change log, but a list of changes resulting from git log
+with some human annotation after the fact.
+
+This is version djconfig_4.1-6
+Wed Apr  5 23:20:45 PDT 2017
+
+b55f560 (HEAD -> master, origin/master, origin/HEAD) NOJIRA: bring other tenants version of Toolbox up-to-date.
+296c8fb NOJIRA: accommodate API change for cspace.
+3d342dc PAHMA-1563: fix typo in labels
+018afc0 PAHMA-1558, PAHMA-1559, PAHMA-1560: handle special case of pahmaFieldLocVerbatim
+461a941 PAHMA-1558, PAHMA-1559, PAHMA-1560: better warning and error msgs for Toolbox
+cff6de5 NOJIRA: update Toolbox app for botgarden and bampfa
+85c6e68 PAHMA-1558, PAHMA-1559, PAHMA-1560: handle objectStatuses correctly.
+0cde30b PAHMA-1558, PAHMA-1559, PAHMA-1560: handle contentDate correctly.
+c45c4bc PAHMA-1558, PAHMA-1559, PAHMA-1560: continue refactoring to handle these new fieldsets
+bb07c9d NOJIRA: remove duplicate file
+443ca4c PAHMA-1558, PAHMA-1559, PAHMA-1560: refactoring to support new fieldsets
+c69541c PAHMA-1558, PAHMA-1559, PAHMA-1560: add the latest toolbox fixes to botgarden
+865e5ad PAHMA-1558, PAHMA-1559, PAHMA-1560: refinements to new fieldsets and the 'full monty' fieldset
+400de7a PAHMA-1558, PAHMA-1559, PAHMA-1560: initial versions of these 3 new fieldsets
+11f0329 NOJIRA: comment out some debugging statements
+566c51b Added provision to use fieldset request parameter for applayout lookup when state == review, added error handling when field in fieldset doesn't match query
+7a78738 Wrote select_cells function so that it selects cells by name specified in applayout csv
+d252270 Added a stylesheet for react autosuggest
+979a09c PAHMA-1219: refactor json response for subheaders, etc.
+3f4ced4 PAHMA-1551: handle special case where brief description does not exist in source record
+dda2876 PAHMA-1556: correct overaggresive coding of replace
+ce86e35 DJAN-60: make these config files point to Prod, like the rest of them.
+61c0799 PAHMA-1556: pluses in object numbers need to be escaped, too
+0fde131 PAHMA-1556: parens in object numbers need to be escaped
+55349e9 PAHMA-1551: preliminary fix for 'white space in brief descriptions' problem
+1afbde1 PAHMA-1219: fix problems in db queries
+72ab90d Merge branch 'master' of https://github.com/cspace-deployment/django_example_config
+9c01db1 PAHMA-1219: fix problems in db queries
+2709aca Update README.md
+6aeeb0e PAHMA-1219: toolbox config files for UCJEPS
+dfc3a9d NOJIRA: update common cfg for cinefiles (even though cinefiles does not use this app)
+299e412 PAHMA-1219: toolbox config file for ucjeps
+2eb375a PAHMA-1219: add latest revisions to Toolbox to all deployments
+c18f30d NOJIRA: minor refactoring and repair of Toolbox logging
+31ef353 NOJIRA: update toolbox .cfg files to use Production parameters
+789e815 PAHMA-1219: continuing refactoring of toolbox (legacy webapp replacement)
+a25900a PAHMA-1095: correct logging of csids
+5d53a67 NOJIRA: cleanup comments
+947e40b (tag: djconfig_4.1-5) PAHMA-1095: update toolbox config files
+1fb1f24 PAHMA-1530: not quite ready for the materials hierarchy search feature yet
+62b492a PAHMA-1549: add 'maker' to search and display fields
+1802a10 BAMPFA-518: modify labels for 'has images' dropdown
+ecf5c9d NOJIRA: handle delete for larger groups correctly
+4f3f39e NOJIRA: refactoring to gracefully handle corner cases
+47d1170 NOJIRA: grouper respect group size limits properly.
+84a73db NOJIRA: refactor grouper to handle deletion better
+8f08532 NOJIRA: add 'phase 1' Toolbox to bampfa
+5c546c7 NOJIRA: remove new-fangled Toolbox from bampfa
+97cf296 NOJIRA: add Toolbox app to ucjeps
+173ec06 (tag: djconfig_4.1-4) NOJIRA: update which apps are available for each deployment
+74a18c7 NOJIRA: bulletproofing and messaging improvement for grouper, part deux
+60b8344 NOJIRA: bulletproofing and messaging improvement for grouper
+05f4bf4 PAHMA-1548: update hardcoded dropdown values for reasonformove.
+00dafbd NOJIRA: revised group configuration files
+78fd604 NOJIRA: update list of 'hidden' webapps
+537315c NOJIRA: minor refactoring of group lookup, etc.
+e810c12 NOJIRA: move grouper to where it belongs
+76ee9bd NOJIRA: config file for grouper
+0f71a48 NOJIRA: initial version of 'grouper'
+61f6c35 NOJIRA: revised config files to remove unused parameters
+db53445 PAHMA-1219: refactor db connection code in cswaDB
+b497bc7 DJAN-54: allow default values to be set for search values
+d2ec130 (tag: djconfig_4.1-3) PAHMA-1219: for now, botgarden wont be using these tools, cfgs not needed
+cc0d74d PAHMA-1219: botgarden tools now basically work
+8cb672e PAHMA-1219: cfg files for botgarden toolbox
+01109e3 PAHMA-1219: reorganize cfg files; move new toolbox to bampfa directory
+2019c75 (tag: djconfig_4.1-2) PAHMA-1219: more cleanup and tweaking for HV
+56311fa PAHMA-1219: HV now has collapsible nodes. Still needs a bit of help
+bfa0b3b (tag: djconfig_4.1-1) PAHMA-1219: additional refactoring of 'legacy' webapps
+33bc435 UCBG-436: update list of Creator initials and refnames
+58f7f63 PAHMA-1219: turn off queuing, for now
+5a6496f PAHMA-1219: queue elements for new toolbox tools
+34af347 NOJIRA: improved example config files
+c02ef47 PAHMA-1219: download csv now works, etc.
+a33bc34 NOJIRA: correct example config files
+237fb77 NOJIRA: delete unneeded file
+2680dbe PAHMA-1219: full path required here, for now.
+e0ac287 PAHMA-1219: revised example config files
+192cbcf PAHMA-1219: experimental refactoring of legacy webapps
+370ae5b UCBG-436: initial BMU customization to support botgarden
+f1ed875 NOJIRA: correct inline comments
+960546a NOJIRA: update UCJEPS config files for new version of portal
+affe34b PAHMA-1219: update config files for PAHMA's toolbox
+1b44c73 PAHMA-1219: next increment of refactoring, with some tests
+3d504d4 NOJIRA: correct typo
+903c523 NOJIRA: improve errors emitted by the Tricoder file uploader
+09ab181 DJAN-85: support default display types and labelling of display type buttons
+c8055eb DJAN-61: support filters for images and latlongs in forms, not control bar
+5ac1b66 PAHMA-1219: initial refactoring database query code
+29fb186 DJAN-77: revisions to keyinfo states
+28bd4ee Passing 'appname' to kick off React app
+4eeb6ee PAHMA-1219: next iterations in implementing React templating.
+3f16bc1 DJAN-77: endpoints for review and enumerate states
+4b866af PAHMA-1530: initial revisions to field definitions for next 'Egyptological' revision of portal
+7095323 DJAN-81: revisions to toolbox layouts
+2004d05 NOJIRA: reformatting only
+bbc8911 DJAN-77: improvements to JSON endpoint for 'start' state
+f272f63 DJAN-77: improvements to JSON endpoint for 'start' state
+52391dd DJAN-77: endpoints return JSON to support new functionalities
+e93cb3d PAHMA-1219: tweaks to activity viewer experiment
+7a6c1a5 NOJIRA: hide <div> element used by the Activity Viewer from other Toolbox apps
+4bf65f0 NOJIRA: remove inadvertent file
+d4c0b3b NOJIRA: no authentication for toolbox for now, while in development
+112703e NOJIRA: install toolbox webapp in botgarden deployment
+ba2d313 NOJIRA: install toolbox webapp in botgarden deployment
+c953e2a DJAN-81: update these js calls for v4.0 of d3.
+93ce4bb NOJIRA: correct connect_string for this app
+b3b19ec PAHMA-1299: eliminate uneeded functions for this webapp
+fae4bb3 PAHMA-1299: eliminate uneeded functions for this webapp
+8c8127c PAHMA-1299: eliminate uneeded functions for this webapp
+644df01 DJAN-12: cosmetic tweak to UCJEPS publicsearch
+f832e84 DJAN-81: remove more javascript cruft, save searchmedia fixture info
+c681e1e DJAN-81: remove cruft in some tenant-specific webapps
+199c7c3 DJAN-81: refactor searchmedia for new search API
+fc91a69 NOJIRA: this sample file is actually for production
+3fe8b09 DJAN-81: minor labeling and cleanup
+d2b312b DJAN-81: new deployment options for Cinefiles
+64260d7 DJAN-81: changes to bampfa deployment options
+3d6b5ec DJAN-81: changes to cinefiles and bampfa deployment options
+20ca5a9 DJAN-81: changes to cinefiles deployment options
+5f52a41 DJAN-81: changes to botgarden deployment options
+245bf64 DJAN-81: changes to UCJEPS deployment configuration
+4320084 NOJIRA: modernize osteology to conform to new API for search
+a3b0227 NOJIRA: further adjustments for PAHMA for the revised deployment approach
+da1efa4 DJAN-81: initial revisions to deployment apparatus for PAHMA
+bb3c58f PAHMA-1516: revisions to field definitions to display production place
+deb3d32 NOJIRA: minor improvements to search and display fields in media portal
+3c2da64 PAHMA-1513: update Creator dropdown values
+8ee0f3d PAHMA-1505: add Donor to Public and Internal Portal search and display
+5750df3 NOJIRA: minor revision to portal parms: make museum number properly searchable.
+cb48481 BAMPFA-500: update config files for new 2 datastore setup
+f9cbeb5 DJAN-66: update configuration for new prod database server
+2282622 UCBG-428: BMU parameters to support media initiatives
+d13e27c Update searchApp.json
+afad57a UCJEPS-635: use media csid as csid
+0a79fe8 UCBG-359: add cultivar epithet to Internal Portal fields
+f682f16 UCBG-432: documentation improvements re: flowering/fruting times
+a5d229d NOJIRA: correct port number in connect string
+7746630 NOJIRA: increase max set size to 30,000
+3acbdea PAHMA-1220: add restricted images to search fields
+fbdc178 PAHMA-1481: raise Statistics limit to 30,000
+4a77c70 UCBG-432: improve labeling of fruiting and flowering fields
+0cf95d3 UCBG-432: improve labeling of fruiting and flowering fields
+b6467a4 PAHMA-1220: improve field layout for new card and image fields
+ce97dc5 PAHMA-1220: updates to field definitions for new image and card fields
+b3ebb16 UCBG-428: more revisions to BMU parameters
+d528e0a UCBG-428: more revisions to BMU parameters
+ee8ac63 UCBG-428: initial revisions to BMU parameters
+0bbd1cc PAHMA-1220, DJAN-61: prepare to remove latlong and image filters from button bar
+d5f6056 UCJEPS-614: add csrecordtype = media to this config file
+e94674a Merge pull request #13 from itsdavidbaxter/master
+5fb782b UCJEPS-614: rearrange search boxes for media portal
+6e125bb Merge branch 'master' of https://github.com/cspace-deployment/django_example_config
+289a1fc PAHMA-1220: revised field definitions for cards and images
+6ea0ca6 Merge pull request #12 from itsdavidbaxter/master
+42a6829 NOJIRA: add persons to UCJEPS BMU config file
+11dbdca Merge pull request #2 from cspace-deployment/master
+573e53a UCJEPS-614: revisions to layout of forms and fields
+32cd75b UCJEPS-614: tweak grid display
+267a3a9 UCJEPS-614: revised field definitions for media
+26f60cd UCJEPS-614: initial config files for media portal
+8df54a5 UCJEPS-630: add comments to available fields, reorder Full display fields for search
+e0a1b82 NOJIRA: revised nav bar items for Tricoder Upload app
+9a54f51 NOJIRA: update nav bar for Tricoder app
+899f331 BAMPFA-404: preserve edits to nav bar text.
+4dd51d0 PAHMA-1442: keeling number label changed
+3236a36 BAMPFA-404: revised layout of input fields; status field now included
+8e38a75 NOJIRA: update BMU batch configuration files
+42196dd BAMPFA-404: minor look-and-feel changes
+8268ad0 BAMPFA-466: render Mediums by default in Portals
+39fb949 PAHMA-1438: osteology portal field definitions
+e162f21 UCBG-428: configuration for BMU
+dc77f8b UCBG-428: configuration for BMU
+e00613d NOJIRA: add config files for new botgarden apps
+6a1cf69 NOJIRA: set ImageServer derivatives appropriately
+d6d31fd NOJIRA: Cinefile BMU batch config (Dev); botgarden fruiting/flowering; PAHMA osteology
+2fabd71 PAHMA-1299: third revision to layout
+2407d8b NOJIRA: add Keeling number to search fields in Internal portal
+0f19b13 NOJIRA: add Keeling number to search fields in Internal portal
+00cd277 PAHMA-1299: config files for osteology
+edad490 Merge pull request #11 from itsdavidbaxter/master
+1b0d5ae UCJEPS-619: updated copyright statement in BMU constants
+12e48ce Merge pull request #1 from cspace-deployment/master
+929e427 BAMPFA-404: latest revisions of field definitions
+052ef5a BAMPFA-114: upgrade config files for BMU (and other apps)
+4550ca9 BAMPFA-404: latest revisions to public portal layout
+3e93d20 BAMPFA-404: latest revisions to internal portal layout
+f639614 BAMPFA-404: revised field definitions.
+425d8c4 BAMPFA-466: restrictions on images served; small refactoring of 404 handling.
+59a7855 UCJEPS-605: changes to config files to support revised spec
+c07ed8d UCJEPS-605: add parameters for new batch script
+77944c2 PAHMA-1406, PAHMA-1407: correct misnamed Description variable (objdescr_ss -> objdescr_s)
+00c973e Merge branch 'master' of https://github.com/cspace-deployment/django_example_config
+c81ddc4 UCJEPS-605: the parms for dropdowns are now lists rather than dicts: need to keep the order.
+7634185 NOJIRA: repair the bMapper config file for this tentant
+6e5a04d Merge pull request #10 from reginax/master
+edc0ba7 NOJIRA: updated fixtures and exported to JSON
+8eeb1b6 Merge pull request #9 from itsdavidbaxter/master
+043b7b3 UCJEPS-605: add creators and rights holders to BMU config gile
+9ad0f21 UCJEPS-605: improve example config files for BMU for PAHMA and UCJEPS
+fe201d0 NOJIRA: the fixture had some bad data in it
+3f85176 UCJEPS-605, UCJEPS-612: add parameters to support additional BMU functionality
+3ee86f3 UCBG-405: small tweaks for consistency to these parm files
+a1e0328 Merge pull request #8 from reginax/master
+763f463 UCBG-405: added accessionnotes field
+33eac3d UCBG-405: continuation of public and internal field improvements
+8f3bae3 Merge pull request #7 from reginax/master
+3259967 UCBG-405: internal and public forms updated
+62015cf Merge pull request #5 from reginax/master
+24e8fd8 UCBG-405: revisions to public portal fields, csv headers, grid view
+c47db5b Merge pull request #4 from reginax/master
+9edebe1 UCBG-405: capture updates to bampfa internal tabs
+93862eb UCBG-405: Updated search tabs for UCJEPS webapps-dev
+9c9e281 Merge pull request #3 from reginax/master
+d2218fe UCBG: capture updates for portal (internal and public)
+facad93 Merge branch 'master' of https://github.com/cspace-deployment/django_example_config
+dd55d20 DJAN-52: these fixtures for pahma need to be checked further...
+2731e94 Merge pull request #2 from reginax/master
+66fc018 UCBG 405: captured updates to Help tab for search webapp
+6539814 Merge pull request #1 from reginax/master
+6f63b44 UCBG-405: minor modification to Public portal layout
+b7de414 UCBG-405: initial revisions to both Public and Internal portal layouts
+0551316 NOJIRA: use public fieldset for public portal
+01716a5 NOJIRA: incremental improvements to UCB webapp config files
+d8caddb NOJIRA: make the header for internal portal indicate that
+7d82527 NOJIRA: latest versions of UCB tenant config files
+0d6d4ae NOJIRA: bring these config files up to date
+1be273d NOJIRA: more adjustments to config files
+7e2b0dc NOJIRA: more adjustments to config files
+0ab2186 NOJIRA: more adjustments to config files
+7e423a5 NOJIRA: bring this field definitions file up to snuff
+08d94b0 NOJIRA: these are needed by the authentication backend
+6665a7a NOJIRA: correct suggestsolr config for these two tenants
+695edcf NOJIRA: reverse the botgarden field definition files. they got confused.
+138dfda NOJIRA: updates to config files for managed servers and new Django regime
+c0461cd CSPACE-6762: incremental improvements to config files
+ebefe6b PAHMA-1362: partial fix for this issue. note dependies on field definition file changes.
+3a25836 UCBG-405, PAHMA-1315: initial commit of example config files
