@@ -159,6 +159,8 @@
                     {% if item.phase %}
                         {{ labels.phase }}: <a class="facet-item" data-facetType="phase">{{ item.phase }}</a>{% endif %}
                 </div>{% endif %}
+            {% if item.sheets %}
+                <div>{{ labels.sheets }}: {{ item.sheets }}</div>{% endif %}
             {% if item.othernumber %}
                 <h4>{{ labels.othernumber }}</h4>
                 {% for t in item.othernumber %}

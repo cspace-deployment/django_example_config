@@ -81,6 +81,7 @@ PARMS = {
     'cultivated': ['Cultivated', 'true', '', 'cultivated_s', ''],
     'sex': ['Sex', 'true', '', 'sex_txt', ''],
     'phase': ['Phase', 'true', '', 'phase_txt', ''],
+    'sheets': ['Sheets', 'true', '', 'sheet_s', ''],
     'determinationdetails': ['Determination Details', 'true', '', 'determinationdetails_txt', ''],
     'determinationqualifier': ['Determination Qualifier', 'true', '', 'determinationqualifier_s', ''],
     'comments': ['Comments', 'true', '', 'comments_ss', 'ss'],
