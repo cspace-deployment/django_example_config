@@ -310,6 +310,7 @@ def listSearchResults(authority, config, displaytype, form, rows):
             if r[1] in duplicates:
                 hasDups = True
             else:
+                duplicates.append(r[1])
                 pass
             html += formatRow({'boxtype': authority, 'rowtype': rowtype, 'data': r}, form, config)
 
@@ -1347,7 +1348,7 @@ def doBarCodes(form, config):
     #If the group field has input, use that
     if form.get("gr.group") != '':
         # sys.stderr.write('group: %s\n' % form.get("gr.group"))
-        objs = cswaDB.getgrouplist(form.get("gr.group"), 5000, config)
+        objs, msg = cswaDB.getgrouplist(form.get("gr.group"), 5000, config)
         if action == 'Create Labels for Objects':
             totalobjects += len(objs)
             o = [o[0:8] + [o[9]] for o in objs]
