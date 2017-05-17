@@ -549,7 +549,7 @@ def doCheckGroupMove(form, config):
         return '<h3 class="error">Please enter a valid storage location!</h3>'
 
     try:
-        objects = cswaDB.getgrouplist(form.get("gr.group"), 3000, config)
+        objects, msg = cswaDB.getgrouplist(form.get("gr.group"), 3000, config)
     except:
         raise
 
