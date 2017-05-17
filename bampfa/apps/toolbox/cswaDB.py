@@ -570,9 +570,54 @@ def getplants(location1, location2, num2ret, config, updateType, qualifier):
 def getgrouplist(group, num2ret, config):
     if int(num2ret) > 30000: num2ret = 30000
     if int(num2ret) < 1:    num2ret = 1
+    institution = config.get('info', 'institution')
 
+    if institution == 'bampfa':
+        getobjects = """
+                    SELECT distinct on (storageLocation,objectnumber,hx2.name)
+(case when cb.computedcrate is Null then regexp_replace(cc.computedcurrentlocation, '^.*\\)''(.*)''$', '\\1')
+     else concat(regexp_replace(cc.computedcurrentlocation, '^.*\\)''(.*)''$', '\\1'),
+     ': ',regexp_replace(cb.computedcrate, '^.*\\)''(.*)''$', '\\1')) end) AS storageLocation,
+        cc.computedcurrentlocation AS locrefname,
+        '' as locationdate,
+        cc.objectnumber objectnumber,
+        tg.bampfatitle,
+        cc.numberofobjects objectCount,
+        '' as movementCsid,
+        '' as movementRefname,
+        '' as objectCsid,
+        ''  objectRefname,
+        '' as moveid,
+        '' as subjectdocumenttype,
+        '' as objectdocumenttype,
+        cc.objectnumber sortableobjectnumber,
+        cb.computedcrate crateRefname,
+        regexp_replace(cb.computedcrate, '^.*\\)''(.*)''$', '\\1') crate,
+        regexp_replace(pg.bampfaobjectproductionperson, '^.*\\)''(.*)''$', '\\1') AS Artist
 
-    getobjects = """SELECT DISTINCT ON (sortableobjectnumber)
+        FROM groups_common gc
+        JOIN misc mc1 ON (gc.id = mc1.id AND mc1.lifecyclestate <> 'deleted')
+
+        JOIN hierarchy h1 ON (gc.id=h1.id)
+        JOIN relations_common rc1 ON (h1.name=rc1.subjectcsid)
+        JOIN hierarchy hx2 ON (rc1.objectcsid=hx2.name)
+        JOIN collectionobjects_common cc ON (hx2.id=cc.id)
+
+        left outer join collectionobjects_bampfa cb on (cb.id=cc.id)
+
+        LEFT OUTER JOIN hierarchy h4 ON (h4.parentid = cc.id AND h4.name = 'collectionobjects_bampfa:bampfaTitleGroupList' and h4.pos=0)
+        LEFT OUTER JOIN bampfatitlegroup tg ON (h4.id = tg.id)
+
+        left outer join hierarchy h5 ON (cc.id = h5.parentid AND h5.name = 'collectionobjects_bampfa:bampfaObjectProductionPersonGroupList' AND (h5.pos = 0 OR h5.pos IS NULL))
+        left outer join bampfaobjectproductionpersongroup pg ON (h5.id = pg.id)
+
+        WHERE
+        gc.title='""" + group + """'
+        ORDER BY storageLocation,objectnumber,hx2.name asc
+        limit """ + str(num2ret)
+
+    else:
+        getobjects = """SELECT DISTINCT ON (sortableobjectnumber)
 (case when ca.computedcrate is Null then regexp_replace(cc.computedcurrentlocation, '^.*\\)''(.*)''$', '\\1')
      else concat(regexp_replace(cc.computedcurrentlocation, '^.*\\)''(.*)''$', '\\1'),
      ': ',regexp_replace(ca.computedcrate, '^.*\\)''(.*)''$', '\\1')) end) AS storageLocation,
