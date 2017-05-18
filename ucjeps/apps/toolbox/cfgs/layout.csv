@@ -1,5 +1,5 @@
 #	toolbox layout configuration								
-#	0.5	11/18/16							
+#	0.6	05/17/17							
 #	app	variable	label	role	datatype	parameters	autocomplete	row	column
 1	listapps		Available Webapps	start	header				
 2	advsearch	location	Location	start	text	40	lo	1	1
@@ -28,201 +28,301 @@
 25	#								
 26	bulkedit	object.start	Start Object	start	text	32	ob	1	1
 27	bulkedit	object.end	End Object	start	text	32	ob	1	2
-29	bulkedit	fieldset	Fieldset	start	dropdown	fieldset		1	3
-30	bulkedit	start	Search	start	button	review			
-31	bulkedit	review	Update	start	button	end			
-33	#								
-34	governmentholdings	agency	Agency	start	dropdown	agencies		2	2
-35	governmentholdings	download	Download as CSV	start	button	end			
-36	governmentholdings	start	View Holdings	start	button	download			
-37	#								
-38	hierarchyviewer	authority	Authority to fetch	start	dropdown	authorities		1	1
-39	hierarchyviewer	start	View Hierarchy	start	button	enumerate			
-40	#								
-41	holdings	enumerate	Enumerate	start	button	end			
-42	holdings	start	Search	start	button	enumerate			
-43	holdings	place	Place	start	text	40	px		
-44	#								
-45	inventory	location.start	Start Location	start	text	40	lo	1	1
-46	inventory	location.end	End Location	start	text	40	lo	1	2
-47	inventory	handler	Handler	start	dropdown	handlers		2	1
-48	inventory	reason	Reason	start	dropdown	reasons		2	2
-50	inventory	move	xxx	start	button	end			
-51	inventory	start	Search	start	button	review			
-52	inventory	review	Inventory	review	button	move			
-53	#								
-54	keyinfo	location.start	Start Location	start	text	40	lo	1	1
-55	keyinfo	location.end	End Location	start	text	40	lo	1	2
-56	keyinfo	fieldset	Fieldset	start	dropdown	fieldset		1	3
-57	keyinfo	start	Search	start	button	review			
-58	keyinfo	review	Update Key Info	review	button	update			
-58	keyinfo	review	End	update	button	review			
-60	#								
-61	locreport	taxon	Taxon	start	text	40	ut	3	2
-62	locreport	enumerate	Enumerate	start	button	end			
-63	locreport	start	Search	start	button	enumerate			
-64	#								
-65	movecrate	location.start	From Location	start	text	40	lo	1	1
-66	movecrate	location.end	To Location	start	text	40	lo	1	2
-67	movecrate	placeholder		start	placeholder			2	1
-68	movecrate	crate	To Crate	start	text	40	lo	2	1
-69	movecrate	handler	Handler	start	dropdown	handlers		3	1
-70	movecrate	reason	Reason	start	dropdown	reasons		3	2
-71	movecrate	move	Move objects	start	button	end			
-72	movecrate	start	Search	start	button	movecheck			
-73	movecrate	movecheck	Move crate	start	button	move			
-74	#								
-75	moveobject	object.start	Start Object	start	text	40	ob	1	1
-76	moveobject	object.end	End Object	start	text	40	ob	1	2
-77	moveobject	location.start	To Location	start	text	40	lo	2	1
-78	moveobject	crate	To Crate	start	text	40	lo	2	2
-79	moveobject	handler	Handler	start	dropdown	handlers		3	1
-80	moveobject	reason	Reason	start	dropdown	reasons		3	2
-81	moveobject	move	Move objects	start	button	end			
-82	moveobject	start	Search	start	button	movecheck			
-83	moveobject	movecheck	Move objects	start	button	move			
-84	#								
-85	objdetails	objectnumber	Museum Number	start	text	40	ob	1	1
-86	objdetails	enumerate	Search	start	button	end			
-87	objdetails	start	Search	start	button	enumerate			
-88	#								
-89	objinfo	object.start	Start Object	start	text	32	ob	1	1
-90	objinfo	object.end	End Object	start	text	32	ob	1	2
-91	objinfo	fieldset	Fieldset	start	dropdown	fieldset		1	3
-92	objinfo	start	Search	start	button	review			
-93	objinfo	review	Update Object Info	review	button	update			
-95	#								
-96	packinglist	location.start	Start Location	start	text	40	lo	1	1
-97	packinglist	location.end	End Location	start	text	40	lo	1	2
-98	packinglist	groupbyculture	groupbyculture	start	checkbox 			2	1
-99	packinglist	place	Place	start	text	40	cp	2	2
-101	packinglist	start	Download as CSV	start	button	save			
-102	packinglist	start	Search	start	button	enumerate			
-105	#								
-106	powermove	location.start	From Location	start	text	40	lo	1	1
-107	powermove	location.end	To Location	start	text	40	lo	1	2
-108	powermove	crate.start	From Crate	start	text	40	lo	2	1
-109	powermove	crate.end	To Crate	start	text	40	lo	2	2
-110	powermove	handler	Handler	start	dropdown	handlers		3	1
-111	powermove	reason	Reason	start	dropdown	reasons		3	2
-112	powermove	move	Move objects	start	button	end			
-113	powermove	start	Search	start	button	movecheck			
-114	powermove	movecheck	Move objects	start	button	move			
-115	#								
-116	search	objectnumber	Museum Number	start	text	40	ob	1	1
-117	search	concept	Concept	start	text	40	co	2	1
-118	search	place	Place	start	text	40	cp	3	1
-119	search	search	Enumerate	start	button	end			
-120	search	start	Search	start	button	search			
-121	#								
-122	upload	file	Select Files	start	file			1	1
-123	upload	start	Upload	start	button			1	1
+28	bulkedit	fieldset	Fieldset	start	dropdown	fieldset		1	3
+29	bulkedit	start	Search	start	button	review			
+30	bulkedit	review	Update	start	button	end			
+31	#								
+32	governmentholdings	agency	Agency	start	dropdown	agencies		2	2
+33	governmentholdings	download	Download as CSV	start	button	end			
+34	governmentholdings	start	View Holdings	start	button	download			
+35	#								
+36	hierarchyviewer	authority	Authority to fetch	start	dropdown	authorities		1	1
+37	hierarchyviewer	start	View Hierarchy	start	button	enumerate			
+38	#								
+39	holdings	enumerate	Enumerate	start	button	end			
+40	holdings	start	Search	start	button	enumerate			
+41	holdings	place	Place	start	text	40	px		
+42	#								
+43	inventory	location.start	Start Location	start	text	40	lo	1	1
+44	inventory	location.end	End Location	start	text	40	lo	1	2
+45	inventory	handler	Handler	start	dropdown	handlers		2	1
+46	inventory	reason	Reason	start	dropdown	reasons		2	2
+47	inventory	move	xxx	start	button	end			
+48	inventory	start	Search	start	button	review			
+49	inventory	review	Inventory	review	button	move			
+50	#								
+51	keyinfo	location.start	Start Location	start	text	40	lo	1	1
+52	keyinfo	location.end	End Location	start	text	40	lo	1	2
+53	keyinfo	fieldset	Fieldset	start	dropdown	fieldset		1	3
+54	keyinfo	start	Search	start	button	review			
+55	keyinfo	review	Update Key Info	review	button	update			
+56	keyinfo	review	End	update	button	review			
+57	#								
+58	locreport	taxon	Taxon	start	text	40	ut	3	2
+59	locreport	enumerate	Enumerate	start	button	end			
+60	locreport	start	Search	start	button	enumerate			
+61	#								
+62	movecrate	location.start	From Location	start	text	40	lo	1	1
+63	movecrate	location.end	To Location	start	text	40	lo	1	2
+64	movecrate	placeholder		start	placeholder			2	1
+65	movecrate	crate	To Crate	start	text	40	lo	2	1
+66	movecrate	handler	Handler	start	dropdown	handlers		3	1
+67	movecrate	reason	Reason	start	dropdown	reasons		3	2
+68	movecrate	move	Move objects	start	button	end			
+69	movecrate	start	Search	start	button	movecheck			
+70	movecrate	movecheck	Move crate	start	button	move			
+71	#								
+72	moveobject	object.start	Start Object	start	text	40	ob	1	1
+73	moveobject	object.end	End Object	start	text	40	ob	1	2
+74	moveobject	location.start	To Location	start	text	40	lo	2	1
+75	moveobject	crate	To Crate	start	text	40	lo	2	2
+76	moveobject	handler	Handler	start	dropdown	handlers		3	1
+77	moveobject	reason	Reason	start	dropdown	reasons		3	2
+78	moveobject	move	Move objects	start	button	end			
+79	moveobject	start	Search	start	button	movecheck			
+80	moveobject	movecheck	Move objects	start	button	move			
+81	#								
+82	objdetails	objectnumber	Museum Number	start	text	40	ob	1	1
+83	objdetails	enumerate	Search	start	button	end			
+84	objdetails	start	Search	start	button	enumerate			
+85	#								
+86	objinfo	object.start	Start Object	start	text	32	ob	1	1
+87	objinfo	object.end	End Object	start	text	32	ob	1	2
+88	objinfo	fieldset	Fieldset	start	dropdown	fieldset		1	3
+89	objinfo	start	Search	start	button	review			
+90	objinfo	review	Update Object Info	review	button	update			
+91	#								
+92	packinglist	location.start	Start Location	start	text	40	lo	1	1
+93	packinglist	location.end	End Location	start	text	40	lo	1	2
+94	packinglist	groupbyculture	groupbyculture	start	checkbox 			2	1
+95	packinglist	place	Place	start	text	40	cp	2	2
+96	packinglist	start	Download as CSV	start	button	save			
+97	packinglist	start	Search	start	button	enumerate			
+98	#								
+99	powermove	location.start	From Location	start	text	40	lo	1	1
+100	powermove	location.end	To Location	start	text	40	lo	1	2
+101	powermove	crate.start	From Crate	start	text	40	lo	2	1
+102	powermove	crate.end	To Crate	start	text	40	lo	2	2
+103	powermove	handler	Handler	start	dropdown	handlers		3	1
+104	powermove	reason	Reason	start	dropdown	reasons		3	2
+105	powermove	move	Move objects	start	button	end			
+106	powermove	start	Search	start	button	movecheck			
+107	powermove	movecheck	Move objects	start	button	move			
+108	#								
+109	search	objectnumber	Museum Number	start	text	40	ob	1	1
+110	search	concept	Concept	start	text	40	co	2	1
+111	search	place	Place	start	text	40	cp	3	1
+112	search	search	Enumerate	start	button	end			
+113	search	start	Search	start	button	search			
+114	#								
+115	upload	file	Select Files	start	file			1	1
+116	upload	start	Upload	start	button			1	1
+117	#								
+118	#								
+119	activityviewer	activity	Activity	start	dropdown	activities		1	1
+120	activityviewer	date.start	Start Date	start	date	40		2	1
+121	activityviewer	date.end	End Date	start	date	40		2	2
+122	activityviewer	start	View Activity	start	button	end		1	1
+123	activityviewer	period	Period	start	dropdown	periods		1	2
 124	#								
-125	#								
-126	activityviewer	activity	Activity	start	dropdown	activities		1	1
-127	activityviewer	date.start	Start Date	start	date	40		2	1
-128	activityviewer	date.end	End Date	start	date	40		2	2
-129	activityviewer	start	View Activity	start	button	end		1	1
-130	activityviewer	period	Period	start	dropdown	periods		1	2
-131	#								
-132	data	data	data	start	data				
-133	#								
-134	#								
-135	keyinfo	museumnumber	Museum #	review	string	100	ob		
-136	keyinfo	objectname	Object name	review	text	140	ob		
-137	keyinfo	count	Count	review	integer	40			
-138	keyinfo	fieldcollectionplace	Field Collection Place	review	text	150	fc		
-139	keyinfo	culturalgroup	Cultural Group	review	text	150			
-140	keyinfo	ethnographicfilecode	Ethnographic File Code	review	text	150			
-135	keyinfo	museumnumber	Museum #	update	string	100	ob		
-136	keyinfo	status	Status	update	string	140	ob		
-137	keyinfo	csid	CSID	update	integer	40			
-141	namedesc	museumnumber	Museum #	review	string	100	ob		
-142	namedesc	objectname	Object name	review	text	140	ob		
-143	namedesc	briefdescription	Brief Description	review	text	150			
-144	registration	museumnumber	Museum #	review	string	100	ob		
-145	registration	objectname	Object name	review	text	140	ob		
-146	registration	altnum	Alt Num	review	text	40			
-147	registration	altnumtype	Alt Num Type	review	text	40			
-148	registration	fieldcollector	Field Collector	review	text	100	pe		
-149	registration	donor	Donor	review	text	100			
-150	registration	accession	Accession	review	string	60	ob		
-151	hsrinfo	museumnumber	Museum #	review	string	100	ob		
-152	hsrinfo	objectname	Object name	review	text	140	ob		
-153	hsrinfo	count	Count	review	integer	40			
-154	hsrinfo	countnote	Count Note	review	text	40			
-155	hsrinfo	fieldcollectionplace	Field Collection Place	review	text	150	fc		
-156	objtypecm	museumnumber	Museum #	review	string	100	ob		
-157	objtypecm	objectname	Object name	review	text	140	ob		
-158	objtypecm	count	Count	review	integer	40			
-159	objtypecm	objecttype	Object Type	review	text	40			
-160	objtypecm	collectionmanager	Collection Manager	review	text	150	pe		
-161	objtypecm	fieldcollectionplace	Field Collection Place	review	text	150	fc		
-162	#inventory	IDnumber	ID number 	review	text	40			
-163	#inventory	title	Title	review	text	40			
-164	#inventory	artist	Artist	review	text	150	pe		
-165	#inventory	found	Found	review	radio	40			
-166	#inventory	notfound	Not Found	review	radio	40			
-167	inventory	museumnumber	Museum #	review	string	100	ob		
-168	inventory	objectname	Object name	review	text	140	ob		
-169	inventory	found	Found	review	radio	40			
-169	inventory	notfound	Not Found	review	radio	40			
-170	movecrate	museumnumber	Museum #	review	string	100	ob		
-171	movecrate	objectname	Object name	review	text	140	ob		
-172	movecrate	move	Move	review	radio	40			
-173	movecrate	dontmove	Don't move	review	radio	40			
-174	#packinglist	IDnumber	ID number	enumerate	string	40			
-175	#packinglist	title	Title	enumerate	string	150			
-176	#packinglist	artist	Artist	enumerate	string	150	pe		
-177	#packinglist	medium	Medium	enumerate	string	40			
-178	#packinglist	dimensions	Dimensions	enumerate	string	100			
-179	#packinglist	creditLine	Credit Line	enumerate	string	150			
-180	packinglist	museumnumber	Museum #	enumerate	string	100	ob		
-181	packinglist	objectname	Object name	enumerate	string	140	ob		
-182	packinglist	count	Count	enumerate	string	40			
-183	packinglist	fieldcollectionplace	Field Collection Place	enumerate	string	150	fc		
-184	packinglist	culturalgroup	Cultural Group	enumerate	string	150			
-185	packinglist	ethnographicfilecode	Ethnographic File Code	enumerate	string	150			
-186	packinglistbyculture	museumnumber	Museum #	review	string	100	ob		
-187	packinglistbyculture	objectname	Object name	review	string	140	ob		
-188	packinglistbyculture	count	Count	review	string	40			
-189	packinglistbyculture	location	Location	review	string	150			
-190	packinglistbyculture	fieldcollectionplace	Field Collection Place	review	string	150	fc		
-191	moveobject	move	Move?	review	checkbox	40			
-192	moveobject	museumnumber	Museum #	review	string	100	ob		
-193	moveobject	objectname	Object name	review	text	140	ob		
-194	moveobject	count	Count	review	integer	40			
-195	moveobject	location	Location	review	text	150			
-196	bedlist	accession	Accession	review	string	60	ob		
-197	bedlist	taxonomicname	Taxonomic Name	review	string	40	ta		
-198	bedlist	family	Family	review	string	150			
-199	bedlist	gardenlocation	Garden Location	review	string	150	lo		
-200	bedlist	locality	Locality	review	string	150			
-201	bedlist	rare	Rare?	review	string	40			
-202	bedlist	accessiondead	Accession Dead?	review	string	40			
-203	locreport	accession	Accession	review	string	60	ob		
-204	locreport	taxonomicname	Taxonomic Name	review	string	40	ta		
-205	locreport	family	Family	review	string	150			
-206	locreport	gardenlocation	Garden Location	review	string	150	lo		
-207	locreport	locality	Locality	review	string	150			
-208	locreport	rare	Rare?	review	string	40			
-209	locreport	accessiondead	Accession Dead?	review	string	40			
+125	data	data	data	start	data				
+126	#								
+127	#								
+128	keyinfo	museumnumber	Museum #	review	string	100	ob		
+129	keyinfo	objectname	Object name	review	text	140	ob		
+130	keyinfo	count	Count	review	integer	40			
+131	keyinfo	fieldcollectionplace	Field Collection Place	review	text	150	fc		
+132	keyinfo	culturalgroup	Cultural Group	review	text	150			
+133	keyinfo	ethnographicfilecode	Ethnographic File Code	review	text	150			
+134	keyinfo	museumnumber	Museum #	update	string	100	ob		
+135	keyinfo	status	Status	update	string	140	ob		
+136	keyinfo	csid	CSID	update	integer	40			
+137	namedesc	museumnumber	Museum #	review	string	100	ob		
+138	namedesc	objectname	Object name	review	text	140	ob		
+139	namedesc	briefdescription	Brief Description	review	text	150			
+140	registration	museumnumber	Museum #	review	string	100	ob		
+141	registration	objectname	Object name	review	text	140	ob		
+142	registration	altnum	Alt Num	review	text	40			
+143	registration	altnumtype	Alt Num Type	review	text	40			
+144	registration	fieldcollector	Field Collector	review	text	100	pe		
+145	registration	donor	Donor	review	text	100			
+146	registration	accession	Accession	review	string	60	ob		
+147	hsrinfo	museumnumber	Museum #	review	string	100	ob		
+148	hsrinfo	objectname	Object name	review	text	140	ob		
+149	hsrinfo	count	Count	review	integer	40			
+150	hsrinfo	countnote	Count Note	review	text	40			
+151	hsrinfo	fieldcollectionplace	Field Collection Place	review	text	150	fc		
+152	objtypecm	museumnumber	Museum #	review	string	100	ob		
+153	objtypecm	objectname	Object name	review	text	140	ob		
+154	objtypecm	count	Count	review	integer	40			
+155	objtypecm	objecttype	Object Type	review	text	40			
+156	objtypecm	collectionmanager	Collection Manager	review	text	150	pe		
+157	objtypecm	fieldcollectionplace	Field Collection Place	review	text	150	fc		
+158	#inventory	IDnumber	ID number 	review	text	40			
+159	#inventory	title	Title	review	text	40			
+160	#inventory	artist	Artist	review	text	150	pe		
+161	#inventory	found	Found	review	radio	40			
+162	#inventory	notfound	Not Found	review	radio	40			
+163	inventory	museumnumber	Museum #	review	string	100	ob		
+164	inventory	objectname	Object name	review	text	140	ob		
+165	inventory	found	Found	review	radio	40			
+166	inventory	notfound	Not Found	review	radio	40			
+167	movecrate	museumnumber	Museum #	review	string	100	ob		
+168	movecrate	objectname	Object name	review	text	140	ob		
+169	movecrate	move	Move	review	radio	40			
+170	movecrate	dontmove	Don't move	review	radio	40			
+171	#packinglist	IDnumber	ID number	enumerate	string	40			
+172	#packinglist	title	Title	enumerate	string	150			
+173	#packinglist	artist	Artist	enumerate	string	150	pe		
+174	#packinglist	medium	Medium	enumerate	string	40			
+175	#packinglist	dimensions	Dimensions	enumerate	string	100			
+176	#packinglist	creditLine	Credit Line	enumerate	string	150			
+177	packinglist	museumnumber	Museum #	enumerate	string	100	ob		
+178	packinglist	objectname	Object name	enumerate	string	140	ob		
+179	packinglist	count	Count	enumerate	string	40			
+180	packinglist	fieldcollectionplace	Field Collection Place	enumerate	string	150	fc		
+181	packinglist	culturalgroup	Cultural Group	enumerate	string	150			
+182	packinglist	ethnographicfilecode	Ethnographic File Code	enumerate	string	150			
+183	packinglistbyculture	museumnumber	Museum #	review	string	100	ob		
+184	packinglistbyculture	objectname	Object name	review	string	140	ob		
+185	packinglistbyculture	count	Count	review	string	40			
+186	packinglistbyculture	location	Location	review	string	150			
+187	packinglistbyculture	fieldcollectionplace	Field Collection Place	review	string	150	fc		
+188	moveobject	move	Move?	review	checkbox	40			
+189	moveobject	museumnumber	Museum #	review	string	100	ob		
+190	moveobject	objectname	Object name	review	text	140	ob		
+191	moveobject	count	Count	review	integer	40			
+192	moveobject	location	Location	review	text	150			
+193	bedlist	accession	Accession	review	string	60	ob		
+194	bedlist	taxonomicname	Taxonomic Name	review	string	40	ta		
+195	bedlist	family	Family	review	string	150			
+196	bedlist	gardenlocation	Garden Location	review	string	150	lo		
+197	bedlist	locality	Locality	review	string	150			
+198	bedlist	rare	Rare?	review	string	40			
+199	bedlist	accessiondead	Accession Dead?	review	string	40			
+200	locreport	accession	Accession	review	string	60	ob		
+201	locreport	taxonomicname	Taxonomic Name	review	string	40	ta		
+202	locreport	family	Family	review	string	150			
+203	locreport	gardenlocation	Garden Location	review	string	150	lo		
+204	locreport	locality	Locality	review	string	150			
+205	locreport	rare	Rare?	review	string	40			
+206	locreport	accessiondead	Accession Dead?	review	string	40			
+207	keyinforesult	museumnumber	Museum #	review	string	100	ob		
+208	keyinforesult	csid	CSID	review	string	40			
+209	keyinforesult	status	Status	review	string	40			
 210	keyinforesult	museumnumber	Museum #	review	string	100	ob		
 211	keyinforesult	csid	CSID	review	string	40			
-212	keyinforesult	status	Status	review	string	40			
-213	keyinforesult	museumnumber	Museum #	review	string	100	ob		
-214	keyinforesult	csid	CSID	review	string	40			
-216	keyinforesult	museumnumber	Museum #	review	string	100	ob		
-217	objinforesult	museumnumber	Museum #	review	string	100	ob		
-218	objinforesult	updatedInventorystatus	Updated Inventory Status	review	string	40			
-219	objinforesult	note	Note	review	string	40			
-220	objinforesult	updatestatus	Update status	review	string	40			
-221	barcodeprint	location	Location	review	string	150			
-222	barcodeprint	objectsfound	Objects found	review	string	140			
-223	barcodeprint	barcodefilename	Barcode Filename	review	string	150			
-224	barcodeprint	notes	Notes	review	string	40			
-225	barcodeprintlocations	locationslisted	Locations listed	review	string	40			
-226	barcodeprintlocations	barcodefilename	Barcode Filename	review	string	150			
-227	upload	museumnumber	Museum #	review	string	100	ob		
-228	upload	note	Note	review	string	40			
-229	upload	updatestatus	Update status	review	string	40			
+212	keyinforesult	museumnumber	Museum #	review	string	100	ob		
+213	objinforesult	museumnumber	Museum #	review	string	100	ob		
+214	objinforesult	updatedInventorystatus	Updated Inventory Status	review	string	40			
+215	objinforesult	note	Note	review	string	40			
+216	objinforesult	updatestatus	Update status	review	string	40			
+217	barcodeprint	location	Location	review	string	150			
+218	barcodeprint	objectsfound	Objects found	review	string	140			
+219	barcodeprint	barcodefilename	Barcode Filename	review	string	150			
+220	barcodeprint	notes	Notes	review	string	40			
+221	barcodeprintlocations	locationslisted	Locations listed	review	string	40			
+222	barcodeprintlocations	barcodefilename	Barcode Filename	review	string	150			
+223	upload	museumnumber	Museum #	review	string	100	ob		
+224	upload	note	Note	review	string	40			
+225	upload	updatestatus	Update status	review	string	40			
+226	#	id	id	start		40			
+227	#	csid	Object CSID	start		40			
+228	#	sortnum	Sortable Museum Number	start		40			
+229	#	blobs	Blob	start		40			
+230	#	cards	Card	start		40			
+231	adhocreports	musno	Museum Number	start	text	40		1	1
+232	adhocreports	name	Object Name	start	text	40		2	1
+233	adhocreports	altnum	Alternate Number	start	text	40		3	1
+234	adhocreports	type	Object Type	start	text	40		4	1
+235	#	type	Object Type	start	dropdown	40		4	1
+236	adhocreports	count	Object Count	start	text	40		5	1
+237	adhocreports	countnote	Count Note	start	text	40		6	1
+238	adhocreports	dept	Department	start	text	40		7	1
+239	adhocreports	keelingser	Keeling Series Number	start	text	40		8	1
+240	adhocreports	fcp	Collection Place	start	text	40		9	1
+241	#	fcptree	Collection Place (tree)	start	text	40		10	1
+242	adhocreports	fcpverbatim	Collection Place (verbatim)	start	text	40		11	1
+243	adhocreports	filecode	Ethnographic File Code	start	text	40		12	1
+244	#	filecode	Ethnographic File Code	start	dropdown	40		12	1
+245	adhocreports	assoccult	Culture or Time period	start	text	40		13	1
+246	#	culturetree	Culture (tree)	start	text	40		14	1
+247	adhocreports	inventory	Inventory	start	text	40		15	1
+248	adhocreports	collector	Collector	start	text	40		16	1
+249	adhocreports	descr	Description	start	text	40		17	1
+250	adhocreports	contextuse	Context of Use	start	text	40		18	1
+251	adhocreports	dimensions	Dimensions	start	text	40		19	1
+252	#	materialtree	Materials (tree)	start	text	40		20	1
+253	adhocreports	materials	Materials	start	text	40		21	1
+254	adhocreports	inscrtext	Inscription	start	text	40		22	1
+255	adhocreports	comment	Comment	start	text	40		23	1
+256	adhocreports	title	Title	start	text	40		24	1
+257	adhocreports	colldate	Collection Date	start	text	40		25	1
+258	#	colldate_begin	Collection Date (earliest)	start	text	40		26	1
+259	#	colldate_end	Collection Date (latest)	start	text	40		27	1
+260	adhocreports	proddate	Production Date	start	text	40		28	1
+261	#	proddate_begin	Production Date (earliest)	start	text	40		29	1
+262	#	proddate_end	Production Date (latest)	start	text	40		30	1
+263	adhocreports	accno	Accession Number	start	text	40		31	1
+264	adhocreports	accdate	Accession Date	start	text	40		32	1
+265	adhocreports	acqdate	Acquisition Date	start	text	40		33	1
+266	adhocreports	fcpgeoloc	LatLong	start	text	40		34	1
+267	adhocreports	fcpelevation	Collection Place Elevation	start	text	40		35	1
+268	adhocreports	keyword	Keyword	start	text	40		36	1
+269	#	primaryimage	Primary Image	start	text	40		37	1
+270	adhocreports	imagetypes	Image Type	start	text	40		38	1
+271	#	imagetypes	Image Type	start	dropdown	40		38	1
+272	adhocreports	hasimage	Has image(s)?	start	text	40		39	1
+273	#	hasimage	Has image(s)?	start	dropdown	40		39	1
+274	adhocreports	hascoords	Has coordinates?	start	text	40		40	1
+275	#	hascoords	Has coordinates?	start	dropdown	40		40	1
+276	#	donor	Donor	start	text	40		41	1
+277	adhocreports	anondonor	Donor	start	text	40		42	1
+278	adhocreports	prodplace	Production Place	start	text	40		43	1
+279	adhocreports	maker	Maker / Artist	start	text	40		44	1
+280	adhocreports	start	Search	start	button	review			
+281	adhocreports	review	Update	start	button	end			
+282	adhocreports	musno	Museum Number	review	string	40			
+283	adhocreports	name	Object Name	review	string	40			
+284	adhocreports	altnum	Alternate Number	review	string	40			
+285	adhocreports	type	Object Type	review	string	40			
+286	adhocreports	count	Object Count	review	string	40			
+287	adhocreports	countnote	Count Note	review	string	40			
+288	adhocreports	dept	Department	review	string	40			
+289	adhocreports	keelingser	Keeling Series Number	review	string	40			
+290	adhocreports	fcp	Collection Place	review	string	40			
+291	#	fcptree	Collection Place (tree)	review	string	40			
+292	adhocreports	fcpverbatim	Collection Place (verbatim)	review	string	40			
+293	adhocreports	filecode	Ethnographic File Code	review	string	40			
+294	adhocreports	assoccult	Culture or Time period	review	string	40			
+295	#	culturetree	Culture (tree)	review	string	40			
+296	adhocreports	inventory	Inventory	review	string	40			
+297	adhocreports	collector	Collector	review	string	40			
+298	adhocreports	descr	Description	review	string	40			
+299	adhocreports	contextuse	Context of Use	review	string	40			
+300	adhocreports	dimensions	Dimensions	review	string	40			
+301	#	materialtree	Materials (tree)	review	string	40			
+302	adhocreports	materials	Materials	review	string	40			
+303	adhocreports	inscrtext	Inscription	review	string	40			
+304	adhocreports	comment	Comment	review	string	40			
+305	adhocreports	title	Title	review	string	40			
+306	adhocreports	colldate	Collection Date	review	string	40			
+307	#	colldate_begin	Collection Date (earliest)	review	string	40			
+308	#	colldate_end	Collection Date (latest)	review	string	40			
+309	adhocreports	proddate	Production Date	review	string	40			
+310	#	proddate_begin	Production Date (earliest)	review	string	40			
+311	#	proddate_end	Production Date (latest)	review	string	40			
+312	adhocreports	accno	Accession Number	review	string	40			
+313	adhocreports	accdate	Accession Date	review	string	40			
+314	adhocreports	acqdate	Acquisition Date	review	string	40			
+315	adhocreports	fcpgeoloc	LatLong	review	string	40			
+316	adhocreports	fcpelevation	Collection Place Elevation	review	string	40			
+317	adhocreports	keyword	Keyword	review	string	40			
+318	adhocreports	primaryimage	Primary Image	review	string	40			
+319	adhocreports	imagetypes	Image Type	review	string	40			
+320	adhocreports	hasimage	Has image(s)?	review	string	40			
+321	adhocreports	hascoords	Has coordinates?	review	string	40			
+322	#	donor	Donor	review	string	40			
+323	adhocreports	anondonor	Donor	review	string	40			
+324	adhocreports	prodplace	Production Place	review	string	40			
+325	adhocreports	maker	Maker / Artist	review	string	40			
