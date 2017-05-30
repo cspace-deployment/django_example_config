@@ -12,18 +12,19 @@ def formatRow(result, form, config):
     rr = [x if x != None else '' for x in rr]
 
     try:
-        csid = rr[8]
+        if institution == 'bampfa':
+            csid = rr[2]
+        else:
+            csid = rr[8]
     except:
         csid = 'user'
     link = protocol + '://' + hostname + port + '/collectionspace/ui/' + institution + '/html/cataloging.html?csid=%s' % csid
-    link2 = ''
-    if institution == 'bampfa':
-        link = protocol + '://' + hostname + port + '/collectionspace/ui/' + institution + '/html/cataloging.html?csid=%s' % rr[2]
-    else:
-        try:
-            link2 = protocol + '://' + hostname + port + '/collectionspace/ui/' + institution + '/html/acquisition.html?csid=%s' % rr[24]
-        except:
-            pass
+
+    # the link to acquisitions is for PAHMA...
+    try:
+        link2 = protocol + '://' + hostname + port + '/collectionspace/ui/' + institution + '/html/acquisition.html?csid=%s' % rr[24]
+    except:
+        link2 = ''
 
     if result['rowtype'] == 'subheader':
         return """<tr><td colspan="7" class="subheader">%s</td></tr>""" % result['data'][0]
