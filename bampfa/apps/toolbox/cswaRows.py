@@ -12,10 +12,7 @@ def formatRow(result, form, config):
     rr = [x if x != None else '' for x in rr]
 
     try:
-        if institution == 'bampfa':
-            csid = rr[2]
-        else:
-            csid = rr[8]
+        csid = rr[8]
     except:
         csid = 'user'
     link = protocol + '://' + hostname + port + '/collectionspace/ui/' + institution + '/html/cataloging.html?csid=%s' % csid
