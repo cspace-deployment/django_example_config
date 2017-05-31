@@ -585,7 +585,7 @@ def getgrouplist(group, num2ret, config):
         cc.numberofobjects objectCount,
         '' as movementCsid,
         '' as movementRefname,
-        '' as objectCsid,
+        hx2.name as objectCsid,
         ''  objectRefname,
         '' as moveid,
         '' as subjectdocumenttype,

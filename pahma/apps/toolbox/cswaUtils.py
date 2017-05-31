@@ -1047,7 +1047,7 @@ def doUpdateLocations(form, config):
     if institution == 'bampfa':
         notlocated = "urn:cspace:bampfa.cspace.berkeley.edu:locationauthorities:name(location):item:name(x781)'Not Located'"
     else:
-        notlocated = "urn:cspace:bampfa.cspace.berkeley.edu:locationauthorities:name(location):item:name(sl23524)'Not located'"
+        notlocated = "urn:cspace:pahma.cspace.berkeley.edu:locationauthorities:name(location):item:name(sl23524)'Not located'"
     updateValues = [form.get(i) for i in form if 'r.' in i and not 'gr.' in i]
 
     # if reason is a refname (e.g. bampfa), extract just the displayname
