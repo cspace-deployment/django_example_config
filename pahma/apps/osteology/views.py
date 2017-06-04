@@ -32,6 +32,12 @@ prmz = loadFields(fielddefinitions, prmz)
 logger = logging.getLogger(__name__)
 logger.info('%s :: %s :: %s' % ('osteology portal startup', '-', '%s | %s | %s' % (prmz.SOLRSERVER, prmz.IMAGESERVER, prmz.BMAPPERSERVER)))
 
+def gatherparms(searchvalues):
+    aggregate = ''
+    for key in searchvalues.keys():
+        if key == 'csrfmiddlewaretoken' : continue
+        aggregate += "%s=%s" % (key.lower(),searchvalues[key])
+    return {'aggregate' : aggregate }
 
 def direct(request):
     return redirect('search/')
@@ -40,13 +46,14 @@ def direct(request):
 @login_required()
 def search(request):
     if request.method == 'GET' and request.GET != {}:
-        context = {'searchValues': dict(request.GET.iteritems())}
+        context = {'searchValues': gatherparms(dict(request.GET.iteritems()))}
         context = doSearch(context, prmz, request)
     else:
         context = setConstants({}, prmz, request)
 
     loginfo(logger, 'start search', context, request)
     context['additionalInfo'] = AdditionalInfo.objects.filter(live=True)
+    context['extra_nav'] = {'href': '../skeleton', 'id': 'skeleton', 'name': 'Skeleton'}
     return render(request, 'search.html', context)
 
 
@@ -60,6 +67,7 @@ def skeleton(request):
 
     loginfo(logger, 'start search', context, request)
     context['additionalInfo'] = AdditionalInfo.objects.filter(live=True)
+    context['extra_nav'] = {'href': '../search', 'id': 'search', 'name': 'Metadata Search'}
     return render(request, 'osteo.html', context)
 
 
@@ -70,8 +78,8 @@ def retrieveResults(request):
         form = forms.Form(requestObject)
 
         if form.is_valid():
-            context = {'searchValues': requestObject}
+            context = {'searchValues': gatherparms(requestObject)}
             context = doSearch(context, prmz, request)
 
         loginfo(logger, 'results.%s' % context['displayType'], context, request)
-        return render(request, 'searchResults.html', context)
+        return render(request, 'results.html', context)
