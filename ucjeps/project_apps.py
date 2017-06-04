@@ -35,7 +35,6 @@ INSTALLED_APPS = (
     'eloan',
     'searchmedia',
     'publicsearch',
-    'permalinks',
     #'toolbox',
     #'simplesearch',
     'uploadmedia',

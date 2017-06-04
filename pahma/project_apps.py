@@ -33,7 +33,6 @@ INSTALLED_APPS = (
     'ireports',
     'landing',
     'osteology',
-    'permalinks',
     'search',
     #'taxonomyeditor',
     'toolbox',
