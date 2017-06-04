@@ -31,6 +31,7 @@ INSTALLED_APPS = (
     'internal',
     'ireports',
     'landing',
+    'permalinks',
     'search',
     #'taxonomyeditor',
     'toolbox',
