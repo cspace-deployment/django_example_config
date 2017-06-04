@@ -52,9 +52,4 @@ urlpatterns = patterns('',
                        #url(r'^toolbox/', include('toolbox.urls', namespace='toolbox')),
                        url(r'^taxoneditor/', include('taxoneditor.urls', namespace='taxoneditor')),
                        url(r'^uploadmedia/', include('uploadmedia.urls', namespace='uploadmedia')),
-
-                       # these two paths are special: they are used to create permalinks for objects and media
-                       url(r'^(media)/', include('permalinks.urls', namespace='permalinks')),
-                       url(r'^(objects)/', include('permalinks.urls', namespace='permalinks')),
-
-                       )
+)
