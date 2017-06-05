@@ -3,10 +3,43 @@ CHANGELOG for the cspace_django_webapps
 OK, it is not a *real* change log, but a list of changes resulting from git log
 with some human annotation after the fact.
 
-This is version djconfig_4.1-6
-Wed Apr  5 23:20:45 PDT 2017
+This is version djconfig_4.1-7
+Sun Jun  4 19:31:12 PDT 2017
 
-b55f560 (HEAD -> master, origin/master, origin/HEAD) NOJIRA: bring other tenants version of Toolbox up-to-date.
+cfefffa (HEAD -> master, origin/master, origin/HEAD) PAHMA-863: add the rest of the permalink app for BAMPFA
+3e48e75 Revert "PAHMA-863: add permalink app to support prettier URLs for permalinks."
+fc9d1ef Merge branch 'master' of https://github.com/cspace-deployment/django_example_config
+48f818e PAHMA-863: add permalink app to support prettier URLs for permalinks.
+24f6645 NOJIRA: grouper needs to know what to use as the CSID field for each Solr core
+f90f8a4 Revert "NOJIRA: grouper needs to know what to use as the CSID field for each Solr core"
+e317e85 NOJIRA: grouper needs to know what to use as the CSID field for each Solr core
+0373de4 BAMPFA-528: add latest Toolbox changes to the other tenants
+65a416f BAMPFA-528: include csid in BAMPFA group query, so Move Group will work
+90a862d BAMPFA-531, BAMPFA-528: fix link construction, query for BAMPFA
+24918d4 BAMPFA-531: repair link construction so it works for BAMPFA too.
+cb58778 BAMPFA-528: add config file for group move, update other config files
+72c6d4e BAMPFA-528: update list of handlers
+fb9565d BAMPFA-528: add institution to postgres term-matching config files
+01485fe DJAN-28: initial .cfg file and layout for 'ad hoc reports'
+c3829eb PAHMA-1569: one other place the API for the group function needs to be changed
+65e7df2 BAMPFA-528: revisions to Move Group for BAMPFA
+e01e00a PAHMA-1299: include missing csrf token
+c3942a1 Added skeletonSearch function
+8ba997b Merge branch 'master' of https://github.com/cspace-deployment/django_example_config
+84ed608 PAHMA-1569: fix barcode printing for groups
+796a434 Update README.md
+01667c3 UCJEPS-653: add sheet numbers to publicsearch and search
+0e5c499 NOJIRA: update Toolbox for the other tenants
+bf01909 NOJIRA: changelog for v4.1-6
+2f50882 PAHMA-1568: add objectName to list of fields updated by placeanddate fieldset in BOE
+3aab13a BAMPFA-521: field definitions to include 'century'
+1f4bf48 BAMPFA-509: add Group Name to portals (commented out in Public for now.)
+aef4dab PAHMA-1564: use correct 'none selected' value in object status dropdown
+7fb5f7c PAHMA-1565: BOE now updated FCP correctly.
+366c19c DJAN-94: add grouper to remaining UCB deployments
+da5ef2c PAHMA-1219: udate toolbox for bampfa and botgarden
+7d57cb9 PAHMA-1558, PAHMA-1559, PAHMA-1560: some input errors in tax and materials now detected; new fieldsets now work with BOE.
+b55f560 (tag: djconfig_4.1-6) NOJIRA: bring other tenants version of Toolbox up-to-date.
 296c8fb NOJIRA: accommodate API change for cspace.
 3d342dc PAHMA-1563: fix typo in labels
 018afc0 PAHMA-1558, PAHMA-1559, PAHMA-1560: handle special case of pahmaFieldLocVerbatim
