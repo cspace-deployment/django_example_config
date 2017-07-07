@@ -640,14 +640,22 @@ def getObjType(form, csid, ot):
     selected = form.get('objectType')
 
     objtypelist = [ \
-        ("Archaeology", "archaeology"),
-        ("Ethnography", "ethnography"),
-        ("(not specified)", "(not specified)"),
-        ("Documentation", "documentation"),
-        ("None (Registration)", "none (Registration)"),
-        ("Sample", "sample"),
-        ("Indeterminate", "indeterminate"),
-        ("Unknown", "unknown")
+        ("(not specified)",
+         "urn:cspace:pahma.cspace.berkeley.edu:vocabularies:name(objecttype):item:name(objtype00)'(not specified)'"),
+        ("none (Registration)",
+         "urn:cspace:pahma.cspace.berkeley.edu:vocabularies:name(objecttype):item:name(objtype01)'none (Registration)'"),
+        ("archaeology",
+         "urn:cspace:pahma.cspace.berkeley.edu:vocabularies:name(objecttype):item:name(objtype02)'archaeology'"),
+        ("ethnography",
+         "urn:cspace:pahma.cspace.berkeley.edu:vocabularies:name(objecttype):item:name(objtype03)'ethnography'"),
+        ("documentation",
+         "urn:cspace:pahma.cspace.berkeley.edu:vocabularies:name(objecttype):item:name(objtype04)'documentation'"),
+        ("sample",
+         "urn:cspace:pahma.cspace.berkeley.edu:vocabularies:name(objecttype):item:name(objtype05)'sample'"),
+        ("indeterminate",
+         "urn:cspace:pahma.cspace.berkeley.edu:vocabularies:name(objecttype):item:name(objtype06)'indeterminate'"),
+        ("unknown",
+         "urn:cspace:pahma.cspace.berkeley.edu:vocabularies:name(objecttype):item:name(objtype07)'unknown'")
     ]
 
     objtypes = \
