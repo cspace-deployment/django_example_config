@@ -269,7 +269,7 @@ def getassoccultures(objectid, config):
 
     getassoccultures = """
    SELECT CASE WHEN (cg.assocpeople IS NOT NULL AND cg.assocpeople <> '') THEN SUBSTRING(cg.assocpeople, POSITION(')''' IN cg.assocpeople)+2, LENGTH(cg.assocpeople)-POSITION(')''' IN cg.assocpeople)-2) END AS culturalgroup,
-    cg.assocpeopletype, cg.assocpeoplenote
+    regexp_replace(cg.assocpeopletype, '^.*\\)''(.*)''$', '\\1')), cg.assocpeoplenote
 FROM hierarchy h1
 FULL OUTER JOIN assocpeoplegroup cg ON (h1.id=cg.id)
 WHERE h1.name='collectionobjects_common:assocPeopleGroupList'
