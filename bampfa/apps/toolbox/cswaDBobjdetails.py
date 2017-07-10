@@ -88,7 +88,7 @@ def getchildlocations(childcsid, config):
     objects.execute(timeoutcommand)
 
     getchildlocations = """
-   SELECT co.objectnumber, mc.locationdate, mc.reasonformove, 
+   SELECT co.objectnumber, mc.locationdate, regexp_replace(mc.reasonformove, '^.*\\)''(.*)''$', '\\1')), 
 CASE WHEN (mc.currentlocation IS NOT NULL AND mc.currentlocation <> '') THEN SUBSTRING(mc.currentlocation, POSITION(')''' IN mc.currentlocation)+2, LENGTH(mc.currentlocation)-POSITION(')''' IN mc.currentlocation)-2) END AS location
 FROM collectionobjects_common co
 JOIN hierarchy csid ON (co.id = csid.id)
