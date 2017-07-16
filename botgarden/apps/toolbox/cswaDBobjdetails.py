@@ -88,7 +88,7 @@ def getchildlocations(childcsid, config):
     objects.execute(timeoutcommand)
 
     getchildlocations = """
-   SELECT co.objectnumber, mc.locationdate, regexp_replace(mc.reasonformove, '^.*\\)''(.*)''$', '\\1')), 
+   SELECT co.objectnumber, mc.locationdate, regexp_replace(mc.reasonformove, '^.*\\)''(.*)''$', '\\1'),
 CASE WHEN (mc.currentlocation IS NOT NULL AND mc.currentlocation <> '') THEN SUBSTRING(mc.currentlocation, POSITION(')''' IN mc.currentlocation)+2, LENGTH(mc.currentlocation)-POSITION(')''' IN mc.currentlocation)-2) END AS location
 FROM collectionobjects_common co
 JOIN hierarchy csid ON (co.id = csid.id)
@@ -269,7 +269,7 @@ def getassoccultures(objectid, config):
 
     getassoccultures = """
    SELECT CASE WHEN (cg.assocpeople IS NOT NULL AND cg.assocpeople <> '') THEN SUBSTRING(cg.assocpeople, POSITION(')''' IN cg.assocpeople)+2, LENGTH(cg.assocpeople)-POSITION(')''' IN cg.assocpeople)-2) END AS culturalgroup,
-    regexp_replace(cg.assocpeopletype, '^.*\\)''(.*)''$', '\\1')), cg.assocpeoplenote
+    regexp_replace(cg.assocpeopletype, '^.*\\)''(.*)''$', '\\1'), cg.assocpeoplenote
 FROM hierarchy h1
 FULL OUTER JOIN assocpeoplegroup cg ON (h1.id=cg.id)
 WHERE h1.name='collectionobjects_common:assocPeopleGroupList'
