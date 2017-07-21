@@ -214,7 +214,8 @@ def updateXML(fieldset, updateItems, xml):
                 newElement.append(leafElement)
                 if relationType in ['assocPeople', 'pahmaAltNum']:
                     apgType = etree.Element(relationType + 'Type')
-                    apgType.text = updateItems[relationType + 'Type'].lower() if relationType == 'pahmaAltNum' else 'made by'
+                    # this needs to be a refname for PAHMA's assocpeopletype...
+                    apgType.text = updateItems[relationType + 'Type'] if relationType == 'pahmaAltNum' else "urn:cspace:pahma.cspace.berkeley.edu:vocabularies:name(assocpeople):item:name(assocpeopletype06)'made by'"
                     # sys.stderr.write(relationType + 'Type:' + updateItems[relationType + 'Type'])
                     newElement.append(apgType)
                 if len(Entries) == 1 and Entries[0].text is None:
