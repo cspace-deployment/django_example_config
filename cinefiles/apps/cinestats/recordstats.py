@@ -1,6 +1,6 @@
-#import psycopg2
 import psycopg2
 from common import cspace # we use the config file reading function
+from cspace_django_site import settings
 from os import path
 
 
@@ -10,7 +10,7 @@ class RecordStats:
     """
 
     def __init__(self):
-        config = cspace.getConfig(path.dirname(__file__), 'cinefiles')
+        config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'cinefiles')
         self.DBNAME = config.get('connect', 'dbname')
         self.USER = config.get('connect', 'dbuser')
         self.PW = config.get('connect', 'dbpassword')
@@ -23,14 +23,10 @@ class RecordStats:
             self.SERVER, self.PORT, self.DBNAME, self.USER, self.PW, self.MODE)
 
 
-        # for psycopg2
-        #self.connect_string = "%s:%s:%s:%s" % (
-        #    self.HOST, self.DBNAME, self.USER, self.PW)
-
     def getConn(self):
-        #conn = psycopg2.connect(self.connect_string)
         conn = psycopg2.connect(self.connect_string)
         return conn
+
 
     def getCount(self, query):
         conn = self.getConn()
