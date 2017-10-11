@@ -2,63 +2,49 @@
 {% load i18n admin_static %}
 {% load staticfiles %}
 
-{% block extrastyle %}
-    <link rel="stylesheet" type="text/css" href="{% static "common/css/theme.blue.css" %}"/>
-    <link rel="stylesheet" type="text/css"
-          href="{% static "cspace_django_site/css/smoothness/jquery-ui-1.10.3.custom.min.css" %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static "common/css/PublicSearch.css" %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static "search/css/dropdownmenu.css" %}"/>
+{% block extrascript %}
+<script type="text/javascript" src="{% static "taxoneditor/js/taxoneditor.js" %}"></script>
 {% endblock %}
 
-{% block scripts %}
-    <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-1.10.0.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-ui-1.10.3.custom.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "common/js/PublicSearch.js" %}"></script>
-    <script type="text/javascript" src="{% static "taxoneditor/js/taxoneditor.js" %}"></script>
-    <script type="text/javascript">
-        var googleAnalytics = {{ googleAnalytics }};
-    </script>
-    <script type="text/javascript" src="{% static "cspace_django_site/js/jquery.tablesorter.min.js" %}"></script>
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="{% static 'cspace_django_site/css/jquery-ui-1.8.22.custom.css' %}"/>
 {% endblock %}
 
 {% block content %}
-
+    {% include "toggled.html" %}
     {% if error %}
         <p style="color: red;">Please submit a search term.</p>
     {% endif %}
-    <form action="" method="get">
-        Enter a scientific name to search for:
-        <input type="text" style="width: 400px" name="determination" value="{{ taxon }}" source="{{ suggestsource }}">
-        <input type="submit" name="Search" value="Search">
-        <input type="checkbox" name="source" value="CSpace" {% if "CSpace" in source %}checked{% endif %}>CSpace
-        <input type="checkbox" name="source" value="GBIF" {% if "GBIF" in source %}checked{% endif %}>GBIF
-        <input type="checkbox" name="source" value="Tropicos" {% if "Tropicos" in source %}checked{% endif %}>Tropicos
+    <form class="search-form" method="post">
+        <span style="vertical-align: top">Enter scientific name(s) to search for:</span>
+        <textarea  rows="10" cols="50" style="width: 400px" name="determinations">{{ taxa }}</textarea>
 
         {% for field in form.hidden_fields %}
             <div style="display:none;">{{ field }}</div>
         {% endfor %}
 
-    </form>
-
-
-    <form enctype="multipart/form-data" action="batch" method="post">
         {% csrf_token %}
-        <hr/>
+        <!-- hr/>
         <p>Or upload a list of names to search in batch:</p>
-        <p><input type="file" name="taxonnamesfile" value="Upload Names to Search"></p>
+        <p><input type="file" name="taxonnamesfile" value="Upload Names to Search"></p -->
         <hr/>
+        <input type="submit" name="Search" value="Search" id="search-list">
+        <input type="checkbox" name="source" value="CSpace" {% if "CSpace" in sources %}checked{% endif %}>CSpace
+        <input type="checkbox" name="source" value="GBIF" {% if "GBIF" in sources %}checked{% endif %}>GBIF
+        <input type="checkbox" name="source" value="Tropicos" {% if "Tropicos" in sources %}checked{% endif %}>Tropicos
 
-        {% for field in form.hidden_fields %}
-            <div style="display:none;">{{ field }}</div>
-        {% endfor %}
     </form>
+
+
+    <div id="waitingImage" style="display: none">
+        <h1><img style="vertical-align: middle"
+                 src="{% static "cspace_django_site/images/timer-animated.gif" %}"
+                 alt="Searching..."/> Searching...</h1>
+    </div>
 
     <div id="content-main">
-        {% if results != None %}
+        {% if multipleresults|length > 0 %}
             {% include "taxon_serviceResults.html" %}
-            {% if fields %}
-                {% include "taxon_edit_form.html" %}
-            {% endif %}
         {% endif %}
     </div>
 

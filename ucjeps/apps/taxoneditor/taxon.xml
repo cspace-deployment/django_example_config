@@ -10,7 +10,7 @@
         <termSourceNote/>
         <termLanguage/>
         <termPrefForLang>true</termPrefForLang>
-        <termDisplayName>{termName}</termDisplayName>
+        <termDisplayName>{termDisplayName}</termDisplayName>
         <termType>descriptor</termType>
         <termStatus>accepted</termStatus>
         <termFormattedDisplayName></termFormattedDisplayName>

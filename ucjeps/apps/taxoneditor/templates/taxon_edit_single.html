@@ -1,7 +1,7 @@
 {% spaceless %}
     <hr/>
-    <h2>Edit / Create Taxon Data</h2>
-    <form action="" method="post">
+    <form class="taxonform" action="create" method="post" data-item="{{ i }}">
+        <input type="hidden" value="{{ i }}" name="item">
         {% csrf_token %}
         <table width="100%">
             {% for field in fields %}
@@ -11,11 +11,11 @@
                             <label>{{ field.label }}</label>
                         </td>
                         <td>
-                            <select id="{{ field.name }}" name="{{ field.name }}">
+                            <select id="{{ field.name }}{{ i }}" name="{{ field.name }}">
                                 <option value="">Please select</option>
                                 {% for value in field.dropdowns %}
                                     <option value="{{ value.0 }}"{% if value.0 == field.value %}
-                                            selected{% endif %}>{{ value.0|slice:":40" }} ({{ value.1 }})
+                                            selected{% endif %}>{{ value.1|slice:":40" }}
                                     </option>
                                 {% endfor %}
                             </select>
@@ -25,8 +25,7 @@
                             <label>{{ field.label }}</label>
                         </td>
                         <td>
-                            <input type="{{ field.type }}" id="{{ field.name }}" name="{{ field.name }}"
-                                   source="{{ suggestsource }}" value="{{ field.value }}"/>
+                            <input type="{{ field.type }}" id="{{ field.name }}{{ i }}" name="{{ field.name }}" source="{{ suggestsource }}" value="{{ field.value }}"/>
                         </td>
 
                     {% elif 'ignore' in field.fieldtype %}
@@ -35,13 +34,12 @@
                             <label>{{ field.label }}</label>
                         </td>
                         <td>
-                            <input type="{{ field.type }}" id="{{ field.name }}" name="{{ field.name }}"
-                                   value="{{ field.value }}"/>
+                            <input type="{{ field.type }}" id="{{ field.name }}{{ i }}" name="{{ field.name }}" value="{{ field.value }}"/>
                         </td>
                     {% endif %}
                 </tr>
             {% endfor %}
         </table>
-        <input type="submit" name="Save" value="Save to CSpace">
+        <input type="submit" name="Save" value="Save to CSpace" id="create-taxon">
     </form>
 {% endspaceless %}

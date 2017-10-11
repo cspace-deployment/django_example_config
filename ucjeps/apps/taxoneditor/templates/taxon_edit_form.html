@@ -1,7 +1,3 @@
 {% spaceless %}
-        {% if multiplenames %}
-            {% include "taxon_edit_multiple.html" %}
-        {% else %}
-            {% include "taxon_edit_single.html" %}
-        {% endif %}
+    {% include "taxon_edit_single.html" with i=itemcount %}
 {% endspaceless %}

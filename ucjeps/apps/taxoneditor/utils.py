@@ -1,4 +1,31 @@
-from uploadmedia.cswaExtras import postxml, relationsPayload, getConfig, getCSID
+# from uploadmedia.cswaExtras import postxml, relationsPayload, getConfig, getCSID
+from common.utils import deURN
+import xml.etree.ElementTree as ET
+# import sys, csv, re, os
+from xml.sax.saxutils import escape
+try:
+    from xml.etree.ElementTree import tostring, parse, Element, fromstring
+    print("running with xml.etree.ElementTree")
+except ImportError:
+    try:
+        from lxml import etree
+
+        print("running with lxml.etree")
+    except ImportError:
+        try:
+            # normal cElementTree install
+            import cElementTree as etree
+
+            print("running with cElementTree")
+        except ImportError:
+            try:
+                # normal ElementTree install
+                import elementtree.ElementTree as etree
+
+                print("running with ElementTree")
+            except ImportError:
+                print("Failed to import ElementTree from any known place")
+
 
 
 TITLE = 'Taxon Editor'
@@ -10,31 +37,28 @@ termTypeDropdowns = [('descriptor', 'descriptor'), ('Leave empty', '')]
 termStatusDropdowns = [('accepted', 'accepted'), ('Leave empty', '')]
 taxonRankDropdowns = [('species', 'species'), ('genus', 'genus')]
 taxonfields = [
-    ('select', '', 'ignore'),
-    ('n', 'N', 'ignore'),
-    ('family', 'Family', 'refName'),
-    ('taxonMajorGroup', 'Major Group', 'string'),
-    ('termDisplayName', 'Scientific Name with Authors', 'string'),
-    ('termName', 'Scientific Name', 'string'),
-    ('commonName', 'Common Name', 'refName'),
-    ('termSource', 'Source', 'string'),
-    ('termSourceID', 'Source ID', 'string'),
-    # these are constants or derived (i.e. not from service)
-    ('termFormattedDisplayName', 'Formatted Scientific Name', 'string'),
-    ('taxonomicStatus', 'Taxonomic Status', 'string'),
-    ('termPrefForLang', 'Term Language', 'string'),
-    ('termType', 'Term Type', 'dropdown', termTypeDropdowns),
-    ('termStatus', 'Term Status', 'dropdown', termStatusDropdowns),
-    ('taxonCurrency', 'Taxon Currency', 'string'),
-    ('inAuthority', 'Authority CSID', 'ignore'),
-    ('taxonRank', 'Rank', 'dropdown', taxonRankDropdowns),
+    ('select', '', 'ignore', '', ''),
+    ('n', 'N', 'ignore', '', ''),
+    ('family', 'Family', 'string', 'taxon_naturalhistory.family', 'taxon'),
+    ('majorgroup', 'Major Group', 'dropdown', 'taxon_ucjeps.taxonMajorGroup', 'taxon'),
+    ('termDisplayName', 'Scientific Name with Authors', 'string', 'taxon_common.taxonTermGroupList.taxonTermGroup.termDisplayName', 'taxon'),
+    ('termName', 'Scientific Name', 'string', 'taxon_common.taxonTermGroupList.taxonTermGroup.termName', 'taxon'),
+    ('commonName', 'Common Name', 'string', 'taxon_common.commonNameGroupList.commonNameGroup.commonName', 'common'),
+    ('termSource', 'Source', 'string', '', ''),
+    ('termSourceID', 'Source ID', 'string', '', ''),
+    ('inAuthority', 'Authority CSID', 'ignore', '', '')
 ]
+    # these are constants or derived (i.e. not from service)
 
-# labels = 'n,family,major group,scientific name with authors,scientific name,idsource,id'.split(',')
-labels = [n[1] for n in taxonfields]
-labels = labels[:9]
-
-formfields = [{'name': f[0], 'label': f[1], 'fieldtype': f[2], 'value': '', 'type': 'text'} for f in taxonfields]
+keep_for_now = [
+    ('termFormattedDisplayName', 'Formatted Scientific Name', 'string', '', ''),
+    ('taxonomicStatus', 'Taxonomic Status', 'string', '', ''),
+    ('termPrefForLang', 'Term Language', 'string', '', ''),
+    ('termType', 'Term Type', 'dropdown', termTypeDropdowns, '', ''),
+    ('termStatus', 'Term Status', 'dropdown', termStatusDropdowns, '', ''),
+    ('taxonCurrency', 'Taxon Currency', 'string', '', ''),
+    ('taxonRank', 'Rank', 'dropdown', taxonRankDropdowns, 'taxon_common.taxonRank', 'taxonrank')
+]
 
 
 def lookupMajorGroup(phylum):
@@ -61,10 +85,38 @@ def lookupMajorGroup(phylum):
         'Anthocerotophyta': 'Bryophytes',
         'Psilophyta': 'Pteridophytes',
         'Cyanidiophyta': 'Algae',
-        'Glaucophyta': 'Algae',
-        'phylum': 'not found',
+        'Glaucophyta': 'Algae'
     }
-    return MajorGroups[phylum]
+    if phylum == 'allgroups':
+        majorgroups = {}
+        for majorgroup in MajorGroups.items():
+            majorgroups[majorgroup[1]] = ''
+        return majorgroups
+    try:
+        return MajorGroups[phylum]
+    except:
+        return ''
+
+
+def getDropdowns(name, type):
+    if type == 'dropdown':
+        if name == 'majorgroup':
+            return [(a,a) for a in lookupMajorGroup('allgroups').keys()]
+    else:
+        return None
+
+# labels = 'n,family,major group,scientific name with authors,scientific name,idsource,id'.split(',')
+labels = [n[1] for n in taxonfields]
+labels = labels[:9]
+formfields = [{'name': f[0], 'label': f[1], 'fieldtype': f[2], 'value': '', 'type': 'text', 'dropdowns': getDropdowns(f[0], f[2])} for f in taxonfields]
+# this file should be in the same directory as this module
+xmlfile = 'taxon.xml'
+try:
+    template = open(xmlfile).read()
+    templateXML = fromstring(template)
+    items = templateXML.findall('.//list-item')
+except:
+    print 'could not open and parse XML template file %s' % xmlfile
 
 
 def xName(name, fieldname, idx):
@@ -75,7 +127,7 @@ def xName(name, fieldname, idx):
         else:
             return [csname, '']
     else:
-        return [csname, 'not found']
+        return [csname, '']
 
 
 def extractTag(xml, tag):
