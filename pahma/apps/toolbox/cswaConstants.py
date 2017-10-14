@@ -567,7 +567,9 @@ def getAltNumTypes(form, csid, ant):
         ("urn:cspace:pahma.cspace.berkeley.edu:vocabularies:name(pahmaaltnumber):item:name(altnum24)'tb (temporary basket) number'",
             "tb (temporary basket) number"),
         ("urn:cspace:pahma.cspace.berkeley.edu:vocabularies:name(pahmaaltnumber):item:name(altnum00)'additional number'",
-            "additional number")
+            "additional number"),
+        ("urn:cspace:pahma.cspace.berkeley.edu:vocabularies:name(pahmaaltnumber):item:name(referencenumber1506531301497)'reference number'",
+            "reference number")
     ]
 
     altnumtypes = '''<select class="cell" name="ant.''' + csid + '''">
