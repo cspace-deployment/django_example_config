@@ -1,11 +1,18 @@
+{% spaceless %}
+{% load staticfiles %}
+<style>
+     .results.tr {padding: 2px 8px; }
+</style>
 <div class="results">
 
-    {% for taxon, results, itemcount in multipleresults %}
+    {% for taxon, taxon_prefix, results, itemcount in multipleresults %}
         <hr/>
-        <h2>{{ itemcount }}. {{ taxon }}</h2>
+        <h2>{{ itemcount }}. {{ taxon }}
+            {% if taxon_prefix != taxon %}<span class="error">searched for prefix: {{ taxon_prefix }}</span>{% endif %}
+        </h2>
         <hr/>
         <div id="service-results{{ itemcount }}">
-        <table>
+        <table style="padding: 2px 8px">
             {% for source, result in results.items %}
                 {% if result|length > 0 %}
                     <tr>
@@ -19,7 +26,10 @@
                     {% for row in result %}
                         <tr>
                             {% if source == "CollectionSpace" %}
-                                <td/>
+                                <td>
+                                    <a target="cspace" href="{{ cspaceserver }}/collectionspace/ui/{{ institution }}/html/{{ csrecordtype }}.html?csid={{ row.7.1 }}">
+                                    <img src="{% static 'common/images/open_cspace.png' %}" class="cspaceLink"></a>
+                                </td>
                             {% else %}
                                 <td>
                                     <button id="taxon-item" data-item="{{ itemcount }}">X</button>
@@ -27,7 +37,13 @@
                             {% endif %}
                             <!-- a target="cspace" href="{{ row.0 }}">{{ row.0 }}</a></td -->
                             {% for cell in row %}
-                                <td class="{{ cell.0 }}">{{ cell.1 }}</td>
+                                <td class="{{ cell.0 }}">
+                                    {% if cell.1 == taxon %}
+                                        <span style="color:green">{{ cell.1 }}</span>
+                                    {% else %}
+                                        {{ cell.1 }}
+                                    {% endif %}
+                                </td>
                             {% endfor %}
                         </tr>
                     {% endfor %}
@@ -45,3 +61,4 @@
     <hr/>
     <input type="submit" name="SaveAll" value="Save All Records to CSpace">
 </div>
+{% endspaceless %}

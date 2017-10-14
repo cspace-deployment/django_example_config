@@ -4,13 +4,13 @@ taxon_template = """
     <taxonTermGroupList>
       <taxonTermGroup>
         <termName>{termName}</termName>
-        <termSource/>
-        <termSourceID></termSourceID>
+        <termSource>{termSource}</termSource>
+        <termSourceID>{termSourceID}</termSourceID>
         <taxonomicStatus>accepted</taxonomicStatus>
         <termSourceNote/>
         <termLanguage/>
         <termPrefForLang>true</termPrefForLang>
-        <termDisplayName>{termName}</termDisplayName>
+        <termDisplayName>{termDisplayName}</termDisplayName>
         <termType>descriptor</termType>
         <termStatus>accepted</termStatus>
         <termFormattedDisplayName></termFormattedDisplayName>
@@ -33,7 +33,7 @@ taxon_template = """
         <taxonAuthorType/>
       </taxonAuthorGroup>
     </taxonAuthorGroupList>
-    <taxonRank>species</taxonRank>
+    <taxonRank>{taxonRank}</taxonRank>
   </ns2:taxon_common>
   <ns2:taxon_naturalhistory xmlns:ns2="http://collectionspace.org/services/taxon/domain/naturalhistory" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <plantAttributesGroupList/>

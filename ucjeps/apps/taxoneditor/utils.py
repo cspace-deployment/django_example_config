@@ -44,8 +44,9 @@ taxonfields = [
     ('termDisplayName', 'Scientific Name with Authors', 'string', 'taxon_common.taxonTermGroupList.taxonTermGroup.termDisplayName', 'taxon'),
     ('termName', 'Scientific Name', 'string', 'taxon_common.taxonTermGroupList.taxonTermGroup.termName', 'taxon'),
     ('commonName', 'Common Name', 'string', 'taxon_common.commonNameGroupList.commonNameGroup.commonName', 'common'),
-    ('termSource', 'Source', 'string', '', ''),
-    ('termSourceID', 'Source ID', 'string', '', ''),
+    ('termSource', 'Source', 'string', 'taxon_common.taxonTermGroupList.taxonTermGroup.termSource', 'taxon'),
+    ('termSourceID', 'Source ID', 'string', 'taxon_common.taxonTermGroupList.taxonTermGroup.termSourceID', 'taxon'),
+    ('updated_at', 'Updated At', 'ignore', '', ''),
     ('inAuthority', 'Authority CSID', 'ignore', '', '')
 ]
     # these are constants or derived (i.e. not from service)
@@ -107,7 +108,7 @@ def getDropdowns(name, type):
 
 # labels = 'n,family,major group,scientific name with authors,scientific name,idsource,id'.split(',')
 labels = [n[1] for n in taxonfields]
-labels = labels[:9]
+labels = labels[:10]
 formfields = [{'name': f[0], 'label': f[1], 'fieldtype': f[2], 'value': '', 'type': 'text', 'dropdowns': getDropdowns(f[0], f[2])} for f in taxonfields]
 # this file should be in the same directory as this module
 xmlfile = 'taxon.xml'

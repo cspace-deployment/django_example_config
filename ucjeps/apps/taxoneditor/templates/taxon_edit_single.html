@@ -25,7 +25,7 @@
                             <label>{{ field.label }}</label>
                         </td>
                         <td>
-                            <input type="{{ field.type }}" id="{{ field.name }}{{ i }}" name="{{ field.name }}" source="{{ suggestsource }}" value="{{ field.value }}"/>
+                            <input style="width: 600px;" type="{{ field.type }}" id="{{ field.name }}{{ i }}" name="{{ field.name }}" source="{{ suggestsource }}" value="{{ field.value }}"/>
                         </td>
 
                     {% elif 'ignore' in field.fieldtype %}
@@ -34,7 +34,7 @@
                             <label>{{ field.label }}</label>
                         </td>
                         <td>
-                            <input type="{{ field.type }}" id="{{ field.name }}{{ i }}" name="{{ field.name }}" value="{{ field.value }}"/>
+                            <input style="width: 600px;" type="{{ field.type }}" id="{{ field.name }}{{ i }}" name="{{ field.name }}" value="{{ field.value }}"/>
                         </td>
                     {% endif %}
                 </tr>
