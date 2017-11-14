@@ -40,6 +40,6 @@ INSTALLED_APPS = (
     #'toolbox',
     #'simplesearch',
     'uploadmedia',
-    #'taxoneditor',
+    'taxoneditor',
     #'uploadtricoder',
 )
