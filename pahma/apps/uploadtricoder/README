@@ -7,8 +7,8 @@ It is a knock-off the webapp portion of the Bulk Media Uploader.
 
 To deploy it on an IS&T server (RHEL VM):
 
-* Clone this repo (pahma_project) and install and configure the Django
-  webapp "as usual".
+* Use the "setup.sh" script that comes with cspace_django_project to deploy this custom app
+  using the 'deploy' option of that script.
 
 * Ensure that the "batch_code" directory is present and set in uploadtricoder.cfg.
   (i.e. usually it is /home/app_webapps/batch_barcode, SELinux tags=???,
