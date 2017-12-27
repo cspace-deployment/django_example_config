@@ -10,7 +10,6 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from taxon import taxon_template
 
-from uploadmedia.cswaExtras import postxml, relationsPayload, getConfig, getCSID
 from utils import termTypeDropdowns, termStatusDropdowns, taxonRankDropdowns, taxonfields, labels, formfields, numberWanted
 from utils import extractTag, xName, TITLE, taxon_authority_csid, tropicos_api_key
 from utils import fromstring, lookupMajorGroup

@@ -1,4 +1,3 @@
-# from uploadmedia.cswaExtras import postxml, relationsPayload, getConfig, getCSID
 from common.utils import deURN
 import xml.etree.ElementTree as ET
 # import sys, csv, re, os
