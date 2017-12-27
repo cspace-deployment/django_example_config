@@ -13,17 +13,17 @@ Below is a conversation that shows how to preserve changes to the nav items:
 
 """
 # login to target server
-jblowe:ucjeps_project jblowe$ ssh cspace-prod.cspace.berkeley.edu
+jblowe:pahma_project jblowe$ ssh cspace-prod.cspace.berkeley.edu
 Last login: Wed Jul 15 17:10:04 2015 from ucbvpn-208-65.vpn.berkeley.edu
 # become webapp user
 -sh-4.1$ sudo su - app_webapps
-(venv)[app_webapps@cspace-prod-01 ~]$ cd ucjeps
+(venv)[app_webapps@cspace-prod-01 ~]$ cd pahma
 # dump the database table corresponding to the app of interest to the appropriate json file
-(venv)[app_webapps@cspace-prod-01 ucjeps]$ python manage.py dumpdata --format=json search | python -mjson.tool > fixtures/search.json
+(venv)[app_webapps@cspace-prod-01 pahma]$ python manage.py dumpdata --format=json search | python -mjson.tool > fixtures/search.json
 # since we don't check in changes from deployed code, we need to move the file(s) to our local machine to
 # check it into github. We do this by copying the file(s) first to /tmp so we can get to them from our developer account
-(venv)[app_webapps@cspace-prod-01 ucjeps]$ cp fixtures/*.json /tmp
-(venv)[app_webapps@cspace-prod-01 ucjeps]$ 
+(venv)[app_webapps@cspace-prod-01 pahma]$ cp fixtures/*.json /tmp
+(venv)[app_webapps@cspace-prod-01 pahma]$ 
 
 # Now, on our local machine:
 $ cd ..../<project>/fixtures
@@ -31,7 +31,7 @@ fixtures $ scp cspace-prod.cspace.berkeley.edu:/tmp/*.json .
 internal.json                                                                  100%  472     0.5KB/s   00:00    
 search.json                                                                    100%   10KB  10.1KB/s   00:01    
 toolbox.json                                                                   100%  206     0.2KB/s   00:00    
-uploadtricoder.json                                                            100% 7590     7.4KB/s   00:00    
+uploadTricoder.json                                                            100% 7590     7.4KB/s   00:00    
 fixtures jblowe$ git status
 On branch master
 Your branch is up-to-date with 'origin/master'.
