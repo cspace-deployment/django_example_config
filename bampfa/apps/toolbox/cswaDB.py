@@ -178,7 +178,7 @@ con.rare,
 cob.deadflag,
 case when (tn.family is not null and tn.family <> '') then regexp_replace(tn.family, '^.*\\)''(.*)''$', '\\1') end as family,
 date(mc.locationdate + interval '8 hours') actiondate,
-regexp_replace(mc.reasonformove, '^.*\\)''(.*)''$', '\\1')) actionreason,
+regexp_replace(mc.reasonformove, '^.*\\)''(.*)''$', '\\1') actionreason,
 case when (mb.previouslocation is not null and mb.previouslocation <> '') then regexp_replace(mb.previouslocation, '^.*\\)''(.*)''$', '\\1') end as previouslocation 
 from collectionobjects_common co1 
 join hierarchy h1 on co1.id=h1.id
@@ -207,12 +207,12 @@ ORDER BY to_number(objectnumber,'9999.9999')
 LIMIT 6000"""
             
         if qualifier == 'alive':
-            queryPart1 = " regexp_replace(mc.reasonformove, '^.*\\)''(.*)''$', '\\1')) != 'Dead' and "
+            queryPart1 = " regexp_replace(mc.reasonformove, '^.*\\)''(.*)''$', '\\1') != 'Dead' and "
             queryPart2 = """join misc misc1 on (misc1.id = mc.id and misc1.lifecyclestate <> 'deleted') -- movement not deleted
                             join misc ms on (co1.id=ms.id and ms.lifecyclestate <> 'deleted')"""
             return queryTemplate % ('not', queryPart2, queryPart1, searchkey, location)
         elif qualifier == 'dead':
-            queryPart1 = " regexp_replace(mc.reasonformove, '^.*\\)''(.*)''$', '\\1')) = 'Dead' and "
+            queryPart1 = " regexp_replace(mc.reasonformove, '^.*\\)''(.*)''$', '\\1') = 'Dead' and "
             queryPart2 = "inner join misc misc1 on (misc1.id = mc.id and misc1.lifecyclestate <> 'deleted') -- movement not deleted"
             return queryTemplate % ('', queryPart2, queryPart1, searchkey, location)
         else:
@@ -433,7 +433,7 @@ h1.name as objectcsid,
 con.rare,
 cob.deadflag,
 regexp_replace(tig2.taxon, '^.*\\)''(.*)''$', '\\1') as determinationNoAuth,
-regexp_replace(mc.reasonformove, '^.*\\)''(.*)''$', '\\1')),
+regexp_replace(mc.reasonformove, '^.*\\)''(.*)''$', '\\1'),
 case when (tn.family is not null and tn.family <> '') then regexp_replace(tn.family, '^.*\\)''(.*)''$', '\\1') end as family,
 date(mc.locationdate + interval '8 hours') actiondate,
 case when (mb.previouslocation is not null and mb.previouslocation <> '') then regexp_replace(mb.previouslocation, '^.*\\)''(.*)''$', '\\1') end as previouslocation 
@@ -475,14 +475,14 @@ left outer join taxon_naturalhistory tn on (tc.id=tn.id) """
             queryPart2 = "join misc misc1 on (misc1.id = mc.id and misc1.lifecyclestate <> 'deleted') -- movement not deleted"
             return queryTemplate % (queryPart1, queryPart2)
         elif qualifier == 'dead':
-            queryPart1 = " and regexp_replace(mc.reasonformove, '^.*\\)''(.*)''$', '\\1')) = 'Dead'"
+            queryPart1 = " and regexp_replace(mc.reasonformove, '^.*\\)''(.*)''$', '\\1') = 'Dead'"
             queryPart2 = " "
             return queryTemplate % (queryPart1, queryPart2)
         elif qualifier == 'dead or alive':
             queryPart1 = ""
             queryPart2 = "join misc misc1 on (misc1.id = mc.id and misc1.lifecyclestate <> 'deleted') -- movement not deleted"
             part1 = queryTemplate % (queryPart1, queryPart2)
-            queryPart1 = " and regexp_replace(mc.reasonformove, '^.*\\)''(.*)''$', '\\1')) = 'Dead'"
+            queryPart1 = " and regexp_replace(mc.reasonformove, '^.*\\)''(.*)''$', '\\1') = 'Dead'"
             queryPart2 = " "
             part2 = queryTemplate % (queryPart1, queryPart2)
             return part1 + ' UNION ' + part2
@@ -492,7 +492,7 @@ left outer join taxon_naturalhistory tn on (tc.id=tn.id) """
 
 
 
-# regexp_replace(mc.reasonformove, '^.*\\)''(.*)''$', '\\1')) = 'Dead'.
+# regexp_replace(mc.reasonformove, '^.*\\)''(.*)''$', '\\1') = 'Dead'.
 #left outer join taxon_naturalhistory tn on (tc.id=tn.id)""" % ("and con.rare = 'true'","and cob.deadflag = 'false'")
 
 def getlocations(location1, location2, num2ret, config, updateType, institution):
