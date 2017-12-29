@@ -42,7 +42,7 @@ taxon_template = """
     <relatedTermGroupList/>
   </ns2:taxon_naturalhistory>
   <ns2:taxon_ucjeps xmlns:ns2="http://collectionspace.org/services/taxon/local/ucjeps" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <taxonMajorGroup>{taxonMajorGroup}</taxonMajorGroup>
+    <taxonMajorGroup>{majorgroup}</taxonMajorGroup>
   </ns2:taxon_ucjeps>
 </document>
 """
