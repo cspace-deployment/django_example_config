@@ -10,7 +10,7 @@ class RecordStats:
     """
 
     def __init__(self):
-        config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'cinefiles')
+        config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'cinestats')
         self.DBNAME = config.get('connect', 'dbname')
         self.USER = config.get('connect', 'dbuser')
         self.PW = config.get('connect', 'dbpassword')
