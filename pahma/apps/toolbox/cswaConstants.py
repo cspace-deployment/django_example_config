@@ -222,40 +222,19 @@ def getHandlers(form, institution):
     else:
 
         handlerlist = [
-            ("Victoria Bradshaw", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(7267)'Victoria Bradshaw'"),
-            ("Sofia Cano", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(SofiaCano1441412806257)'Sofia Cano'"),
-            ("Iris Close", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(IrisClose1351199196181)'Iris Close'"),
-            ("Barrett Dryden", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(BarrettDryden1441411842447)'Barrett Dryden'"),
-            ("Alicja Egbert", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(8683)'Alicja Egbert'"),
+            ("Michael T. Black", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(7827)'Michael T. Black'"),
+            ("Camille Cronkhite", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(CamilleCronkhite1487791877801)'Camille Cronkhite'"),
             ("Madeleine Fang", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(7248)'Madeleine W. Fang'"),
             ("Leslie Freund", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(7475)'Leslie Freund'"),
-            ("Haley Goren", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(HaleyGoren1441412331902)'Haley Goren'"),
-            ("Samuel Hemsley", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(SamuelHemsley1441412367955)'Samuel Hemsley'"),
-            ("Chelsea Hernandez-Garcia", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(ChelseaHernandezGarcia1436388486316)'Chelsea Hernandez-Garcia'"),
-            ("Alexandra Idso", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(AlexandraIdso1441412402823)'Alexandra Idso'"),
+            ("Corrina Fuller", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(CorrinaFuller1516841545527)'Corrina Fuller'"),
+            ("Jasmine Hernandez", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(JasmineHernandez1516841792786)'Jasmine Hernandez'"),
+            ("Audrey Hungridge", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(AudreyHungridge1516841827825)'Audrey Hungridge'"),
             ("Natasha Johnson", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(7652)'Natasha Johnson'"),
-            ("Brenna Jordan","urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(BrennaJordan1383946978257)'Brenna Jordan'"),
-            ("Dani Knapp", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(DaniKnapp1436386634306)'Dani Knapp'"),
-            ("Theo Lovett","urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(TheoLovett1441780245610)'Theo Lovett'"),
-            ("Corri MacEwen", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(9090)'Corri MacEwen'"),
-            ("Rebekah McKay","urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(RebekahMcKay1441780293210)'Rebekah McKay'"),
-            ("Karyn Moore","urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(KarynMoore1399567930777)'Karyn Moore'"),
-            ("Jon Oligmueller", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(JonOligmueller1372192617217)'Jon Oligmueller'"),
-            ("Katrina Oshima", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(KatrinaOshima1441412692846)'Katrina Oshima'"),
-            ("Nathaniel Rigler", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(NathanielRigler1441412770505)'Nathaniel Rigler'"),
-            ("Adrian Rios", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(AdrianRios1441412383598)'Adrian Rios'"),
-            ("Barbara Rocha", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(BarbaraRocha1441413033713)'Barbara Rocha'"),
-            ("Rubi Ruopp", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(RubiRuopp1441412850032)'Rubi Ruopp'"),
-            ("Emily Sandoval", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(EmilySandoval1441412274520)'Emily Sandoval'"),
-            ("Holly Seyler", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(HollySeyler1351291017723)'Holly Seyler'"),
+            ("Mei Shan Liang", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(MeiShanLiang1516841862452)'Mei Shan Liang'"),
+            ("Oscar Murguia-Zepeda", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(OscarMurguiaZepeda1516841756311)'Oscar Murguia-Zepeda'"),
             ("Martina Smith", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(9034)'Martina Smith'"),
-            ("Kaci Spooner", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(KaciSpooner1441412653643)'Kaci Spooner'"),
-            ("Susannah Starr","urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(SusannahStarr1438363401681)'Susannah Starr'"),
             ("Linda Waterfield", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(LindaWaterfield1358535276741)'Linda Waterfield'"),
             ("Leah Weaver", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(LeahWeaver1441412347620)'Leah Weaver'"),
-            ("Jane Williams", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(7420)'Jane L. Williams'"),
-            ("Madlyne Woodward", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(MadlyneWoodward1441412735172)'Madlyne Woodward'"),
-            ("Heather Van Zankwyk", "urn:cspace:pahma.cspace.berkeley.edu:personauthorities:name(person):item:name(HeatherVanZankwyk1436386602136)'Heather Van Zankwyk'"),
         ]
 
     handlers = '''
@@ -1165,7 +1144,7 @@ if __name__ == '__main__':
         elif type(result) == type('string'):
             return header + result
         else:
-            raise
+            print "handleResult error"
             #return result
             #return "\n<h2>some other result</h2>\n"
 
