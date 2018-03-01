@@ -22,7 +22,7 @@ field	9	osteoageestimatelower   	Age Estimate (lower)	osteoageestimatelower_f			
 field	9	sexdetermination	Sex Determination	sexdetermination_s			keyword	4,3	2		3	4	3		7	x
 field	10	osteoageestimatenote	Age Estimate Note	osteoageestimatenote_s			keyword					3			6	x
 field	11	sexdeterminationnote	Sex Determination Note	sexdeterminationnote_s			keyword					5			8	x
-field	12	aggregate	Skeletal Data	aggregate_ss			keyword	4,2				34				x
+field	12	aggregate	Skeletal Data	aggregate_ss			keyword	4,2	10			34				x
 field	13	notes_postcranialpathology	Postcranial Pathology	notes_postcranialpathology_s			keyword					28			33	x
 field	13	notes_cranialpathology    	Cranial Pathology	notes_cranialpathology_s			keyword					29			34	x
 field	13	notes_dentalpathology     	Dental Pathology	notes_dentalpathology_s			keyword					30			35	x
