@@ -23,7 +23,6 @@
     <link rel="stylesheet" type="text/css" href="{% static "css/repeatable.css" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static "css/datepicker.css" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static "css/osteo.css" %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static "css/jquery-ui-1.7.2.custom.css" %}"/>
     <!--[if lt IE 9]>
     <link rel="stylesheet" type="text/css" href=".{% static "css/cspace_ie.css" %}"/> <![endif]-->
 {% endblock %}
@@ -39,5 +38,6 @@
     <div id="content-main">
         {% include "toggled.html" %}
         {% include "skeleton.html" %}
+        {% include "searchResults.html" %}
     </div>
 {% endblock %}

@@ -37,8 +37,9 @@ def gatherosteoparms(searchvalues):
     for key in searchvalues.keys():
         if key == 'csrfmiddlewaretoken' : continue
         if searchvalues[key] == '': continue
-        aggregate.append("%s:\"%s\"" % (key.lower(),searchvalues[key]))
-    return aggregate
+        searchkey = key.replace('csc-osteology-','')
+        aggregate.append('%s=%s' % (searchkey.lower(), searchvalues[key]))
+    return {'aggregate': ' '.join(aggregate), 'aggregate_qualifier': 'phrase'}
 
 def direct(request):
     return redirect('search/')
@@ -47,7 +48,7 @@ def direct(request):
 @login_required()
 def search(request):
     if request.method == 'GET' and request.GET != {}:
-        context = {'searchValues': request.GET.iteritems()}
+        context = {'searchValues': dict(request.GET.iteritems())}
         context = doSearch(context, prmz, request)
     else:
         context = setConstants({}, prmz, request)
