@@ -70,32 +70,33 @@ def updateCspace(fieldset, updateItems, form, config):
         try:
             url2, content, httpcode, elapsedtime = connection.make_get_request(url)
         except:
-            sys.stderr.write("ERROR: problem GETting XML for %s" % url)
+            sys.stderr.write("ERROR: problem GETting XML for %s\n" % url)
             raise
         if httpcode != 200:
-            sys.stderr.write("ERROR: HTTP response code %s for  %s" % (httpcode, url))
-            raise
+            sys.stderr.write("ERROR: HTTP response code %s for GET %s\n" % (httpcode, url))
+            sys.stderr.write("ERROR: content for %s: \n%s\n" % (url, content))
+            return when2post, "ERROR: HTTP response code %s for GET %s\n" % (httpcode, url)
         if content is None:
-            sys.stderr.write("ERROR: No XML returned from CSpace server for %s" % url)
-            raise
+            sys.stderr.write("ERROR: No XML returned from CSpace server for %s\n" % url)
+            return when2post, "ERROR: No XML returned from CSpace server for %s\n" % url
         try:
             message, payload = updateXML(fieldset, updateItems, content)
         except:
-            sys.stderr.write("ERROR generating update XML for fieldset %s" % fieldset)
+            sys.stderr.write("ERROR generating update XML for fieldset %s\n" % fieldset)
             try:
-                sys.stderr.write("ERROR: payload for %s: \n%s" % (url, payload))
+                sys.stderr.write("ERROR: payload for %s: \n%s\n" % (url, payload))
             except:
-                sys.stderr.write("ERROR: could not write payload for %s: \n%s" % url)
-            return when2post, "ERROR generating update XML for fieldset %s" % fieldset
+                sys.stderr.write("ERROR: could not write payload for %s\n" % url)
+            return when2post, "ERROR generating update XML for fieldset %s\n" % fieldset
         try:
             (url3, data, httpcode, elapsedtime) = postxml('PUT', uri, payload, form)
         except:
-            sys.stderr.write("ERROR: failed PUT payload for %s: \n%s" % (url, payload))
-            return when2post, "ERROR: failed PUT payload for %s: \n%s" % (url, payload)
+            sys.stderr.write("ERROR: failed PUT payload for %s: \n%s\n" % (url, payload))
+            return when2post, "ERROR: failed PUT payload for %s: \n" % url
         if data is None:
-            sys.stderr.write("ERROR: failed PUT payload for %s: \n%s" % (url, payload))
-            sys.stderr.write("ERROR: HTTP response code %s for  %s" % (httpcode, url))
-            return when2post, "ERROR: Bad HTTP response code %s for  %s" % (httpcode, url)
+            sys.stderr.write("ERROR: HTTP response code %s for  %s\n" % (httpcode, url))
+            sys.stderr.write("ERROR: failed PUT payload for %s: \n%s\n" % (url, payload))
+            return when2post, "ERROR: Bad HTTP response code %s for  %s\n" % (httpcode, url)
         # sys.stderr.write("payload for %s: \n%s" % (url, payload))
         sys.stderr.write("updated object with csid %s to REST API...\n" % updateItems['objectCsid'])
         return when2post, message
