@@ -1,0 +1,47 @@
+{% load staticfiles %}
+<h2>{{ filename }}</h2>
+{% if message %}
+    <h4>{{ message }}</h4>
+    <hr/>
+{% endif %}
+<table border="1">
+    <tr>
+        {% for header in labels %}
+            {% if dropdowns.header %}
+                <th>
+                    <select id="{{ dropdowns.name }}" name="{{ dropdowns.name }}">
+                        <option value="">Please select</option>
+                        {% for value in dropdowns.values %}
+                            <option value="{{ value.0 }}"{% if value.0 == header %} selected{% endif %}>{{ value.0|slice:":40" }} ({{ value.1 }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </th>
+            {% else %}
+                <th>
+                    {{ header }}
+                    <input type="hidden" name="labels" value="{{ header }}">
+                </th>
+            {% endif %}
+        {% endfor %}
+    </tr>
+    {% for row in matrix %}
+        <tr>
+            {% for cell in row %}
+                <td>
+                    {% if forloop.counter0 == keyrow %}
+                        {{ cell }}
+                    {% else %}
+                        {% if action == 'count' or action == 'validate' or action == None %}
+                            {{ cell }}
+                        {% else %}
+                            <input type="text" name="col.{{ forloop.counter }}" value="{{ cell }}">
+                        {% endif %}
+                    {% endif %}
+                </td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+
+<h4>({{ matrix|length }} rows in this table.)</h4>

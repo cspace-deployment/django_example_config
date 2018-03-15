@@ -1,0 +1,127 @@
+1	# DWC to Cspace field name mapping				
+2	# being a specification of how to match DarwinCore fields to UCJEPS Cspace fields				
+3	# first column is DWC field name, second is Cspace collectionobject tag				
+4	# 3rd column is Cspace “context element” (group/list element), 4th is the datatype of the element				
+5	# 				
+6	# v0.9 jbl 2/20/18				
+7					
+8	# FIMS field name	Cspace collectionobject tag	context tag	data type	check exists?
+9	# identifying details	##################################			
+10	barcodenumber	objectNumber		literal	
+11		numberValue	otherNumber	literal	
+12		numberType	otherNumber	literal	
+13	scientificName	taxon		refname	
+14	main_collector	fieldCollectionNumberAssignor		refname	
+15	all_collectors	fieldCollector		refname	
+16	coll_num	fieldCollectionNumber		literal	
+17	# textual info	##################################			
+18	brief_desc	briefDescription		literal	
+19	comments	comment		literal	
+20	# place info	##################################			
+21	locality	fieldLocVerbatim		literal	
+22	habitat	fieldCollectionNote		literal	
+23	elevation	vElevation		integer	
+24	elevation_units	elevationUnit		vocab	
+25	latitude	decimalLatitude		float	
+26	longitude	decimalLongitude		float	
+27	coordinate_source	localitySource		literal	
+28	# label info	##################################			
+29	label_header	labelHeader		refname	
+30	label_footer	labelFooter		refname	
+31	# dates	##################################			
+32	coll_date	dateDisplayDate	fieldCollectionDateGroup	literal	
+33	coll_day	dateLatestDay	fieldCollectionDateGroup	integer	
+34	coll_month	dateLatestMonth	fieldCollectionDateGroup	month	
+35	coll_year	dateLatestYear	fieldCollectionDateGroup	year	
+36		dateDisplayDate	identDateGroup	literal	
+37	# location info	##################################			
+38	stateProvince	fieldLocState		vocab	
+39	country	fieldLocCountry		vocab	
+40	county	fieldLocCounty		vocab	
+41	# determination info	##################################			
+42	determinedby	identBy		refname	
+43	det_day	dateLatestDay	identDateGroup	int	
+44	det_month	dateLatestMonth	identDateGroup	month	
+45	det_year	dateLatestYear	identDateGroup	year	
+46		dateDisplayDate	identDateGroup	literal	
+47	id				
+48	institutionCode				
+49	collectionCode				
+50	ownerInstitutionCode	objectNumber			checkonupdate
+51	basisOfRecord				
+52	occurrenceID				
+53	catalogNumber				
+54	otherCatalogNumbers				
+55	kingdom				
+56	phylum				
+57	class				
+58	order				
+59	family				
+61	scientificNameAuthorship				
+62	genus				
+63	specificEpithet				
+64	taxonRank				
+65	infraspecificEpithet				
+66	identifiedBy	identBy		refname	
+67	dateIdentified				
+68	identificationReferences				
+69	identificationRemarks				
+70	taxonRemarks				
+71	identificationQualifier				
+72	typeStatus				
+73	recordedBy				
+74	recordedByID				
+75	associatedCollectors				
+76	recordNumber				
+77	eventDate				
+78	year				
+79	month				
+80	day				
+81	startDayOfYear				
+82	endDayOfYear				
+83	verbatimEventDate				
+84	occurrenceRemarks				
+86	substrate				
+87	verbatimAttributes				
+88	fieldNumber				
+89	informationWithheld				
+90	dataGeneralizations				
+91	dynamicProperties				
+92	associatedTaxa	associatedTaxon		refname	
+93	reproductiveCondition				
+94	establishmentMeans				
+95	cultivationStatus	cultivated		truefalse	
+96	lifeStage				
+97	sex	sex		vocab	
+98	individualCount				
+99	samplingProtocol				
+100	samplingEffort				
+101	preparations				
+105	municipality				
+107	locationRemarks				
+108	localitySecurity				
+109	localitySecurityReason				
+110	decimalLatitude	decimalLatitude			
+111	decimalLongitude	decimalLongitude			
+112	geodeticDatum				
+113	coordinateUncertaintyInMeters				
+114	verbatimCoordinates	vCoordinates		literal	
+115	georeferencedBy	geoRefencedBy			
+116	georeferenceProtocol	geoRefProtocol			
+117	georeferenceSources	geoRefSource		refname	
+118	georeferenceVerificationStatus	geoRefVerificationStatus			
+119	georeferenceRemarks	geoRefRemarks			
+120	minimumElevationInMeters	minElevation		integer	
+121	maximumElevationInMeters	maxElevation		integer	
+122	minimumDepthInMeters	minDepth		integer	
+123	maximumDepthInMeters	maxDepth		integer	
+124	verbatimDepth	vDepth		integer	
+125	verbatimElevation	vElevation			
+126	disposition				
+127	language				
+128	recordEnteredBy				
+129	modified				
+130	sourcePrimaryKey-dbpk				
+131	collId				
+132	recordId				
+133	references				
