@@ -84,27 +84,27 @@ def updateCspace(fieldset, updateItems, form, config):
         except:
             sys.stderr.write("ERROR generating update XML for fieldset %s\n" % fieldset)
             try:
-                sys.stderr.write("ERROR: payload for %s: \n%s\n" % (url, payload))
+                sys.stderr.write("ERROR: payload for PUT %s: \n%s\n" % (url, payload))
             except:
-                sys.stderr.write("ERROR: could not write payload for %s\n" % url)
+                sys.stderr.write("ERROR: could not write payload to error log for %s: \n" % url)
             return when2post, "ERROR generating update XML for fieldset %s\n" % fieldset
         try:
             (url3, data, httpcode, elapsedtime) = postxml('PUT', uri, payload, form)
         except:
             sys.stderr.write("ERROR: failed PUT payload for %s: \n%s\n" % (url, payload))
-            return when2post, "ERROR: failed PUT payload for %s: \n" % url
+            return when2post, "ERROR: failed PUT payload for %s: \n%s\n" % (url, payload)
         if data is None:
-            sys.stderr.write("ERROR: HTTP response code %s for  %s\n" % (httpcode, url))
             sys.stderr.write("ERROR: failed PUT payload for %s: \n%s\n" % (url, payload))
+            sys.stderr.write("ERROR: HTTP response code %s for  %s\n" % (httpcode, url))
             return when2post, "ERROR: Bad HTTP response code %s for  %s\n" % (httpcode, url)
         # sys.stderr.write("payload for %s: \n%s" % (url, payload))
-        sys.stderr.write("updated object with csid %s to REST API...\n" % updateItems['objectCsid'])
+        # sys.stderr.write("updated object with csid %s to REST API...\n" % updateItems['objectCsid'])
         return when2post, message
     elif when2post == 'queue':
         message = add2queue("PUT", uri, fieldset, updateItems, form)
         return when2post, message
     else:
-        raise
+        return 'invalid move action' % when2post, ''
 
 
 def createObject(objectinfo, config, form):
@@ -121,7 +121,7 @@ def createObject(objectinfo, config, form):
         add2queue("POST", uri, 'createobject', objectinfo, form)
         return 'queued new object', ''
     else:
-        raise
+        return 'invalid move action' % when2post, ''
 
 
 def updateLocations(updateItems, config, form):
@@ -136,7 +136,7 @@ def updateLocations(updateItems, config, form):
         add2queue("POST", uri, 'movements', updateItems, form)
         return 'queued move', ''
     else:
-        raise
+        return 'invalid move action' % when2post, ''
 
 
 def updateXML(fieldset, updateItems, xml):
@@ -434,7 +434,11 @@ def postxml(requestType, uri, payload, form):
 
 def writeLog(updateItems, uri, httpAction, form, config):
     auditFile = config.get('files', 'auditfile')
-    updateType = config.get('info', 'updatetype')
+    # TODO: unsnarl this someday. there should be only one way to specify which tool is in use.
+    try:
+        updateType = form['tool']
+    except:
+        updateType = updateItems['updateType']
     try:
         username = form['userdata']
         username = username.username
@@ -452,16 +456,16 @@ def writeLog(updateItems, uri, httpAction, form, config):
         pass
 
 
-def writeInfo2log(request, form, config, elapsedtime):
-    action = str(form.get("action"))
+def writeInfo2log(action, updateType , form, config, elapsedtime):
+    "'start', updateType, form, webappconfig, 0.0"
+    #action = str(form.get("action"))
     serverlabel = config.get('info', 'serverlabel')
-    apptitle = config.get('info', 'apptitle')
-    updateType = config.get('info', 'updatetype')
     institution = config.get('info', 'institution')
+    apptitle = config.get(updateType, 'apptitle')
     checkServer = form.get('check')
     # override updateType if we are just checking the server
     if checkServer == 'check server':
         updateType = checkServer
     updateItems = {'app': apptitle, 'server': serverlabel, 'institution': institution,
-                   'elapsedtime': '%8.2f' % elapsedtime, 'action': action}
-    writeLog(updateItems, '', request, form, config)
+                   'elapsedtime': '%8.2f' % elapsedtime, 'action': action, 'updateType': updateType}
+    writeLog(updateItems, '', '', form, config)

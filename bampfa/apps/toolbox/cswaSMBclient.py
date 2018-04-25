@@ -13,8 +13,7 @@ def uploadCmdrWatch(barcodeFile, dataType, data, config):
                 csvlogfh.writerow((d[0],))  # writerow needs a tuple or array
         elif dataType == 'objectLabels':
             csvlogfh.writerow(
-                'MuseumNumber,ObjectName,PieceCount,FieldCollectionPlace,AssociatedCulture,EthnographicFileCode'.split(
-                    ','))
+                'MuseumNumber,ObjectName,PieceCount,FieldCollectionPlace,AssociatedCulture,EthnographicFileCode'.split(','))
             for d in data:
                 csvlogfh.writerow(d[3:9])
         barcodeFh.close()
@@ -28,12 +27,12 @@ def uploadCmdrWatch(barcodeFile, dataType, data, config):
         # OK, now we have the file object with the data in it. write it to the
         # commanderWatch server via SMB
 
-        domain = config.get('files', 'domain')
-        userID = config.get('files', 'userID')
-        password = config.get('files', 'password')
-        client_name = config.get('files', 'client_name')
-        server_ip = config.get('files', 'server_ip')
-        service_name = config.get('files', 'service_name')
+        domain = config.get('barcodeprint', 'domain')
+        userID = config.get('barcodeprint', 'userID')
+        password = config.get('barcodeprint', 'password')
+        client_name = config.get('barcodeprint', 'client_name')
+        server_ip = config.get('barcodeprint', 'server_ip')
+        service_name = config.get('barcodeprint', 'service_name')
 
         # client_machine_name can be an arbitary ASCII string
         # server_name should match the remote machine name, or else the connection will be rejected
@@ -54,5 +53,5 @@ def uploadCmdrWatch(barcodeFile, dataType, data, config):
     except:
         # raise
         os.unlink('/tmp/%s' % localslug)
-        barcodeFile = '<span style="color:red;">could not transmit %s to commanderWatch</span>' % barcodeFile
+        barcodeFile = '<span style="color:red;">could not transmit %s to commanderWatch. Check parameters and connection</span>' % barcodeFile
         return barcodeFile

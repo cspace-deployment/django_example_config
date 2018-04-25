@@ -696,7 +696,7 @@ left outer join collectionobjects_common_briefdescriptions bd on (bd.id=cc.id an
 left outer join collectionobjects_common_contentplaces conp on (conp.id=cc.id and conp.pos=0)
 left outer join collectionobjects_common_fieldcollectors pc on (pc.id=cc.id and pc.pos=0)
 
-FULL OUTER JOIN relations_common rc6 ON (rc6.subjectcsid = h1.name AND rc6.objectdocumenttype = 'Acquisition')
+FULL OUTER JOIN relations_common rc6 ON (rc6.subjectcsid = hx2.name AND rc6.objectdocumenttype = 'Acquisition')
 FULL OUTER JOIN hierarchy h7 ON (h7.name = rc6.objectcsid)
 FULL OUTER JOIN acquisitions_common ac ON (ac.id = h7.id)
 FULL OUTER JOIN hierarchy h9 ON (ac.id = h9.id)

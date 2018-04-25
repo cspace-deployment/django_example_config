@@ -1,18 +1,17 @@
 #!/usr/bin/env /usr/bin/python
 # -*- coding: UTF-8 -*-
 
-import os
 import copy
 import csv
 import time
 import datetime
 import cgi
 import re
-import ConfigParser
 
 import cswaSMBclient
 
 from django.http import HttpResponse
+from common.Counter import Counter
 
 MAXLOCATIONS = 1000
 
@@ -47,27 +46,6 @@ from cswaRows import formatRow, setRefnames
 from cspace_django_site.main import cspace_django_site
 
 MAINCONFIG = cspace_django_site.getConfig()
-
-def basicSetup(config):
-    parms = []
-    for parm in 'institution updatetype updateactionlabel'.split(' '):
-        try:
-            parms.append(config.get('info',parm))
-        except:
-            parms.append('')
-    return parms
-
-def getConfig(request):
-    try:
-        # pretty hacky, let's improve the filename construction someday
-        fileName = '.' + request.path.replace('toolbox/', 'toolbox/cfgs/') + '.cfg'
-        config = ConfigParser.RawConfigParser()
-        config.read(fileName)
-        # test to see if it seems like it is really a config file
-        config.get('info', 'updatetype')
-        return config
-    except:
-        return False
 
 
 def serverCheck(form, config):
@@ -125,7 +103,7 @@ def listAuthorities(authority, primarytype, authItem, config, form, displaytype)
 
 def doComplexSearch(form, config, displaytype):
     html = ''
-    #if not validateParameters(form,config): return
+    institution, updateType, updateactionlabel = basicSetup(form, config)
     hasDups, x, r = listAuthorities('taxon', 'TaxonTenant35', form.get("ut.taxon"), config, form, displaytype)
     html += x
     hasDups, x, r = listAuthorities('locations', 'Locationitem', form.get("lo.location1"), config, form, displaytype)
@@ -135,16 +113,15 @@ def doComplexSearch(form, config, displaytype):
     #listAuthorities('taxon',     'TaxonTenant35',  form.get("ob.objectnumber"),config, form, displaytype)
     #listAuthorities('concepts',  'TaxonTenant35',  form.get("cx.concept"),     config, form, displaytype)
 
-    html += getTableFooter(config, displaytype, '')
+    html += getTableFooter(config, displaytype, updateType, '')
     return html
 
 
 def doLocationSearch(form, config, displaytype):
     html = ''
-
+    institution, updateType, updateactionlabel = basicSetup(form, config)
     valid, error = validateParameters(form, config)
     if not valid: return html + error
-    updateType = config.get('info', 'updatetype')
 
     if form.get('lo.location1') == '':
         return '<h3 class="error">Please enter at least a starting location!</h3>'
@@ -161,15 +138,15 @@ def doLocationSearch(form, config, displaytype):
     hasDups, html = listSearchResults('locations', config, displaytype, form, rows)
 
     if hasDups:
-        html += getTableFooter(config, 'error', 'Please eliminate duplicates and try again!')
+        html += getTableFooter(config, 'error', updateType, 'Please eliminate duplicates and try again!')
         return
-    if len(rows) != 0: html += getTableFooter(config, displaytype, '')
+    if len(rows) != 0: html += getTableFooter(config, displaytype, updateType, '')
     return html
 
 
 def doObjectSearch(form, config, displaytype):
     html = ''
-    institution, updateType, updateactionlabel = basicSetup(config)
+    institution, updateType, updateactionlabel = basicSetup(form, config)
     valid, error = validateParameters(form, config)
     if not valid: return html + error
 
@@ -220,13 +197,10 @@ def doObjectSearch(form, config, displaytype):
 
 def doOjectRangeSearch(form, config, displaytype=''):
     html = ''
+    institution, updateType, updateactionlabel = basicSetup(form, config)
 
     valid, error = validateParameters(form, config)
     if not valid: return html + error
-
-    updateType = config.get('info', 'updatetype')
-    updateactionlabel = config.get('info', 'updateactionlabel')
-
 
     objs, msg = cswaDB.getobjlist('range', form.get("ob.objno1"), form.get("ob.objno2"), 1000, config)
 
@@ -254,7 +228,7 @@ def doOjectRangeSearch(form, config, displaytype=''):
 
 def listSearchResults(authority, config, displaytype, form, rows):
     html = ''
-    institution, updateType, updateactionlabel = basicSetup(config)
+    institution, updateType, updateactionlabel = basicSetup(form, config)
     hasDups = False
 
     if not rows: rows = []
@@ -332,9 +306,9 @@ def listSearchResults(authority, config, displaytype, form, rows):
     return hasDups, html
 
 
-def doGroupSearch(form, config, displaytype):
+def doGroupSearch(form, config, displayType):
     html = ''
-    institution, updateType, updateactionlabel = basicSetup(config)
+    institution, updateType, updateactionlabel = basicSetup(form, config)
     valid, error = validateParameters(form, config)
     if not valid: return html + error
 
@@ -370,13 +344,12 @@ def doGroupSearch(form, config, displaytype):
 
 def doEnumerateObjects(form, config):
     html = ''
-    institution, updateType, updateactionlabel = basicSetup(config)
+    institution, updateType, updateactionlabel = basicSetup(form, config)
     valid, error = validateParameters(form, config)
     if not valid: return html + error
 
     try:
-        locationList = cswaDB.getloclist('range', form.get("lo.location1"), form.get("lo.location2"), MAXLOCATIONS,
-                                         config)
+        locationList = cswaDB.getloclist('range', form.get("lo.location1"), form.get("lo.location2"), MAXLOCATIONS, config)
     except:
         raise
 
@@ -453,7 +426,7 @@ def verifyLocation(loc, form, config):
 
 def doCheckMove(form, config):
     html = ''
-    institution, updateType, updateactionlabel = basicSetup(config)
+    institution, updateType, updateactionlabel = basicSetup(form, config)
     valid, error = validateParameters(form, config)
     if not valid: return html + error
 
@@ -534,10 +507,7 @@ def doCheckMove(form, config):
 
 def doCheckGroupMove(form, config):
     html = ''
-
-    updateactionlabel = config.get('info', 'updateactionlabel')
-    #updateType = config.get('info', 'updatetype')
-    institution = config.get('info', 'institution')
+    institution, updateType, updateactionlabel = basicSetup(form, config)
 
     if form.get('gr.group') == '':
         return'<h3>Please enter group identifier!</h3>'
@@ -587,7 +557,7 @@ def doCheckGroupMove(form, config):
 
 def doCheckPowerMove(form, config):
     html = ''
-    institution, updateType, updateactionlabel = basicSetup(config)
+    institution, updateType, updateactionlabel = basicSetup(form, config)
     valid, error = validateParameters(form, config)
     if not valid: return html + error
 
@@ -702,8 +672,7 @@ def doBulkEdit(form, config):
     valid, error = validateParameters(form, config)
     if not valid: return error
 
-    updateType = config.get('info', 'updatetype')
-    updateactionlabel = config.get('info', 'updateactionlabel')
+    institution, updateType, updateactionlabel = basicSetup(form, config)
 
     objs, msg, totalobjects = getTrio(form, config)
 
@@ -727,8 +696,7 @@ def doBulkEditForm(form, config, displaytype):
     valid, error = validateParameters(form, config)
     if not valid: return html + error
 
-    updateType = config.get('info', 'updatetype')
-    updateactionlabel = config.get('info', 'updateactionlabel')
+    institution, updateType, updateactionlabel = basicSetup(form, config)
 
     objs, msg, totalobjects = getTrio(form, config)
 
@@ -759,11 +727,7 @@ def doBulkEditForm(form, config, displaytype):
 def doCreateObjects(form, config):
     html = ''
 
-    # html += form
-    #if not validateParameters(form, config): return
-
-    updateType = config.get('info', 'updatetype')
-    updateactionlabel = config.get('info', 'updateactionlabel')
+    institution, updateType, updateactionlabel = basicSetup(form, config)
     msgs = []
 
     html += '''<table width="100%" cellpadding="8px"><tbody><tr class="smallheader">
@@ -861,7 +825,7 @@ def doUpdateKeyinfo(form, config):
 
 def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
     html = ''
-    institution, updateType, updateactionlabel = basicSetup(config)
+    institution, updateType, updateactionlabel = basicSetup(form, config)
 
     html += cswaConstants.getHeader('keyinfoResult',institution)
 
@@ -1043,7 +1007,7 @@ def doTheUpdate(CSIDs, form, config, fieldset, refNames2find):
 
 def doUpdateLocations(form, config):
     html = ''
-    institution, updateType, updateactionlabel = basicSetup(config)
+    institution, updateType, updateactionlabel = basicSetup(form, config)
     #notlocated = config.get('info','notlocated')
     if institution == 'bampfa':
         notlocated = "urn:cspace:bampfa.cspace.berkeley.edu:locationauthorities:name(location):item:name(x781)'Not Located'"
@@ -1119,7 +1083,7 @@ def doUpdateLocations(form, config):
 
 def doPackingList(form, config):
     html = ''
-    institution, updateType, updateactionlabel = basicSetup(config)
+    institution, updateType, updateactionlabel = basicSetup(form, config)
     valid, error = validateParameters(form, config)
     if not valid: return html + error
 
@@ -1214,7 +1178,7 @@ def doPackingList(form, config):
 
 def doAuthorityScan(form, config):
     html = ''
-    institution, updateType, updateactionlabel = basicSetup(config)
+    institution, updateType, updateactionlabel = basicSetup(form, config)
     valid, error = validateParameters(form, config)
     if not valid: return html + error
 
@@ -1257,7 +1221,7 @@ def doAuthorityScan(form, config):
                    'Unique genera': 'genus'
     }
     for s in statistics.keys():
-        counts[s] = cswaConstants.Counter()
+        counts[s] = Counter()
 
     totalobjects = 0
     for t in objects:
@@ -1278,7 +1242,7 @@ def doAuthorityScan(form, config):
 
 def downloadCsv(form, config):
     html = ''
-    institution, updateType, updateactionlabel = basicSetup(config)
+    institution, updateType, updateactionlabel = basicSetup(form, config)
 
     try:
         # create the HttpResponse object with the appropriate CSV header.
@@ -1333,7 +1297,7 @@ def downloadCsv(form, config):
 
 def doBarCodes(form, config):
     html = ''
-    institution, updateType, updateactionlabel = basicSetup(config)
+    institution, updateType, updateactionlabel = basicSetup(form, config)
 
     action = form.get('action')
 
@@ -1421,7 +1385,7 @@ def doBarCodes(form, config):
 
 def doAdvancedSearch(form, config):
     html = ''
-    institution, updateType, updateactionlabel = basicSetup(config)
+    institution, updateType, updateactionlabel = basicSetup(form, config)
     groupby = form.get('groupby')
 
     valid, error = validateParameters(form, config)
@@ -1462,7 +1426,7 @@ def doAdvancedSearch(form, config):
 
 def doBedList(form, config):
     html = ''
-    institution, updateType, updateactionlabel = basicSetup(config)
+    institution, updateType, updateactionlabel = basicSetup(form, config)
     valid, error = validateParameters(form, config)
     if not valid: return html + error
 
@@ -1549,10 +1513,12 @@ def doHierarchyView(form, config):
 
     res = cswaDB.gethierarchy(query, config)
     html += '<p></p><a class="prettyBtn" id="all">Toggle All</a><p/><div class="tree">'
+    if res == []:
+        return '<h3 class="error">Sorry, could not retrieve this authority hierarchy!</h3>'
     lookup = {concept.PARENT: concept.PARENT}
     link = ''
     hostname = config.get('connect', 'hostname')
-    institution, updateType, updateactionlabel = basicSetup(config)
+    institution, updateType, updateactionlabel = basicSetup(form, config)
     port = ''
     protocol = 'https'
     if query == 'taxonomy':
@@ -1635,44 +1601,13 @@ def doListGovHoldings(form, config):
 def writeCommanderFile(location, printerDir, dataType, filenameinfo, data, config):
     # slugify the location
     slug = re.sub('[^\w-]+', '_', location).strip().lower()
-    barcodeFile = config.get('files', 'cmdrfmtstring') % (
+    barcodeFile = config.get('barcodeprint', 'cmdrfmtstring') % (
         dataType, printerDir, slug,
         datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S"), filenameinfo)
 
     newName = cswaSMBclient.uploadCmdrWatch(barcodeFile, dataType, data, config)
 
     return newName
-
-
-def uploadFile(actualform, form, config):
-    barcodedir = config.get('files', 'barcodedir')
-    barcodeprefix = config.get('files', 'barcodeprefix')
-    #html += form
-    # we are using <form enctype="multipart/form-data"...>, so the file contents are now in the FieldStorage.
-    # we just need to save it somewhere...
-    fileitem = actualform['file']
-
-    # Test if the file was uploaded
-    if fileitem.filename:
-
-        # strip leading path from file name to avoid directory traversal attacks
-        fn = os.path.basename(fileitem.filename)
-        # don't validate uploaded file (faster!)
-        #success = processTricoderFile(fileitem, form, config)
-        success = True
-        if success:
-            fileitem.file.seek(0,0)
-            open(barcodedir + '/' + barcodeprefix + '.' + fn, 'wb').write(fileitem.file.read())
-            os.chmod(barcodedir + '/' + barcodeprefix + '.' + fn, 0666)
-            # for now, processing of Tricoder files by this webapp is disabled. john and julian 17 oct 2013
-            #numUpdated = processTricoderFile(barcodedir + '/' + barcodeprefix + '.' + fn, form, config)
-            message = '%s.%s was uploaded successfully to directory %s!' % (barcodeprefix,fn, barcodedir)
-        else:
-             message = 'Sorry, your file was rejected for errors.'
-    else:
-        message = 'No file was chosen to be uploaded. Please choose a file!'
-
-    return "<h3>%s</h3>" % message
 
 
 def doUploadUpdateLocs(data, line, id2ref, form, config):

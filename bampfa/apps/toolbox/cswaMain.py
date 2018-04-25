@@ -11,39 +11,26 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 
-def main(request, updateType):
-
-    # NB we convert FieldStorage to a dict, but we need the actual form for barcode upload...
-    #actualform = cgi.FieldStorage()
-    form       = {}
-    for r in request.POST.keys():
-        form[r] = request.POST[r]
+def main(request, updateType, form, webappconfig):
 
     if request.user.is_authenticated():
         form['userdata'] = request.user
     else:
         return "<span style='color:red'>You must be authenticated to use these Tools! Please sign in (upper right of this page).</span>", None
 
-    try:
-        action = request.POST['action']
-    except:
-        action = ''
 
+    update_action_label = form.get('action')
     checkServer = form.get('check')
-
-    config  = getConfig(request)
-    # we don't do anything with debug now, but it is a comfort to have
-    debug = form.get("debug")
 
     html = ''
 
-    # bail if we don't know which webapp to be...(i.e. no config object passed in from cswaMain)
-    if config == False:
-        html = selectWebapp(form, request)
+    # if we don't know which tool was picked, have the user pick one
+    if updateType == 'landing':
+        html = selectWebapp(form, webappconfig)
         return html, None
 
     # if action has not been set, this is the first time through, and we need to set defaults. (only 2 right now!)
-    if action == 'Login':
+    if update_action_label == 'Login':
         form['dora'] = 'alive'
 
     # if location2 was not specified, default it to location1
@@ -56,40 +43,40 @@ def main(request, updateType):
 
     elapsedtime = time.time()
 
-    writeInfo2log('start', form, config, 0.0)
-    html += starthtml(form,config)
+    writeInfo2log('start', updateType, form, webappconfig, 0.0)
+    toolconfig = webappconfig._sections[updateType]
+    html += starthtml(form, updateType, webappconfig)
 
     try:
         sys.stdout.flush()
 
         if checkServer == 'check server':
-            print serverCheck(form,config)
+            print serverCheck(form,webappconfig)
         else:
-            if action == "Enumerate Objects":
-                html += doEnumerateObjects(form,config)
-            elif action == "Create Labels for Locations Only":
-                html += doBarCodes(form,config)
-            elif action == config.get('info','updateactionlabel'):
-                if   updateType == 'packinglist':  html += doPackingList(form,config)
-                elif updateType == 'movecrate':    html += doUpdateLocations(form,config)
-                elif updateType == 'powermove':    html += doUpdateLocations(form,config)
-                elif updateType == 'grpmove':      html += doUpdateLocations(form,config)
-                elif updateType == 'barcodeprint': html += doBarCodes(form,config)
-                elif updateType == 'inventory':    html += doUpdateLocations(form,config)
-                elif updateType == 'moveobject':   html += doUpdateLocations(form,config)
-                elif updateType == 'objinfo':      html += doUpdateKeyinfo(form,config)
-                elif updateType == 'keyinfo':      html += doUpdateKeyinfo(form,config)
-                elif updateType == 'grpinfo':      html += doUpdateKeyinfo(form,config)
-                elif updateType == 'createobjects': html += doCreateObjects(form,config)
-                elif updateType == 'bulkedit':     html += doBulkEdit(form,config)
-                elif updateType == 'bedlist':      html += doBedList(form,config)
-                elif updateType == 'advsearch':    html += doAdvancedSearch(form,config)
-                elif updateType == 'upload':       uploadFile(form,form,config)
-                elif updateType == 'governmentholdings': html += doListGovHoldings(form, config)
+            if update_action_label == "Enumerate Objects":
+                html += doEnumerateObjects(form,webappconfig)
+            elif update_action_label == "Create Labels for Locations Only":
+                html += doBarCodes(form,webappconfig)
+            elif update_action_label == webappconfig.get(updateType, 'updateactionlabel'):
+                if   updateType == 'packinglist':  html += doPackingList(form,webappconfig)
+                elif updateType == 'movecrate':    html += doUpdateLocations(form,webappconfig)
+                elif updateType == 'powermove':    html += doUpdateLocations(form,webappconfig)
+                elif updateType == 'grpmove':      html += doUpdateLocations(form,webappconfig)
+                elif updateType == 'barcodeprint': html += doBarCodes(form,webappconfig)
+                elif updateType == 'inventory':    html += doUpdateLocations(form,webappconfig)
+                elif updateType == 'moveobject':   html += doUpdateLocations(form,webappconfig)
+                elif updateType == 'objinfo':      html += doUpdateKeyinfo(form,webappconfig)
+                elif updateType == 'keyinfo':      html += doUpdateKeyinfo(form,webappconfig)
+                elif updateType == 'grpinfo':      html += doUpdateKeyinfo(form,webappconfig)
+                elif updateType == 'createobjects': html += doCreateObjects(form,webappconfig)
+                elif updateType == 'bulkedit':     html += doBulkEdit(form,webappconfig)
+                elif updateType == 'bedlist':      html += doBedList(form,webappconfig)
+                elif updateType == 'advsearch':    html += doAdvancedSearch(form,webappconfig)
+                elif updateType == 'governmentholdings': html += doListGovHoldings(form, webappconfig)
                 #elif updateType == 'editrel':      html += doRelationsEdit(form,config)
-                elif updateType == 'makegroup':    makeGroup(form,config)
-                elif action == "Recent Activity":
-                    viewLog(form,config)
+                elif updateType == 'makegroup':    makeGroup(form,webappconfig)
+                elif update_action_label == "Recent Activity":
+                    viewLog(form,webappconfig)
         ##    # special case: if only one location in range, jump to enumerate
         ##    elif form.getvalue("lo.location1") != '' and str(form.getvalue("lo.location1")) == str(form.getvalue("lo.location2")) :
         ##        if updateType in ['keyinfo', 'inventory']:
@@ -98,39 +85,39 @@ def main(request, updateType):
         ##            doCheckMove(form,config)
         ##        else:
         ##            doLocationSearch(form,config,'nolist')
-            elif action == "Search":
-                if   updateType == 'packinglist':  html += doLocationSearch(form,config,'nolist')
-                elif updateType == 'movecrate':    html += doCheckMove(form,config)
-                elif updateType == 'grpmove':      html += doCheckGroupMove(form,config)
-                elif updateType == 'powermove':    html += doCheckPowerMove(form,config)
+            elif update_action_label == "Search":
+                if   updateType == 'packinglist':  html += doLocationSearch(form,webappconfig,'nolist')
+                elif updateType == 'movecrate':    html += doCheckMove(form,webappconfig)
+                elif updateType == 'grpmove':      html += doCheckGroupMove(form,webappconfig)
+                elif updateType == 'powermove':    html += doCheckPowerMove(form,webappconfig)
                 elif updateType == 'barcodeprint':
                     if form.get('gr.group'):
-                        html += doGroupSearch(form, config, 'list')
+                        html += doGroupSearch(form, webappconfig, 'list')
                     elif form.get('ob.objno1'):
-                        html += doOjectRangeSearch(form, config)
+                        html += doOjectRangeSearch(form, webappconfig)
                     else:
-                        html += doLocationSearch(form, config, 'nolist')
-                elif updateType == 'bedlist':      html += doComplexSearch(form,config,'select')
-                elif updateType == 'bulkedit':     html += doBulkEditForm(form,config,'nolist')
-                elif updateType == 'holdings':     html += doAuthorityScan(form,config)
-                elif updateType == 'locreport':    html += doAuthorityScan(form,config)
-                elif updateType == 'advsearch':    html += doComplexSearch(form,config,'select')
-                elif updateType == 'inventory':    html += doLocationSearch(form,config,'list')
-                elif updateType == 'keyinfo':      html += doLocationSearch(form,config,'list')
-                elif updateType == 'objinfo':      html += doObjectSearch(form,config,'list')
-                elif updateType == 'grpinfo':      html += doGroupSearch(form,config,'list')
-                elif updateType == 'createobjects': html += doCreateObjects(form,config)
-                elif updateType == 'moveobject':   html += doObjectSearch(form,config,'list')
-                elif updateType == 'objdetails':   html += doObjectDetails(form,config)
+                        html += doLocationSearch(form, webappconfig, 'nolist')
+                elif updateType == 'bedlist':      html += doComplexSearch(form,webappconfig,'select')
+                elif updateType == 'bulkedit':     html += doBulkEditForm(form,webappconfig,'nolist')
+                elif updateType == 'holdings':     html += doAuthorityScan(form,webappconfig)
+                elif updateType == 'locreport':    html += doAuthorityScan(form,webappconfig)
+                elif updateType == 'advsearch':    html += doComplexSearch(form,webappconfig,'select')
+                elif updateType == 'inventory':    html += doLocationSearch(form,webappconfig,'list')
+                elif updateType == 'keyinfo':      html += doLocationSearch(form,webappconfig,'list')
+                elif updateType == 'objinfo':      html += doObjectSearch(form,webappconfig,'list')
+                elif updateType == 'grpinfo':      html += doGroupSearch(form,webappconfig,'list')
+                elif updateType == 'createobjects': html += doCreateObjects(form,webappconfig)
+                elif updateType == 'moveobject':   html += doObjectSearch(form,webappconfig,'list')
+                elif updateType == 'objdetails':   html += doObjectDetails(form,webappconfig)
                 #elif updateType == 'editrel':      html += doRelationsSearch(form,config)
-                elif updateType == 'makegroup':    html += doComplexSearch(form,config,'select')
+                elif updateType == 'makegroup':    html += doComplexSearch(form,webappconfig,'select')
 
-            elif action == "View Hierarchy":
-                html += doHierarchyView(form,config)
-            elif action == "View Holdings":
-                html += doListGovHoldings(form,config)
-            elif action in ['<<','>>']:
-                print "<h3>Sorry not implemented yet! Please try again tomorrow!</h3>"
+            elif update_action_label == "View Hierarchy":
+                html += doHierarchyView(form,webappconfig)
+            elif update_action_label == "View Holdings":
+                html += doListGovHoldings(form,webappconfig)
+            elif update_action_label in ['<<', '>>']:
+                html += "<h3>Sorry not implemented yet! Please try again tomorrow!</h3>"
             else:
                 pass
                 # print "<h3>Unimplemented action %s!</h3>" % str(action)
@@ -148,7 +135,7 @@ def main(request, updateType):
 
     elapsedtime = time.time() - elapsedtime
 
-    writeInfo2log('end', form, config, elapsedtime)
-    html += endhtml(form,config,elapsedtime)
+    writeInfo2log('end', updateType, form, webappconfig, elapsedtime)
+    html += endhtml(form,webappconfig,elapsedtime)
 
     return html, ('%8.2f' % elapsedtime) + ' seconds'

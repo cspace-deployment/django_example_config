@@ -1,6 +1,32 @@
-import sys
+import sys, time, os
 import cswaConstants
 from django.conf import settings
+
+from common import appconfig
+from common.utils import devicetype
+
+def basicSetup(form, webappconfig):
+    parms = [webappconfig.get('info', 'institution')]
+    tool = form.get('tool')
+    for parm in 'updatetype updateactionlabel'.split(' '):
+        try:
+            parms.append(webappconfig.get(tool, parm))
+        except:
+            parms.append('')
+    return parms
+
+
+# get the common parameters
+def configure_common_tools(context, request, action, webappconfig):
+    context['serverlabel'] = webappconfig.get('info', 'serverlabel')
+    context['serverlabelcolor'] = webappconfig.get('info', 'serverlabelcolor')
+    context['institution'] = webappconfig.get('info', 'institution')
+    context['apptitle'] = webappconfig.get(action, 'apptitle')
+    context['version'] = appconfig.getversion()
+    context['device'] = devicetype(request)
+    context['timestamp'] = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
+    context['labels'] = 'name file'.split(' ')
+    return context
 
 
 def makeObjectLink(config, csid, objectnumber):
@@ -34,7 +60,7 @@ def validateParameters(form, config):
         html += '<h3 class="error">Please select a reason before searching.</h3>'
         valid = False
 
-    if config.get('info', 'updatetype') == 'barcodeprint':
+    if form.get('action') == 'barcodeprint':
         if form.get('printer') == 'None':
             html += '<h3 class="error">Please select a printer before trying to print labels.</h3>'
             valid = False
@@ -58,9 +84,9 @@ def validateParameters(form, config):
     return valid, html
 
 
-def getTableFooter(config, displaytype, msg):
+def getTableFooter(config, displaytype, updateType, msg):
     html = ''
-    updateType = config.get('info', 'updatetype')
+    button = config.get(updateType, 'updateactionlabel')
 
     html += """<table width="100%"><tr><td align="center" colspan="3"></tr>"""
     if displaytype == 'error':
@@ -76,7 +102,6 @@ def getTableFooter(config, displaytype, msg):
         html += "</tr>"
     else:
         html += """<tr><td align="center">"""
-        button = config.get('info', 'updateactionlabel')
         html += """<input type="submit" class="save" value="%s" name="action"></td>""" % button
         if updateType == "packinglist":
             html += """<td><input type="submit" class="save" value="%s" name="action"></td>""" % 'Download as CSV'
@@ -286,14 +311,10 @@ def alreadyExists(txt, elements):
     return False
 
 
-def starthtml(form, config):
-    logo = config.get('info', 'logo')
+def starthtml(form, updateType, config):
     schemacolor1 = config.get('info', 'schemacolor1')
-    serverlabel = config.get('info', 'serverlabel')
-    serverlabelcolor = config.get('info', 'serverlabelcolor')
-    apptitle = config.get('info', 'apptitle')
-    updateType = config.get('info', 'updatetype')
     institution = config.get('info', 'institution')
+
     msg = ''
 
     button = '''<input id="actionbutton" class="save" type="submit" value="Search" name="action">'''
@@ -412,7 +433,7 @@ def starthtml(form, config):
         <th><span class="cell">group:</span></th>
         <th><input id="gr.group" class="cell" type="text" size="40" name="gr.group" value="''' + grpinfo + '''" class="xspan"></th>
         <th colspan="4"><i>NB: object number range supersedes location range, if entered;</i><br/>
-        <i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;group identifier supercedes both, if entered.</i></th>
+        <i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;group identifier supersedes both, if entered.</i></th>
         </tr>'''
 
     elif updateType == 'objdetails':
@@ -606,7 +627,7 @@ def starthtml(form, config):
 <th><input id="gr.group" class="cell" type="text" size="40" name="gr.group" value="''' + grpinfo + '''" class="xspan"></th>
 <th colspan="4"><i>NB: object number range supersedes location range, if entered;</i><br/></th>
 <tr><th><span class="cell">printer cluster:</span></th><th>''' + printers + '''</th>
-<th colspan="4"><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;group identifier supercedes both, if entered.</i></th>
+<th colspan="4"><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;group identifier supersedes both, if entered.</i></th>
 </tr>'''
 
     elif updateType == 'inventory':
@@ -630,15 +651,10 @@ def starthtml(form, config):
             if form.get('groupbyculture'): otherfields = otherfields.replace('value="groupbyculture"',
                                                                              'checked value="groupbyculture"')
 
-    elif updateType == 'upload':
-        reasons, selected = cswaConstants.getReasons(form, institution)
-
-        button = '''<input id="actionbutton" class="save" type="submit" value="Upload" name="action">'''
-        otherfields = '''<tr><th><span class="cell">file:</span></th><th><input type="file" name="file"></th><th/></tr>
-<th><span class="cell">reason:</span></th><th>''' + reasons + '''</th>'''
-
     elif updateType == 'hierarchyviewer':
-        hierarchies, selected = cswaConstants.getHierarchies(form)
+
+        authorities = config.get('hierarchyviewer', 'authorities').split(',')
+        hierarchies, selected = cswaConstants.getHierarchies(form, authorities)
         button = '''<input id="actionbutton" class="save" type="submit" value="View Hierarchy" name="action">'''
         otherfields = '''<tr><th><span class="cell">Authority:</span></th><th>''' + hierarchies + '''</th></tr>'''
 
@@ -708,7 +724,7 @@ def endhtml(form, config, elapsedtime):
 });"""
 
     # for object details, clear out the input field on focus, for everything else, just focus
-    if config.get('info', 'updatetype') == 'objdetails':
+    if 'action' in form and form['action'] == 'objdetails':
         focusSnippet = '''$('input:text:first').focus().val("");'''
     else:
         focusSnippet = '''$('input:text:first').focus();'''
