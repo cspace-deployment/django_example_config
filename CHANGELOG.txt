@@ -3,10 +3,71 @@ CHANGELOG for the cspace_django_webapps
 OK, it is not a *real* change log, but a list of changes resulting from git log
 with some human annotation after the fact.
 
-This is version djconfig_4.1-7
-Sun Jun  4 19:31:12 PDT 2017
+This is version djconfig_4.1-8
+Mon Apr 30 21:10:47 PDT 2018
 
-cfefffa (HEAD -> master, origin/master, origin/HEAD) PAHMA-863: add the rest of the permalink app for BAMPFA
+61802dd (HEAD -> master, origin/master, origin/HEAD) BAMPFA-518: put this code where it belongs
+3d81e0e UCJEPS-514: belatedly adding these files to github
+8df35e1 BAMPFA-518: add their buttons.html custom file for posterity
+83abb6c NOJIRA: minor indeed inconsequential cleanup of grouper config file
+8a46140 UCJEPS-580: bMapper XML config file revisions
+da1b476 PAHMA-1299: revisions to support skeleton searching
+ba95076 DJAN-98: add parameters for improved watermarking; also, add new group CSID parameter
+9cacd1b DJAN-115: assorted config file changes for consistency
+d3941d0 DJAN-115: propagate toolbox changes to all tenants
+faa1876 UCBG-445: fix typo
+7690437 UCBG-445: add new media contributors names
+33d9ad2 DJAN-99: update imageserver options to include watermarking
+235cf78 DJAN-115: toolbox now uses a single config file in the config directory
+1c53f48 UCJEPS-559: initial version of a webapp to import csv files, esp. darwin core 'occurrence.tab' files
+0e4d1c5 PAHMA-1615: actually this repair is for pahma, but need to keep this app in sync
+165460f PAHMA-1624: brief description updates being ignored for dates fieldset
+876475b PAHMA-1624: brief description updates being ignored for dates fieldset
+2564ff9 NOJIRA: improve error messages when PUTs from xIR apps fail.
+208b4ea NOJIRA: improve error messages when PUTs from xIR apps fail.
+d301248 PAHMA-1299: the skeleton now works a little bit...
+cdfed73 PAHMA-1299: include skeletal data in facets.
+f4143b9 PAHMA-1299: repair osteology portal (broken by bit rot...)
+c87afe3 PAHMA-1615: revise move apps Handler list
+f117f37 NOJIRA: improve example config file for suggestpostgres
+fec356e NOJIRA: fix FCP searching in osteology and internal portals
+84dd84f BAMPFA-550: update example config file
+4cce156 BAMPFA-550: use correct name for cinestats config file.
+d21985a UCJEPS-622: major group was not getting properly inserted into taxon records.
+deadf2b DJAN-118: repair css styling of buttons
+d738805 UCJEPS-672: taxoneditor now uses common configuration and function, not its own
+86f4385 NOJIRA: make this match the 'generic' readme for fixtures
+e0bf369 UCBG-440: fix typo in SQL that references new dynamic field 'reasonformove'
+6ed4528 Update README
+59d4461 PAHMA-1612: update logo and schema color.
+4c9275a PAHMA-1612: adjust logo urls.
+974c1c3 NOJIRA: remove obsolete config files
+a0cd272 UCJEPS-672: make lookupMajorGroup.py a separate module to facilitate development
+085d719 NOJIRA: the pattern for webapp config files is to configure for Production...
+2c777b1 UCJEPS-674: eloan now restored as a public app on landing page
+ba1b0f3 PAHMA-1602: repair Portal configuration for objfcptree_ss
+dfe7b7e UCJEPS-622: include Taxon Editor as a 'released application' for UCJEPS
+e018dfd UCJEPS-622: numerous fixes and improvements to the Taxon Editor
+f78b579 PAHMA-1594: add 'reference number' to pahmaAltNum dropdown
+6c5a9a4 Merge branch 'master' of https://github.com/cspace-deployment/django_example_config
+f962799 UCJEPS-622: 'alpha' version of the Taxon Editor
+545835c Update public_credits.html
+ce140d9 BAMPFA-550: minor refactoring of this webapps to make it work with existing deployment framework
+49f3c5b DJAN-94: max objects for grouper is now 1,000
+cbe6779 DJAN-94: grouper is now a contributed app
+9d28b0c DJAN-111: use 404 GIF image
+11c5f65 PAHMA-1582: assocpeopletype is now a refname...
+496ab0e NOJIRA: fix extra parens
+963f6ae PAHMA-1582: use 'made by' refname for assocpeopletype in PAHMA updates
+ceec0fc UCBG-441: mc.reasonformove is now a dynamic vocabulary
+eebae26 PAHMA-1581: object type is now a dynamic vocabulary
+607e799 PAHMA-1553: shorten displayed values for pahmaaltnumtype
+3de47a0 PAHMA-1553: use dynamic values for pahmaaltnumtype
+0555086 PAHMA-1553: use dynamic values for pahmaaltnumtype
+52a7a1a NOJIRA: setup urls for new app 'csvimport'
+8540b76 NOJIRA: landing app: list of apps is now a whitelist, not a blacklist
+1b3f99c (tag: djconfig_4.1-7) revise change log for version djconfig_4.1-7
+cfefffa PAHMA-863: add the rest of the permalink app for BAMPFA
 3e48e75 Revert "PAHMA-863: add permalink app to support prettier URLs for permalinks."
 fc9d1ef Merge branch 'master' of https://github.com/cspace-deployment/django_example_config
 48f818e PAHMA-863: add permalink app to support prettier URLs for permalinks.
