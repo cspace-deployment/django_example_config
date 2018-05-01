@@ -129,7 +129,8 @@
     background-repeat: no-repeat;
 }
 
-.osteo label > input[type="radio"] + span {
+.osteo label > input[type="radio"] + span,
+.osteo label > input[type="checkbox"] + span {
     background-image: url(../images/radio-black-unchecked.png);
 }
 
@@ -137,27 +138,27 @@
     background-image: url(../images/checkbox-unchecked.png);
 }
 
-.osteo label > input[type="radio"].absent + span {
+.osteo label > input[type="checkbox"].absent + span {
     background-image: url(../images/radio-red-unchecked.png);
 }
 
-.osteo label > input[type="radio"].complete + span {
+.osteo label > input[type="checkbox"].complete + span {
     background-image: url(../images/radio-blue-unchecked.png);
 }
 
-.osteo label > input[type="checkbox"]:checked + span {
+/* .osteo label > input[type="checkbox"]:checked + span {
     background-image: url(../images/checkbox-checked.png);;
-}
+} */
 
-.osteo label > input[type="radio"]:checked + span {
+.osteo label > input[type="checkbox"]:checked + span {
     background-image: url(../images/radio-black-checked.png);
 }
 
-.osteo label > input[type="radio"].absent:checked + span {
+.osteo label > input[type="checkbox"].absent:checked + span {
     background-image: url(../images/radio-red-checked.png);
 }
 
-.osteo label > input[type="radio"].complete:checked + span {
+.osteo label > input[type="checkbox"].complete:checked + span {
     background-image: url(../images/radio-blue-checked.png);
 }
 

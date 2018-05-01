@@ -1,0 +1,409 @@
+<style>
+    .osteo td {
+        min-width: 250px;
+        text-align: left;
+    }
+
+    .side {
+        min-width: 100px;
+    }
+
+    .amount {
+        min-width: 100px;
+    }
+
+</style>
+<div class="csc-templateEditor"></div>
+<div class="csc-recordEditor-renderer-container fl-container-flex fl-fix information-group info-column">
+
+    <form class="csc-osteology-form" >
+        <p>
+            <input class="prettyBtn" type="submit" id="search" value="Search">
+        </p>
+
+        <div class="osteo-row">
+            <div class="column">
+                <table>
+                    <thead class="flat-label">
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <h3>Sex Determination</h3>
+                        </td>
+                        <td><select style="width: 180px;" name="sex">
+                            <option value="">Please select a value</option>
+                            <option value="Female">Female</option>
+                            <option value="Probably female">Probably female</option>
+                            <option value="Possibly female">Possibly female</option>
+                            <option value="Male">Male</option>
+                            <option value="Probably male">Probably male</option>
+                            <option value="Possibly male">Possibly male</option>
+                            <option value="Indeterminate">Indeterminate</option>
+                            <option value="Unknown">Unknown</option>
+                        </select></td>
+                    </tr>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h3>Head</h3>
+                        </td>
+                        <td><select style="width: 180px;" name="Head">
+                            <option value="">Select bone</option>
+                            <option value="Cranium">Cranium</option>
+                            <option value="Frontal">Frontal</option>
+                            <option value="Occipital">Occipital</option>
+                            <option value="Occipital_pars_basilaris">Occipital_pars_basilaris</option>
+                            <option value="Occipital_pars_lateralis">Occipital_pars_lateralis</option>
+                            <option value="Sphenoid">Sphenoid</option>
+                            <option value="Vomer">Vomer</option>
+                            <option value="Ethmoid">Ethmoid</option>
+                            <option value="Parietal">Parietal</option>
+                            <option value="Temporal">Temporal</option>
+                            <option value="Maxilla">Maxilla</option>
+                            <option value="Nasal">Nasal</option>
+                            <option value="Zygomatic">Zygomatic</option>
+                            <option value="Lacrimal">Lacrimal</option>
+                            <option value="Palatine">Palatine</option>
+                            <option value="Mandible">Mandible</option>
+                            <option value="Orbit">Orbit</option>
+                            <option value="Hyoid">Hyoid</option>
+                        </select></td>
+                        <td class="side">{% include "side.html" %}</td>
+                        <td class="amount">{% include "amount.html" %}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h3>Arm</h3>
+                        </td>
+                        <td><select style="width: 180px;" name="Arm">
+                            <option value="">Select bone</option>
+                            <option value="Humerus">Humerus</option>
+                            <option value="Humerus_JS">Humerus_JS</option>
+                            <option value="Humerus_shaft">Humerus_shaft</option>
+                            <option value="Humerus_JS">Humerus_JS</option>
+                            <option value="Radius">Radius</option>
+                            <option value="Radius_JS">Radius_JS</option>
+                            <option value="Radius_shaft">Radius_shaft</option>
+                            <option value="Radius_JS">Radius_JS</option>
+                            <option value="Ulna">Ulna</option>
+                            <option value="Ulna_JS">Ulna_JS</option>
+                            <option value="Ulna_shaft">Ulna_shaft</option>
+                            <option value="Ulna_JS">Ulna_JS</option>
+                        </select></td>
+                        <td class="side">{% include "side.html" %}</td>
+                        <td class="amount">{% include "amount.html" %}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h3>Leg</h3>
+                        </td>
+                        <td><select style="width: 180px;" name="">
+                            <option value="">Select bone</option>
+                            <option value="Femur">Femur</option>
+                            <option value="Femur_JS">Femur_JS</option>
+                            <option value="Femur_shaft">Femur_shaft</option>
+                            <option value="Femur_JS">Femur_JS</option>
+                            <option value="Tibia">Tibia</option>
+                            <option value="Tibia_JS">Tibia_JS</option>
+                            <option value="Tibia_shaft">Tibia_shaft</option>
+                            <option value="Tibia_JS">Tibia_JS</option>
+                            <option value="Fibula">Fibula</option>
+                            <option value="Fibula_JS">Fibula_JS</option>
+                            <option value="Fibula_shaft">Fibula_shaft</option>
+                            <option value="Fibula_JS">Fibula_JS</option>
+                        </select></td>
+                        <td class="side">{% include "location.html" %}</td>
+                        <td class="amount">{% include "amount.html" %}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h3>Pelvis</h3>
+                        </td>
+                        <td><select style="width: 180px;" name="">
+                            <option value="">Select bone</option>
+                            <option value="Os_coxae">Os coxae</option>
+                            <option value="Ischium">Ischium</option>
+                            <option value="Ilium">Ilium</option>
+                            <option value="Pubis">Pubis</option>
+                            <option value="Acetabulum">Acetabulum</option>
+                            <option value="Auricular_surf">Auricular surf</option>
+                            <option value="Scapula">Scapula</option>
+                            <option value="Glenoid">Glenoid</option>
+                            <option value="Clavicle">Clavicle</option>
+                            <option value="Sternum">Sternum</option>
+                            <option value="Manubrium">Manubrium</option>
+                            <option value="Patella">Patella</option>
+                        </select></td>
+                        <td class="side">{% include "side.html" %}</td>
+                        <td class="amount">{% include "amount.html" %}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h3>Spine</h3>
+                        </td>
+                        <td><select style="width: 180px;" name="">
+                            <option value="">Select bone</option>
+                            <option value="Carpals">Carpals</option>
+                            <option value="Scaphoid">Scaphoid</option>
+                            <option value="Lunate">Lunate</option>
+                            <option value="Triquetral">Triquetral</option>
+                            <option value="Pisiform">Pisiform</option>
+                            <option value="Trapezium">Trapezium</option>
+                            <option value="Trapezoid">Trapezoid</option>
+                            <option value="Capitate">Capitate</option>
+                            <option value="Hamate">Hamate</option>
+                        </select></td>
+                        <td class="side">{% include "side.html" %}</td>
+                        <td class="amount">{% include "amount.html" %}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h3>Foot</h3>
+                        </td>
+                        <td><select style="width: 180px;" name="">
+                            <option value="">Select bone</option>
+                            <option value="Tarsals">Tarsals</option>
+                            <option value="Talus">Talus</option>
+                            <option value="Calcaneus">Calcaneus</option>
+                            <option value="Navicular">Navicular</option>
+                            <option value="Cuboid">Cuboid</option>
+                            <option value="Med_cuneif_1">Med_cuneif_1</option>
+                            <option value="Int_cuneif_2">Int_cuneif_2</option>
+                            <option value="Lat_cuneif_3">Lat_cuneif_3</option>
+                        </select></td>
+                        <td class="side">{% include "side.html" %}</td>
+                        <td class="amount">{% include "amount.html" %}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h3>Ribs</h3>
+                        </td>
+                        <td><select style="width: 180px;" name="">
+                            <option value="">Select bone</option>
+                            <option value="Ribs">Ribs</option>
+                            <option value="Rib1_sternal_end">Rib1_sternal_end</option>
+                            <option value="Rib1_head_neck">Rib1_head_neck</option>
+                            <option value="Rib1">Rib1</option>
+                            <option value="Rib2_sternal_end">Rib2_sternal_end</option>
+                            <option value="Rib2_head_neck">Rib2_head_neck</option>
+                            <option value="Rib2">Rib2</option>
+                            <option value="Rib3_sternal_end">Rib3_sternal_end</option>
+                            <option value="Rib3_head_neck">Rib3_head_neck</option>
+                            <option value="Rib3">Rib3</option>
+                            <option value="Rib4_sternal_end">Rib4_sternal_end</option>
+                            <option value="Rib4_head_neck">Rib4_head_neck</option>
+                            <option value="Rib4">Rib4</option>
+                            <option value="Rib5_sternal_end">Rib5_sternal_end</option>
+                            <option value="Rib5_head_neck">Rib5_head_neck</option>
+                            <option value="Rib5">Rib5</option>
+                            <option value="Rib6_sternal_end">Rib6_sternal_end</option>
+                            <option value="Rib6_head_neck">Rib6_head_neck</option>
+                            <option value="Rib6">Rib6</option>
+                            <option value="Rib7_sternal_end">Rib7_sternal_end</option>
+                            <option value="Rib7_head_neck">Rib7_head_neck</option>
+                            <option value="Rib7">Rib7</option>
+                            <option value="Rib8_sternal_end">Rib8_sternal_end</option>
+                            <option value="Rib8_head_neck">Rib8_head_neck</option>
+                            <option value="Rib8">Rib8</option>
+                            <option value="Rib9_sternal_end">Rib9_sternal_end</option>
+                            <option value="Rib9_head_neck">Rib9_head_neck</option>
+                            <option value="Rib9">Rib9</option>
+                            <option value="Rib10_sternal_end">Rib10_sternal_end</option>
+                            <option value="Rib10_head_neck">Rib10_head_neck</option>
+                            <option value="Rib10">Rib10</option>
+                            <option value="Rib11_sternal_end">Rib11_sternal_end</option>
+                            <option value="Rib11_head_neck">Rib11_head_neck</option>
+                            <option value="Rib11">Rib11</option>
+                            <option value="Rib12_sternal_end">Rib12_sternal_end</option>
+                            <option value="Rib12_head_neck">Rib12_head_neck</option>
+                            <option value="Rib12">Rib12</option>
+                        </select></td>
+                        <td class="side">{% include "side.html" %}</td>
+                        <td class="amount">{% include "amount.html" %}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h3>MC</h3>
+                        </td>
+                        <td><select style="width: 180px;" name="">
+                            <option value="">Select bone</option>
+                            <option value="MC">MC</option>
+                            <option value="MC1">MC1</option>
+                            <option value="MC2">MC2</option>
+                            <option value="MC3">MC3</option>
+                            <option value="MC4">MC4</option>
+                            <option value="MC5">MC5</option>
+                        </select></td>
+                        <td class="side">{% include "side.html" %}</td>
+                        <td class="amount">{% include "amount.html" %}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h3>MT</h3>
+                        </td>
+                        <td><select style="width: 180px;" name="">
+                            <option value="">Select bone</option>
+                            <option value="MT">MT</option>
+                            <option value="MT1">MT1</option>
+                            <option value="MT2">MT2</option>
+                            <option value="MT3">MT3</option>
+                            <option value="MT4">MT4</option>
+                            <option value="MT5">MT5</option>
+                        </select></td>
+                        <td class="side">{% include "side.html" %}</td>
+                        <td class="amount">{% include "amount.html" %}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h3>Vertebrae</h3>
+                        </td>
+                        <td><select style="width: 180px;" name="">
+                            <option value="">Select bone</option>
+                            <option value="Vertebrae">Vertebrae</option>
+                            <option value="C1">C1</option>
+                            <option value="C2">C2</option>
+                            <option value="C3">C3</option>
+                            <option value="C4">C4</option>
+                            <option value="C5">C5</option>
+                            <option value="C6">C6</option>
+                            <option value="C7">C7</option>
+                            <option value="T1">T1</option>
+                            <option value="T2">T2</option>
+                            <option value="T3">T3</option>
+                            <option value="T4">T4</option>
+                            <option value="T5">T5</option>
+                            <option value="T6">T6</option>
+                            <option value="T7">T7</option>
+                            <option value="T8">T8</option>
+                            <option value="T9">T9</option>
+                            <option value="T10">T10</option>
+                            <option value="T11">T11</option>
+                            <option value="T12">T12</option>
+                            <option value="L1">L1</option>
+                            <option value="L2">L2</option>
+                            <option value="L3">L3</option>
+                            <option value="L4">L4</option>
+                            <option value="L5">L5</option>
+                            <option value="Sacrum">Sacrum</option>
+                            <option value="Sacrum_alae">Sacrum_alae</option>
+                            <option value="S1">S1</option>
+                            <option value="S1_ala">S1_ala</option>
+                            <option value="S2">S2</option>
+                            <option value="S2_ala">S2_ala</option>
+                            <option value="S3">S3</option>
+                            <option value="S3_ala">S3_ala</option>
+                            <option value="S4">S4</option>
+                            <option value="S4_ala">S4_ala</option>
+                            <option value="S5">S5</option>
+                            <option value="S5_ala">S5_ala</option>
+                            <option value="Coccyx">Coccyx</option>
+                        </select></td>
+                        <td class="side">{% include "spine.html" %}</td>
+                        <td class="amount">{% include "amount.html" %}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h3>Permanent Dentition</h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <legend>Upper</legend>
+                        </td>
+                        <td><select style="width: 180px;" name="">
+                            <option value="">Select tooth</option>
+                            <option value="Teeth_UI1">Teeth_UI1</option>
+                            <option value="Teeth_UI2">Teeth_UI2</option>
+                            <option value="Teeth_UC">Teeth_UC</option>
+                            <option value="Teeth_UP3">Teeth_UP3</option>
+                            <option value="Teeth_UP4">Teeth_UP4</option>
+                            <option value="Teeth_UM1">Teeth_UM1</option>
+                            <option value="Teeth_UM2">Teeth_UM2</option>
+                            <option value="Teeth_UM3">Teeth_UM3</option>
+                        </select></td>
+                        <td class="side">{% include "side.html" %}</td>
+                        <td class="amount">{% include "amount.html" %}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <legend>Lower</legend>
+                        </td>
+                        <td><select style="width: 180px;" name="">
+                            <option value="">Select tooth</option>
+                            <option value="TeethI1">TeethI1</option>
+                            <option value="TeethI2">TeethI2</option>
+                            <option value="TeethC">TeethC</option>
+                            <option value="TeethP3">TeethP3</option>
+                            <option value="TeethP4">TeethP4</option>
+                            <option value="TeethM1">TeethM1</option>
+                            <option value="TeethM2">TeethM2</option>
+                            <option value="TeethM3">TeethM3</option>
+                        </select></td>
+                        <td class="side">{% include "side.html" %}</td>
+                        <td class="amount">{% include "amount.html" %}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h3>Deciduous Dentition</h3>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <legend>Upper</legend>
+                        </td>
+                        <td><select style="width: 180px;" name="">
+                            <option value="">Select tooth</option>
+                            <option value="Teeth_decid_Udi1">Teeth_decid_Udi1</option>
+                            <option value="Teeth_decid_Udi2">Teeth_decid_Udi2</option>
+                            <option value="Teeth_decid_Udc">Teeth_decid_Udc</option>
+                            <option value="Teeth_decid_Udm1">Teeth_decid_Udm1</option>
+                            <option value="Teeth_decid_Udm2">Teeth_decid_Udm2</option>
+                        </select></td>
+                        <td class="side">{% include "side.html" %}</td>
+                        <td class="amount">{% include "amount.html" %}</td>
+                    </tr>
+                    </tr>
+                    <tr>
+                        <td>
+                            <legend>Lower</legend>
+                        </td>
+                        <td><select style="width: 180px;" name="">
+                            <option value="">Select tooth</option>
+                            <option value="Teeth_deciddi1">Teeth_deciddi1</option>
+                            <option value="Teeth_deciddi2">Teeth_deciddi2</option>
+                            <option value="Teeth_deciddc">Teeth_deciddc</option>
+                            <option value="Teeth_deciddm1">Teeth_deciddm1</option>
+                            <option value="Teeth_deciddm2">Teeth_deciddm2</option>
+                        </select></td>
+                        <td class="side">{% include "side.html" %}</td>
+                        <td class="amount">{% include "amount.html" %}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div class="immVertFrags">
+                    <h3>Imm. Vert. frags</h3>
+                    Count <input type="text" name="Teeth_immVertFragsCount">
+                </div>
+            </div>
+        </div>
+
+        <div class="info-column">
+            <div class="info-column2-50 fl-force-left">
+                <div class="info-pair">
+                    <div class="header">
+                        <div class="label csc-osteology-NotesOnElementInventory-label">Notes on inventory</div>
+                    </div>
+                    <div class="content">
+                <textarea class="csc-osteology-NotesOnElementInventory" id=".csc-osteology-NotesOnElementInventory"
+                          name=".csc-osteology-NotesOnElementInventory"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="resultsPanel">
+        </div>
+    </form>
+</div>

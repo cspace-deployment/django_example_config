@@ -4,9 +4,7 @@
 
 {% block extrastyle %}
     <link rel="stylesheet" type="text/css" href="{% static "common/css/theme.blue.css" %}"/>
-    <link rel="stylesheet" type="text/css"
-          href="{% static "cspace_django_site/css/smoothness/jquery-ui-1.10.3.custom.min.css" %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static "common/css/PublicSearch.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "cspace_django_site/css/smoothness/jquery-ui-1.10.3.custom.min.css" %}"/>
 
     <link rel="stylesheet" type="text/css" href="{% static "css/fss-reset.css" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static "css/fss-layout.css" %}"/>
@@ -23,6 +21,7 @@
     <link rel="stylesheet" type="text/css" href="{% static "css/repeatable.css" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static "css/datepicker.css" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static "css/osteo.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "common/css/PublicSearch.css" %}"/>
     <!--[if lt IE 9]>
     <link rel="stylesheet" type="text/css" href=".{% static "css/cspace_ie.css" %}"/> <![endif]-->
 {% endblock %}
@@ -37,7 +36,38 @@
 {% block content %}
     <div id="content-main">
         {% include "toggled.html" %}
-        {% include "skeleton.html" %}
-        {% include "searchResults.html" %}
+
+
+        {% if resultsOnly %}
+            {% include "shrine.html" %}
+        {% else %}
+            <div class="searchPanel">
+                <form class="searchForm" id="search">
+                    {% csrf_token %}
+                    <div id="searchfieldsTarget">
+                        {% include "fields.html" %}
+                        {% include "skeleton.html" %}
+                        {% include "buttons.html" %}
+                    </div>
+                </form>
+            </div>
+            <div id="waitingImage" style="display: none">
+                <h1><img style="vertical-align: middle"
+                         src="{% static "cspace_django_site/images/timer-animated.gif" %}"
+                         alt="Searching..."/> Searching...</h1>
+            </div>
+            <div id="resultsPanel">
+                {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                {% if count > 0 %}
+                    {% include "searchResults.html" %}
+                {% endif %}
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

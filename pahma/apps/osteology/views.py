@@ -34,12 +34,18 @@ logger.info('%s :: %s :: %s' % ('osteology portal startup', '-', '%s | %s | %s' 
 
 def gatherosteoparms(searchvalues):
     aggregate = []
+    search_keys = []
     for key in searchvalues.keys():
         if key == 'csrfmiddlewaretoken' : continue
         if searchvalues[key] == '': continue
         searchkey = key.replace('csc-osteology-','')
-        aggregate.append('%s=%s' % (searchkey.lower(), searchvalues[key]))
-    return {'aggregate': ' '.join(aggregate), 'aggregate_qualifier': 'phrase'}
+        search_keys.append(searchkey)
+        aggregate.append('aggregate_ss:"%s"' % searchkey.lower())
+        #aggregate.append(searchkey.lower())
+        #aggregate.append('%s=%s' % (searchkey.lower(), searchvalues[key]))
+    # e.g.: aggregate_ss:"cranium=3" OR  aggregate_ss:"cranium=0"
+    return aggregate, search_keys
+    #return {'aggregate': ' '.join(aggregate), 'aggregate_qualifier': 'special'}
 
 def direct(request):
     return redirect('search/')
@@ -63,12 +69,15 @@ def search(request):
 def skeleton(request):
     if request.method == 'GET' and request.GET != {}:
         # context = {'searchValues': dict(request.GET.iteritems())}
-        context = {'searchValues': gatherosteoparms(dict(request.GET.iteritems()))}
+        aggregate, search_keys = gatherosteoparms(dict(request.GET.iteritems()))
+        requestObject = {'querystring': (' OR '.join(aggregate)), 'url': 'url', 'special': 'true'}
+        context = {'searchValues': requestObject}
+        context['aggregate'] = search_keys
         context = doSearch(context, prmz, request)
     else:
         context = setConstants({}, prmz, request)
 
-    loginfo(logger, 'start search', context, request)
+    loginfo(logger, 'start skeleton search', context, request)
     context['additionalInfo'] = AdditionalInfo.objects.filter(live=True)
     context['extra_nav'] = {'href': '../search', 'id': 'search', 'name': 'Metadata Search'}
     return render(request, 'osteo.html', context)
