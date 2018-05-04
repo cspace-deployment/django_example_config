@@ -3,10 +3,14 @@ CHANGELOG for the cspace_django_webapps
 OK, it is not a *real* change log, but a list of changes resulting from git log
 with some human annotation after the fact.
 
-This is version djconfig_4.1-8
-Mon Apr 30 21:10:47 PDT 2018
+This is version djconfig_4.1-9
+Fri May  4 10:45:01 PDT 2018
 
-61802dd (HEAD -> master, origin/master, origin/HEAD) BAMPFA-518: put this code where it belongs
+eca9ecd (HEAD -> master, origin/master, origin/HEAD) UCJEPS-514: put these portal customizations where they belong.
+a2b0881 DJAN-115: rename config files for consistency
+51708cc DJAN-98: correct imageserver config for botgarden watermark
+e601933 (tag: djconfig_4.1-8) revise change log and VERSION file for version djconfig_4.1-8
+61802dd BAMPFA-518: put this code where it belongs
 3d81e0e UCJEPS-514: belatedly adding these files to github
 8df35e1 BAMPFA-518: add their buttons.html custom file for posterity
 83abb6c NOJIRA: minor indeed inconsequential cleanup of grouper config file
