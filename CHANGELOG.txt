@@ -3,10 +3,13 @@ CHANGELOG for the cspace_django_webapps
 OK, it is not a *real* change log, but a list of changes resulting from git log
 with some human annotation after the fact.
 
-This is version djconfig_4.1-9
-Fri May  4 10:45:01 PDT 2018
+This is version djconfig_4.1-10
+Fri May  4 20:17:35 PDT 2018
 
-eca9ecd (HEAD -> master, origin/master, origin/HEAD) UCJEPS-514: put these portal customizations where they belong.
+0e88afc (HEAD -> master, origin/master, origin/HEAD) NOJIRA: use correct identifier for ucjeps objectno in portal config
+c124ecd UCJEPS-514: use 'Open Sans' in customized portal
+45f27a6 (tag: djconfig_4.1-9) revise change log and VERSION file for version djconfig_4.1-9
+eca9ecd UCJEPS-514: put these portal customizations where they belong.
 a2b0881 DJAN-115: rename config files for consistency
 51708cc DJAN-98: correct imageserver config for botgarden watermark
 e601933 (tag: djconfig_4.1-8) revise change log and VERSION file for version djconfig_4.1-8
