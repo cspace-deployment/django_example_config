@@ -35,7 +35,9 @@
 <concept viewlist="1" datatype="darwin:catalognumbertext" alias="Catalog Number" />
 <concept viewlist="1" datatype="darwin:scientificname" alias="Scientific Name" />
 <concept viewlist="1" datatype="darwin:collector" alias="Collector" />
+<concept viewlist="1" datatype="char120:1" alias="Collector Num Prefix" />
 <concept viewlist="1" datatype="char120:2" alias="Collector Num" />
+<concept viewlist="1" datatype="char120:3" alias="Collector Num Suffix" />
 <concept viewlist="0" datatype="char255:1" alias="early J date" />
 <concept viewlist="0" datatype="char255:2" alias="late J date" />
 <concept viewlist="1" datatype="char120:4" alias="Date Collected" />
