@@ -2,8 +2,8 @@
 #																x
 title	Search															x
 #																x
-revision	1.7															x
-date	04/30/17															x
+revision	1.8															x
+date	05/20/18															x
 #																x
 server	http://localhost:8983/solr															x
 core	ucjeps-public															x
@@ -24,16 +24,16 @@ field	10	collectionnumber	Collection Number	collectornumber_s			keyword	2,3		6	5
 field	11	collectiondate	Date Collected	collectiondate_s			keyword	2,2		10	4	8			7	x
 field	12	earlycollectiondate	earlycollectiondate_dt	earlycollectiondate_dt			date			8					8	x
 field	13	latecollectiondate	latecollectiondate	latecollectiondate_dt			date			9					9	x
-field	14	localityverbatim	Locality (verbatim)	locality_s			keyword			13	9	9	3		10	x
-field	15	localitynote	Locality Note	localitynote_s			keyword					10			11	x
-field	16	localitysource	Locality Source	localitysource_s			keyword					11			12	x
-field	17	localitysourcedetail	Locality Source Detail	localitysourcedetail_s			keyword					12			13	x
-field	18	county	County	collcounty_s			dropdown	4,1	5	11	6	13			14	x
-field	19	state	State	collstate_s			dropdown	4,2	6		7	14			15	x
-field	20	country	Country	collcountry_s			dropdown	4,3	7		8	15			16	x
-field	21	elevation	Elevation	elevation_s			keyword			12		16			17	x
-field	22	minelevation	Min elevation	minelevation_f			keyword					17			18	x
-field	23	maxelevation	Max elevation	maxelevation_f			keyword					18			19	x
+field	14	localityverbatim	Locality (verbatim)	locality_s			keyword			13	9	10	3		10	x
+field	15	localitynote	Locality Note	localitynote_s			keyword					11			11	x
+field	16	localitysource	Locality Source	localitysource_s			keyword					12			12	x
+field	17	localitysourcedetail	Locality Source Detail	localitysourcedetail_s			keyword					13			13	x
+field	18	county	County	collcounty_s			dropdown	4,1	5	11	6	14			14	x
+field	19	state	State	collstate_s			dropdown	4,2	6		7	15			15	x
+field	20	country	Country	collcountry_s			dropdown	4,3	7		8	16			16	x
+field	21	elevation	Elevation	elevation_s			keyword			12		18			17	x
+field	22	minelevation	Min elevation	minelevation_f			keyword					19			18	x
+field	23	maxelevation	Max elevation	maxelevation_f			keyword					20			19	x
 field	24	elevationunit	Elevation unit	elevationunit_s			keyword					21			20	x
 field	25	habitat	Habitat	habitat_s			keyword					22			21	x
 field	26	latlong	LatLong	latlong_p			location								22	x
@@ -43,8 +43,8 @@ field	29	trscoordinates	TRS coordinates	trscoordinates_s			dropdown							1	25	x
 field	30	datum	Datum	datum_s			dropdown			14				2	26	x
 field	31	coordinatesource	Coordinate source	coordinatesource_s			dropdown							3	27	x
 field	32	coordinateuncertainty	Coordinate uncertainty	coordinateuncertainty_f			keyword							4	28	x
-field	33	coordinateuncertaintyunit	Coordinate uncertainty unit	coordinateuncertaintyunit_s			keyword					42		5	29	x
-field	34	updatedat	Last updated at	updatedat_dt			date					45			30	x
+field	33	coordinateuncertaintyunit	Coordinate uncertainty unit	coordinateuncertaintyunit_s			keyword					43		5	29	x
+field	34	updatedat	Last updated at	updatedat_dt			date					46			30	x
 field	35	previousdeterminations	Previous Determinations	previousdeterminations_ss			keyword					5			31	x
 field	36	localname	Local Name	localname_s			keyword					23			32	x
 field	37	briefdescription	Description	briefdescription_s			keyword					24			33	x
@@ -55,25 +55,28 @@ field	41	ucbgaccessionnumber	UCBG Accession Number	ucbgaccessionnumber_s			keywo
 field	42	loanstatus	Loan Status	loanstatus_s			dropdown					29			38	x
 field	43	loannumber	Loan Number	loannumber_s			keyword					30			39	x
 field	44	labelheader	Label Header	labelheader_s			keyword					1			40	x
-field	45	labelfooter	Label Footer	labelfooter_s			keyword					41			41	x
+field	45	labelfooter	Label Footer	labelfooter_s			keyword					42			41	x
 field	46	depth	Depth	depth_s			keyword					32			42	x
 field	47	mindepth	Min. Depth	mindepth_s			keyword					33			43	x
 field	48	maxdepth	Max. Depth	maxdepth_s			keyword					34			44	x
 field	49	depthunit	Depth Unit	depthunit_s			keyword					35			45	x
-field	50	cultivated	Cultivated	cultivated_s			dropdown	5,1				36			46	x
-field	51	sex	Sex	sex_s			dropdown					37			47	x
-field	52	phase	Phase	phase_s			dropdown					39			48	x
+field	50	cultivated	Cultivated?	cultivated_s			dropdown	5,1				36			46	x
+field	51	sex	Sex	sex_s			dropdown					38			47	x
+field	52	phase	Phase	phase_s			dropdown					40			48	x
 field	53	determinationdetails	Determination Details	determinationdetails_s			keyword					4			49	x
 field	54	alllocalities	Localities	alllocalities_ss			keyword	3,1								x
-field	55	hastypeassertions	Type Assertions?	hastypeassertions_s			dropdown	5,2				38			46	x
-field	56	comments	Comments	comments_ss			keyword					43			51	x
+field	55	hastypeassertions	Type Assertions?	hastypeassertions_s			dropdown	5,2				39			46	x
+field	56	comments	Comments	comments_ss			keyword					44			51	x
 field	57	blobs	Images	blob_ss			blob								50	x
 #	58	constant fields which contain no data but are inserted into form for obvious reasons!														x
-field	59	loanrequest	email a request for this item	mailto:ucjepscomments@lists.berkeley.edu?Subject=Loan of {{ i.accession }}, ({{ i.loannumber }})			constant					31				x
-field	60	comment	email a comment about this record	mailto:ucjepscomments@lists.berkeley.edu?Subject={{ i.accession }}			constant					44				x
+#	59	loanrequest	request this item	mailto:ucjepscomments@lists.berkeley.edu?Subject=Loan of 			constant					31				x
+field	60	comment	email a comment	mailto:ucjepscomments@lists.berkeley.edu?Subject=Accession 			constant					45				x
 #	61	these two fields are placeholders used to create needed empty columns in the bMapper file														x
 field	62	collnumprefix	Collector Num Prefix	na			constant			5						x
 field	63	collnumsuffix	Collector Num Suffix	na			constant			7						x
 field	64	hasimage	Has image(s)?	blob_ss			present	5,3								x
 field	65	hascoords	Has coordinates?	latlong_p			present	6,3								x
-field	66	sheet	Sheet	sheet_s								40			52	x
+field	66	sheet	Sheet	sheet_s								41			52	x
+field	67	subheader1	Locality Details				subheader					9				x
+field	68	subheader2	Habitat Details				subheader					17				x
+field	69	subheader3	Characterizing Details				subheader					37				x
