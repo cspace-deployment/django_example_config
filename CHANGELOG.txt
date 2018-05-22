@@ -3,10 +3,28 @@ CHANGELOG for the cspace_django_webapps
 OK, it is not a *real* change log, but a list of changes resulting from git log
 with some human annotation after the fact.
 
-This is version djconfig_4.1-10
-Fri May  4 20:17:35 PDT 2018
+This is version djconfig_4.1-11
+Mon May 21 19:35:43 PDT 2018
 
-0e88afc (HEAD -> master, origin/master, origin/HEAD) NOJIRA: use correct identifier for ucjeps objectno in portal config
+51d78a7 (HEAD -> master, origin/master, origin/HEAD) UCBG-463: update portal parms 'internal version' number.
+5c81321 UCJEP-564: changes to portal config file.
+9479284 NOJIRA: portal default display for ucjeps should be 'list'
+f4cf51a UCBG-463: add 'source' to portal config files
+33544ba DJAN-115: make example config files more consistent
+dc47653 NOJIRA: improvements to pahma toolbox and bmu configuration
+2d085b5 NOJIRA: inline documentation of configuration of uploadtricoder
+4f26419 DJAN-115: CSIDFIELD parameter is required in current version of grouper
+95a7ba7 DJAN-155: specify correct apps for toolbox for these 2 deployments
+a7c6f7d NOJIRA: ucjeps bmapper config needs these 2 fields to work properly
+1283836 DJAN-155: imaginator max results now 100, for all deployments
+bb48561 DJAN-155: 'landing' app does not need logo specified, except to indicate that it is a config file
+50d0a64 DJAN-155: grouper default max records is now 1,000
+94ee069 DJAN-115: ongoing refinements to example config files
+15a9022 DJAN-45: remove cruft of old google analytics approach
+31faae8 DJAN-115: put the cinefiles bmu batch file where it belongs
+85a48eb NOJIRA: incremental improvements to example config files
+c9a6fb8 (tag: djconfig_4.1-10) revise change log and VERSION file for version djconfig_4.1-10
+0e88afc NOJIRA: use correct identifier for ucjeps objectno in portal config
 c124ecd UCJEPS-514: use 'Open Sans' in customized portal
 45f27a6 (tag: djconfig_4.1-9) revise change log and VERSION file for version djconfig_4.1-9
 eca9ecd UCJEPS-514: put these portal customizations where they belong.
