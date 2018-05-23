@@ -77,7 +77,7 @@ field	62	blobs	Images	blob_ss			blob								41	x
 field	63	hasimage	Has image(s)?	blob_ss			present	13,3								x
 field	64	hascoords	Has coordinates?	latlong_p			present	14,3								x
 field	65	source	Source	source_s			keyword	4,2			7				42	x
-field	66	group	Group	group_ss			keyword	13,2			43				43	x
+field	66	group	Group	grouptitle_ss			keyword	13,2			43				43	x
 field	67	researcher	Researcher Name	researcher_s			keyword	14,2			44				44	x
 field	68	latitude	Latitude	latitude_f			keyword								45	x
 field	69	longitude	Longitude	longitude_f			keyword								46	x
