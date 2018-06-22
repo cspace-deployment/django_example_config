@@ -8,7 +8,7 @@ import urllib
 import urllib2
 from cspace_django_site.main import cspace_django_site
 from eloanutils import get_entity, build_solr_query, getInstitutionCodefromDisplayName, getShortIdfromRefName
-from publicsearch.utils import getfromXML
+from common.utils import getfromXML
 
 
 # alas, there are many ways the XML parsing functionality might be installed.

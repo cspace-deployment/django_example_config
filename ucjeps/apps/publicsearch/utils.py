@@ -100,111 +100,6 @@ def getfacets(response):
     return _facets
 
 
-def parseTerm(queryterm):
-    queryterm = queryterm.strip(' ')
-    terms = queryterm.split(' ')
-    terms = ['"' + t + '"' for t in terms]
-    result = ' AND '.join(terms)
-    if 'AND' in result: result = '(' + result + ')' # we only need to wrap the query if it has multiple terms
-    return result
-
-
-def makeMarker(result):
-    if 'L1' in result and 'L2' in result:
-        #return 'color:green%%7Clabel:G%%7C%s,%s' % (result['L1'], result['L2'])
-        #return 'label:%s%%7C%s,%s' % (result['accession'],result['L1'], result['L2'])
-        return '%s,%s' % (result['L1'], result['L2'])
-    else:
-        return None
-
-
-def writeCsv(filehandle, items, writeheader):
-    fieldset = getfields('csvdata')
-    writer = csv.writer(filehandle, delimiter='\t')
-    # write the berkeley mapper header as the header for the csv file, if asked...
-    if writeheader:
-        writer.writerow(getfields('bmapperheader'))
-    for item in items:
-        # get the cells from the item dict in the order specified; make empty cells if key is not found.
-        row = []
-        for x in fieldset:
-            if x in item.keys():
-                cell = item[x]
-            else:
-                cell = ''
-                # the following few lines are a hack to handle non-unicode data which appears to be present in the solr datasource
-            if isinstance(cell, unicode):
-                try:
-                    cell = cell.translate({0xd7: u"x"})
-                    cell = cell.decode('utf-8', 'ignore').encode('utf-8')
-                    #cell = cell.decode('utf-8','ignore').encode('utf-8')
-                    #cell = cell.decode('utf-8').encode('utf-8')
-                except:
-                    print 'unicode problem', cell.encode('utf-8', 'ignore')
-                    cell = u'invalid unicode data'
-            row.append(cell)
-        writer.writerow(row)
-
-
-def setupGoogleMap(requestObject, context):
-    selected = []
-    for p in requestObject:
-        if 'item-' in p:
-            selected.append(requestObject[p])
-    mappableitems = []
-    markerlist = []
-    for item in context['items']:
-        if item['csid'] in selected:
-            m = makeMarker(item)
-            if len(mappableitems) >= MAXMARKERS: break
-            if m is not None:
-                #print 'm= x%sx' % m
-                markerlist.append(m)
-                mappableitems.append(item)
-    context['mapmsg'] = []
-    if len(context['items']) < context['count']:
-        context['mapmsg'].append('%s points plotted. %s selected objects examined (of %s in result set).' % (
-            len(markerlist), len(selected), context['count']))
-    else:
-        context['mapmsg'].append(
-            '%s points plotted. all %s selected objects in result set examined.' % (len(markerlist), len(selected)))
-    context['items'] = mappableitems
-    context['markerlist'] = '&markers='.join(markerlist[:MAXMARKERS])
-    if len(markerlist) >= MAXMARKERS:
-        context['mapmsg'].append(
-            '%s points is the limit. Only first %s accessions (with coordinates) plotted!' % (MAXMARKERS, len(markerlist)))
-    return context
-
-
-def setupBMapper(requestObject, context):
-    context['berkeleymapper'] = 'set'
-    selected = []
-    for p in requestObject:
-        if 'item-' in p:
-            selected.append(requestObject[p])
-    mappableitems = []
-    for item in context['items']:
-        if item['csid'] in selected:
-            m = makeMarker(item)
-            if m is not None:
-                mappableitems.append(item)
-    context['mapmsg'] = []
-    filename = 'bmapper%s.csv' % datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S")
-    #filehandle = open(filename, 'wb')
-    filehandle = open(path.join(LOCALDIR, filename), 'wb')
-    writeCsv(filehandle, mappableitems, writeheader=False)
-    filehandle.close()
-    context['mapmsg'].append('%s points of the %s selected objects examined had coordinates (%s in result set).' % (
-        len(mappableitems), len(selected), context['count']))
-    #context['mapmsg'].append('if our connection to berkeley mapper were working, you be able see them plotted there.')
-    context['items'] = mappableitems
-    bmapperconfigfile = '%s/%s/%s' % (BMAPPERSERVER, BMAPPERDIR, BMAPPERCONFIGFILE)
-    tabfile = '%s/%s/%s' % (BMAPPERSERVER, BMAPPERDIR, filename)
-    print BMAPPERURL
-    context['bmapperurl'] = BMAPPERURL % (tabfile, bmapperconfigfile)
-    return context
-    # return HttpResponseRedirect(context['bmapperurl'])
-
 
 def setDisplayType(requestObject):
     if 'displayType' in requestObject:
@@ -412,7 +307,6 @@ def doSearch(solr_server, solr_core, context):
         # blobs are handled specially
         if 'blobs' in item.keys():
                 item['blobs'] = item['blobs'].split(';')
-        item['marker'] = makeMarker(item)
         context['items'].append(item)
 
     if context['displayType'] in ['full', 'grid'] and response._numFound > MAXLONGRESULTS:
