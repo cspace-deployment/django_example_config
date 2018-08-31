@@ -725,78 +725,63 @@ def doBulkEditForm(form, config, displaytype):
 
 
 def doCreateObjects(form, config):
-    html = ''
 
     institution, updateType, updateactionlabel = basicSetup(form, config)
     msgs = []
 
-    html += '''<table width="100%" cellpadding="8px"><tbody><tr class="smallheader">
-      <td>Item</td><td>Value</td>'''
+    html = '''<table width="100%" cellpadding="8px"><tbody><tr class="smallheader">
+      <td>Item</td><td>Object Number</td>'''
 
-    year, msg = getints('create.year', form)
-    if msg != '': msgs.append(msg)
-    accession, msg = getints('create.accession', form)
-    if msg != '': msgs.append(msg)
-    sequence, msg = getints('create.sequence', form)
-    if msg != '': msgs.append(msg)
-    count, msg = getints('create.count', form)
-    if msg != '': msgs.append(msg)
+    if 'objects' in form:
+        objectnumbers = form['objects'].strip()
+        objectnumbers = re.sub(r"[\r\n ]+", ' ', objectnumbers)
+        if objectnumbers == '':
+            pass
+        else:
+            objectnumbers_escaped = objectnumbers.replace(')', '\)').replace('(', '\(').replace('+', '\+')
+            objectnumbers_escaped = objectnumbers_escaped.split(' ')
+            objectnumbers = objectnumbers.split(' ')
 
+
+    totalobjects = len(objectnumbers)
     try:
-        startsortobject = '%0.10d.%0.10d.%0.10d' % (year, accession, sequence)
-        startobject = '%s.%s.%s' % (year, accession, sequence)
+        for i, o in enumerate(objectnumbers):
+            csid = cswaDB.getCSID('objectnumber', o, config)
+            if csid is not None:
+                msgs.append('an object with object number %s already exists!' % o)
+            html += "<tr><td>%s</td><td>%s</td></tr>" % (i+1, o)
     except:
-        startobject = 'invalid'
-        msgs.append('start object value invalid')
-
-    try:
-        endsortobject = '%0.10d.%0.10d.%0.10d' % (year, accession, sequence + count - 1)
-        endobject = '%s.%s.%s' % (year, accession, sequence + count - 1)
-    except:
-        endobject = 'invalid'
-        msgs.append('end object value invalid')
-
-    try:
-        objs = cswaDB.getlistofobjects('range', startsortobject, endsortobject, 100, config)
-        totalobjects = len(objs)
-        if totalobjects != 0:
-            msgs.append('there are already %s objects in this range!' % totalobjects)
-            msgs.append('(%s to %s)' % (startobject, endobject))
-            for o in objs:
-                msgs.append(o[0])
-    except:
-        msgs.append('problem checking object range')
+        msgs.append('problem checking object list')
         totalobjects = -1
 
-    if count > 100:
+    if totalobjects > 100:
         msgs.append('Maximum objects you can create at one time is 100.')
         msgs.append('Consider breaking your work into chunks of 100.')
 
     if len(msgs) == 0:
-        html += "<tr><td>%s</td><td>%s</td></tr>" % ('first object', startobject)
-        html += "<tr><td>%s</td><td>%s</td></tr>" % ('last object', endobject)
-        html += "<tr><td>%s</td><td>%s</td></tr>" % ('objects requested', count)
 
-        if form.get('action') == config.get('info', 'updateactionlabel'):
+        if form.get('action') == updateactionlabel:
+
+            html = '''<table width="100%" cellpadding="8px"><tbody><tr class="smallheader">
+              <td>Object Number</td><td>CSID</td>'''
+
             # create objects here
-            for seq in range(count):
-                objectNumber = '%s.%s.%s' % (year, accession, sequence + seq)
-                sortableobjectnumber = '%0.10d.%0.10d.%0.10d' % (year, accession, sequence + seq)
+            for count, objectNumber in enumerate(objectnumbers):
+                #sortableobjectnumber = '%0.10d.%0.10d.%0.10d' % (year, accession, sequence + seq)
                 objectinfo = {'objectNumber': objectNumber}
-                objectinfo['sortableObjectNumber'] = sortableobjectnumber
+                #objectinfo['sortableObjectNumber'] = sortableobjectnumber
                 message,csid = createObject(objectinfo, config, form)
                 html += "<tr><td>%s</td><td>%s</td></tr>" % (objectNumber, csid)
-            html += "<tr><td>%s</td><td>%s</td></tr>" % ('created objects', count)
         else:
             # list objects to be created
-            msg = "Caution: clicking on the button at left will create <b> %s empty objects</b>!" % count
+            msg = "Caution: clicking on the button at left will create <b> %s empty objects</b>!" % totalobjects
             html += """<tr><td align="center" colspan="3"></tr>"""
             html += """<tr><td align="center" colspan="2">"""
             html += '''<input type="submit" class="save" value="''' + updateactionlabel + '''" name="action"></td><td colspan="1">%s</td></tr>''' % msg
 
     else:
         for m in msgs:
-            html += '<tr><td class="error">%s</td><td></td></tr>' % m
+            html += '<tr><td class="error" colspan="2">%s</td></tr>' % m
 
     html += '</table>'
     html += ""

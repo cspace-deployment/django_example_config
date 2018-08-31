@@ -477,26 +477,11 @@ def starthtml(form, updateType, config):
 
     elif updateType == 'createobjects':
 
-        year = str(form.get("create.year")) if form.get("create.year") else ''
-        accession = str(form.get("create.accession")) if form.get("create.accession") else ''
-        sequence = str(form.get("create.sequence")) if form.get("create.sequence") else ''
-        count = str(form.get("create.count")) if form.get("create.count") else ''
+        objects = str(form.get("objects")) if form.get("objects") else ''
 
         otherfields = '''
-            <tr><th><span class="cell">year:</span></th>
-            <th><input id="create.year" class="cell" type="text" size="40" name="create.year" value="''' + year + '''" class="xspan"></th></tr>'''
-
-        otherfields += '''
-            <tr><th><span class="cell">accession:</span></th>
-            <th><input id="create.accession" class="cell" type="text" size="40" name="create.accession" value="''' + accession + '''" class="xspan"></th></tr>'''
-
-        otherfields += '''
-            <tr><th><span class="cell">sequence:</span></th>
-            <th><input id="create.sequence" class="cell" type="text" size="40" name="create.sequence" value="''' + sequence + '''" class="xspan"></th></tr>'''
-
-        otherfields += '''
-            <tr><th><span class="cell">count:</span></th>
-            <th><input id="create.count" class="cell" type="text" size="40" name="create.count" value="''' + count + '''" class="xspan"></th></tr>'''
+            <tr><th><span class="cell">objects:</span></th>
+            <th><textarea name="objects" rows="8" cols="60" id="objects">''' + objects + '''</textarea></th></tr>'''
 
     elif updateType == 'movecrate':
         crate = str(form.get("lo.crate")) if form.get("lo.crate") else ''

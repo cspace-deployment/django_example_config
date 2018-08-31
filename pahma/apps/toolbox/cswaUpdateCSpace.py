@@ -113,7 +113,7 @@ def createObject(objectinfo, config, form):
     writeLog(objectinfo, uri, 'POST', form, config)
 
     if when2post == 'update':
-        payload = createObjectXML(objectinfo)
+        msg, payload = createObjectXML(objectinfo)
         (url, data, csid, elapsedtime) = postxml('POST', uri, payload, form)
         sys.stderr.write("created new object with csid %s to REST API..." % csid)
         return 'created new object', csid
@@ -372,12 +372,6 @@ def createObjectXML(objectinfo):
 <objectNumber/>
 </ns2:collectionobjects_common>
 </document>'''
-
-    x = '''
-<ns2:collectionobjects_omca xmlns:ns2="http://collectionspace.org/services/collectionobject/local/omca" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-<sortableObjectNumber/>
-</ns2:collectionobjects_omca>
-'''
 
     root = etree.fromstring(content)
     for elementname in objectinfo:
