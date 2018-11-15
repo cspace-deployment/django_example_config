@@ -1,0 +1,173 @@
+1	# DWC to Cspace field name mapping						
+2	# being a specification of how to match DarwinCore fields to UCJEPS Cspace fields						
+3	# first column is DWC field name	 second is Cspace collectionobject tag					
+4	# 3rd column is Cspace “context element” (group/list element)	 4th is the datatype of the element					
+5	# 						
+6	# v0.9 jbl 2/20/18						
+7							
+8	# FIMS field name	Cspace collectionobject tag	context tag	data type	check exists?	authority	csid
+9	# identifying details	##################################					
+10	barcodenumber	objectNumber		literal			
+11		numberValue	otherNumber	literal			
+12		numberType	otherNumber	literal			
+13	scientificName	taxon		refname		taxon	
+14	main_collector	fieldCollectionNumberAssignor		refname			
+15	all_collectors	fieldCollector		refname			
+16	coll_num	fieldCollectionNumber		literal			
+17	# textual info	##################################					
+18	brief_desc	briefDescription		literal			
+19	comments	comment		literal			
+20	# place info	##################################					
+21	locality	fieldLocVerbatim		literal			
+22	habitat	fieldCollectionNote		literal			
+23	elevation	vElevation		integer			
+24	elevation_units	elevationUnit		vocab			
+25	latitude	decimalLatitude		float			
+26	longitude	decimalLongitude		float			
+27	coordinate_source	localitySource		literal			
+28	# label info	##################################					
+29	label_header	labelHeader		refname			
+30	label_footer	labelFooter		refname			
+31	# dates	##################################					
+32	coll_date	dateDisplayDate	fieldCollectionDateGroup	literal			
+33	coll_day	dateLatestDay	fieldCollectionDateGroup	integer			
+34	coll_month	dateLatestMonth	fieldCollectionDateGroup	month			
+35	coll_year	dateLatestYear	fieldCollectionDateGroup	year			
+36		dateDisplayDate	identDateGroup	literal			
+37	# location info	##################################					
+38	stateProvince	fieldLocState		vocab			
+39	country	fieldLocCountry		vocab			
+40	county	fieldLocCounty		vocab			
+41	# determination info	##################################					
+42	determinedby	identBy		refname			
+43	det_day	dateLatestDay	identDateGroup	int			
+44	det_month	dateLatestMonth	identDateGroup	month			
+45	det_year	dateLatestYear	identDateGroup	year			
+46		dateDisplayDate	identDateGroup	literal			
+47	id						
+48	institutionCode						
+49	collectionCode						
+50	ownerInstitutionCode	objectNumber			checkonupdate		
+51	basisOfRecord						
+52	occurrenceID						
+53	catalogNumber						
+54	otherCatalogNumbers						
+55	kingdom						
+56	phylum						
+57	class						
+58	order						
+59	family						
+60	scientificNameAuthorship						
+61	genus						
+62	specificEpithet						
+63	taxonRank						
+64	infraspecificEpithet						
+65	identifiedBy	identBy		refname			
+66	dateIdentified						
+67	identificationReferences						
+68	identificationRemarks						
+69	taxonRemarks						
+70	identificationQualifier						
+71	typeStatus						
+72	recordedBy						
+73	recordedByID						
+74	associatedCollectors						
+75	recordNumber						
+76	eventDate						
+77	year						
+78	month						
+79	day						
+80	startDayOfYear						
+81	endDayOfYear						
+82	verbatimEventDate						
+83	occurrenceRemarks						
+84	substrate						
+85	verbatimAttributes						
+86	fieldNumber						
+87	informationWithheld						
+88	dataGeneralizations						
+89	dynamicProperties						
+90	associatedTaxa	associatedTaxon		refname	taxon		
+91	reproductiveCondition						
+92	establishmentMeans						
+93	cultivationStatus	cultivated		truefalse			
+94	lifeStage						
+95	sex	sex		vocab			
+96	individualCount						
+97	samplingProtocol						
+98	samplingEffort						
+99	preparations						
+100	municipality						
+101	locationRemarks						
+102	localitySecurity						
+103	localitySecurityReason						
+104	decimalLatitude	decimalLatitude					
+105	decimalLongitude	decimalLongitude					
+106	geodeticDatum						
+107	coordinateUncertaintyInMeters						
+108	verbatimCoordinates	vCoordinates		literal			
+109	georeferencedBy	geoRefencedBy					
+110	georeferenceProtocol	geoRefProtocol					
+111	georeferenceSources	geoRefSource		refname			
+112	georeferenceVerificationStatus	geoRefVerificationStatus					
+113	georeferenceRemarks	geoRefRemarks					
+114	minimumElevationInMeters	minElevation		integer			
+115	maximumElevationInMeters	maxElevation		integer			
+116	minimumDepthInMeters	minDepth		integer			
+117	maximumDepthInMeters	maxDepth		integer			
+118	verbatimDepth	vDepth		integer			
+119	verbatimElevation	vElevation					
+120	disposition						
+121	language						
+122	recordEnteredBy						
+123	modified						
+124	sourcePrimaryKey-dbpk						
+125	collId						
+126	recordId						
+127	references						
+128							
+129	# FIMS to Cspace field name mapping						
+130	# being a specification of how to match FIMS fields to UCJEPS Cspace fields						
+131	# first column is FIMS field name, second is Cspace collectionobject tag						
+132	# 						
+133	# v0.9 jbl 2/20/15						
+134							
+135	# FIMS field name	Cspace collectionobject tag	context tag	data type			
+136	# identifying details	##################################					
+137	barcodenumber	objectNumber		literal			
+138		numberValue	otherNumber	literal			
+139		numberType	otherNumber	literal			
+140	scientificname	taxon		refname			
+141	main_collector	fieldCollector		refname			
+142	all_collectors	fieldCollector		refname			
+143	coll_num			literal			
+144	# textual info	##################################					
+145	brief_desc	briefDescription		literal			
+146	comments	comment					
+147	# place info	##################################					
+148	locality	fieldLocVerbatim		literal			
+149	habitat	fieldCollectionNote		literal			
+150	elevation	vElevation		integer			
+151	elevation_units	elevationUnit					
+152	latitude	decimalLatitude		float			
+153	longitude	decimalLongitude		float			
+154	coordinate_source	localitySource		literal			
+155	# label info	##################################					
+156	label_header			refname			
+157	label_footer			refname			
+158	# dates	##################################					
+159	coll_date	dateDisplayDate	fieldCollectionDateGroup	literal			
+160	coll_day	dateLatestDay	fieldCollectionDateGroup	day			
+161	coll_month	dateLatestMonth	fieldCollectionDateGroup	month			
+162	coll_year	dateLatestYear	fieldCollectionDateGroup	year			
+163		dateDisplayDate	identDateGroup	literal			
+164	# location info	##################################					
+165	stateprovince	fieldLocState		literal			
+166	country	fieldLocCountry		literal			
+167	county	fieldLocCounty		literal			
+168	# determination info	##################################					
+169	determinedby	identBy		refname			
+170	det_day	dateLatestDay	identDateGroup	day			
+171	det_month	dateLatestMonth	identDateGroup	month			
+172	det_year	dateLatestYear	identDateGroup	year			
+		dateDisplayDate	identDateGroup	literal			

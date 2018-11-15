@@ -1,0 +1,21 @@
+{% load staticfiles %}
+<table border="1">
+    <tr>
+        {% for h in header %}
+            <th>
+                {{ h }}
+                <input type="hidden" name="labels" value="{{ h }}">
+            </th>
+        {% endfor %}
+    </tr>
+    {% for row in stats %}
+        <tr>
+        <td></td>
+            {% for cell in row %}
+                <td>
+                    <input type="text" name="col.{{ forloop.counter }}" value="{{ cell }}">
+                </td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
