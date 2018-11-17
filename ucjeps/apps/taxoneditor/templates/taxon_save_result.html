@@ -4,8 +4,9 @@
     {% else %}
         <p style="color: green;">Taxon record created.</p>
         <p>csid: {{ csid }}</p>
+        <p><a href="https://ucjeps.cspace.berkeley.edu/record/taxon/local/{{ csid }}" target="cspace">Open in CSpace</a></p>
         <p>elapsedtime: {{ elapsedtime }}</p>
-        <button class="toggle-serviceresult">Click</button> to show or hide saved result.
+        <button class="prettyBtn toggle-serviceresult">Click</button> to show or hide saved result.
         <p></p>
     {% endif %}
 {% endspaceless %}

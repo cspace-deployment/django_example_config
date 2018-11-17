@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import HttpResponse
 from taxon import taxon_template
+from xml.sax.saxutils import escape
 
 from utils import termTypeDropdowns, termStatusDropdowns, taxonRankDropdowns, taxonfields, labels, formfields, numberWanted
 from utils import extractTag, xName, TITLE, taxon_authority_csid, tropicos_api_key
@@ -61,6 +62,7 @@ def taxoneditor(request):
             itemcount += 1
             # remove leading and trailing white space
             taxon = taxon.strip()
+            taxon = taxon.encode('utf-8')
             taxon_prefix = taxon.replace('. ', '.')
             taxon_prefix = re.sub(r' +\(.*','',taxon_prefix)
             # extract just latin name (= "Genus species"
@@ -189,7 +191,7 @@ def load_payload(payload, request, cspace_fields):
     for field in cspace_fields:
         cspace_name = field[0]
         if cspace_name in request.POST.keys():
-            payload = payload.replace('{%s}' % cspace_name, request.POST[cspace_name])
+            payload = payload.replace('{%s}' % cspace_name, escape(request.POST[cspace_name]).encode(encoding="ascii",errors="xmlcharrefreplace"))
 
     # get rid of any unsubstituted items in the template
     payload = re.sub(r'\{.*?\}', '', payload)
@@ -217,8 +219,10 @@ def create_taxon(request):
         #(url, data, taxonCSID, elapsedtime) = postxml('POST', uri, http_parms.realm, http_parms.hostname, http_parms.username, http_parms.password, payload)
     # elapsedtimetotal += elapsedtime
     except:
-        messages['error'] = '%s REST API post failed...' % uri
-        return messages
+        messages['error'] = '%s REST API post failed...please report to cspace-support!' % uri
+
+    if data == None:
+        messages['error'] = "got HTTP response %s; don't think it worked. " % taxonCSID
 
     messages['item'] = request.POST['item']
     messages['csid'] = taxonCSID

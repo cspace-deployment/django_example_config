@@ -6,7 +6,7 @@ $(document).on('click', '#taxon-item', function () {
             console.log(fieldname);
             field_to_set = document.getElementById(fieldname + this.dataset.item);
             if (field_to_set) {
-                document.getElementById(fieldname + this.dataset.item).value = tds[td].innerText;
+                document.getElementById(fieldname + this.dataset.item).value = tds[td].innerText.trim();
             }
     }
 });
