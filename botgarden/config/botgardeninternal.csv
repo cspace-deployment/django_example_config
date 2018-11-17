@@ -37,7 +37,7 @@ field	22	coordinatesource	Coordinate source	coordinatesource_s			keyword							3
 field	23	coordinateuncertainty	Coordinate uncertainty	coordinateuncertainty_s			keyword							4		x
 field	24	coordinateuncertaintyunit	Coordinate uncertainty unit	coordinateuncertaintyunit_s			keyword							5		x
 field	25	family	Family	family_s			dropdown	3,1	6		13	3	5		13	x
-field	26	gardenlocation	Garden Location	gardenlocation_s			keyword	7,2	7		14	4	6		14	x
+field	26	gardenlocation	Garden Location	gardenlocation_ss			keyword	7,2	7		14	4	6		14	x
 field	27	dataquality	Data Quality	dataquality_s			keyword				15					x
 field	28	locality	Geographic Place Name	locality_s		pl	keyword	8,2			16	5			15	x
 field	29	rare	Rare?	rare_s			dropdown	12,1	8		17	8	7		16	x

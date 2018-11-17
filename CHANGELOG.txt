@@ -3,10 +3,26 @@ CHANGELOG for the cspace_django_webapps
 OK, it is not a *real* change log, but a list of changes resulting from git log
 with some human annotation after the fact.
 
-This is version djconfig_4.1-11
-Mon May 21 19:35:43 PDT 2018
+This is version djconfig_5.0-1
+Sat Nov 17 11:18:23 PST 2018
 
-51d78a7 (HEAD -> master, origin/master, origin/HEAD) UCBG-463: update portal parms 'internal version' number.
+2d45385 (HEAD -> master, origin/master, origin/HEAD) UJ-31: repair the 3 bugs noted in this webapps
+5186e08 UCJEPS-667: next iteration of csvimport webapp
+f5cf72d UCBG-499: add SA to Contributor initials for botgarden BMU
+a2e2b82 PAHMA-1219: a version of create empty objects that works for ucb deployments
+55f7a41 PAHMA-1219: fix legacy bug in hierarchy viewer
+6938847 UCJEPS-607: need all Search urls in Publicsearch
+badd8c0 UCJEPS-607: refactoring to make search and publicsearch the same
+bbdbe90 UCJEPS-635: use correct csid value in Media Portal configuration
+794d1b4 UCJEPS-580: minor cleanup to portal full display configuration
+0c58137 UCJEPS-580: update portal full display configuration
+0c3bce9 UCBG-470: use correct grouptitle field name
+ef42621 UCBG-470: internal portal layout changes to add separate lat and long fields
+db8d782 UCBG-470: internal portal layout changes to add new fields
+40d4727 UCBG-463: only display/search source in internal portal
+26e9a22 UCBG-463: add Collector to public portal Full display
+478d07b (tag: djconfig_4.1-11) revise change log and VERSION file for version djconfig_4.1-11
+51d78a7 UCBG-463: update portal parms 'internal version' number.
 5c81321 UCJEP-564: changes to portal config file.
 9479284 NOJIRA: portal default display for ucjeps should be 'list'
 f4cf51a UCBG-463: add 'source' to portal config files
