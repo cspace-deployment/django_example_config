@@ -42,4 +42,5 @@ INSTALLED_APPS = (
     'uploadmedia',
     'taxoneditor',
     #'uploadtricoder',
+    'workflow',
 )
