@@ -42,6 +42,7 @@ TITLE = 'Review accessions by date updated'
 @login_required()
 def workflow(request):
     if 'start_date' in request.GET and request.GET['start_date']:
+        size_limit = 1000
         start_date = request.GET['start_date']
         try:
             end_date = request.GET['end_date']
@@ -57,8 +58,8 @@ def workflow(request):
         #search_terms = urllib.quote_plus(search_terms % (start_date, end_date))
         search_terms = search_terms % (start_date_timestamp, end_date_timestamp)
         search_terms = search_terms.replace(' ', '%20')
-        print 'cspace-services/%s?%s&pgSz=400&wf_deleted=false' % ('collectionobjects', search_terms)
-        (url, data, statusCode,elapsedtime) = connection.make_get_request('cspace-services/%s?%s&pgSz=400&wf_deleted=false' % ('collectionobjects', search_terms))
+        print 'cspace-services/%s?%s&pgSz=%s&wf_deleted=false' % ('collectionobjects', search_terms, size_limit)
+        (url, data, statusCode,elapsedtime) = connection.make_get_request('cspace-services/%s?%s&pgSz=%s&wf_deleted=false' % ('collectionobjects', search_terms, size_limit))
         # ...collectionobjects?kw=%27orchid%27&wf_deleted=false
         results = []
         error_message = ''
@@ -93,7 +94,8 @@ def workflow(request):
             error_message = 'Query failed.'
         return render(request, 'workflow.html',
                       {'apptitle': TITLE, 'results': results, 'start_date': start_date, 'end_date': end_date,
-                       'error': error_message, 'labels': 'Accession Number|Taxon Name|Type Specimen Kind|Updated At'.split('|')})
+                       'error': error_message, 'size_limit': size_limit,
+                       'labels': 'Accession Number|Taxon Name|Type Specimen Kind|Updated At'.split('|')})
 
     else:
         return render(request, 'workflow.html', {'apptitle': TITLE})
