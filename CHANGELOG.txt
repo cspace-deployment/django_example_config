@@ -3,10 +3,15 @@ CHANGELOG for the cspace_django_webapps
 OK, it is not a *real* change log, but a list of changes resulting from git log
 with some human annotation after the fact.
 
-This is version djconfig_5.0-1
-Sat Nov 17 11:18:23 PST 2018
+This is version djconfig_5.0-2
+Thu Dec  6 08:27:21 PST 2018
 
-2d45385 (HEAD -> master, origin/master, origin/HEAD) UJ-31: repair the 3 bugs noted in this webapps
+e84a2b3 (HEAD -> master, jblowe/master) NOJIRA: make toolbox available to UCJEPS; NB: much customization needed
+9f78732 NOJIRA: move in progress toolbox rewrite to 'adhocreporting'
+decdbce (origin/master, origin/HEAD) UJ-43: initial prototype of 'accession review tool'
+9b538ee UCJEPS-667: minor revisions to text in csvimport
+60520fa (tag: djconfig_5.0-1) revise change log and VERSION file for version djconfig_5.0-1
+2d45385 UJ-31: repair the 3 bugs noted in this webapps
 5186e08 UCJEPS-667: next iteration of csvimport webapp
 f5cf72d UCBG-499: add SA to Contributor initials for botgarden BMU
 a2e2b82 PAHMA-1219: a version of create empty objects that works for ucb deployments
