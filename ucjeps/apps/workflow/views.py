@@ -1,10 +1,15 @@
 __author__ = 'jblowe'
 
 import re
-import urllib
+import logging
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+
+# Get an instance of a logger, log some startup info
+logger = logging.getLogger(__name__)
+logger.info('%s :: %s :: %s' % ('workflow startup', '-', '-'))
+
 
 # alas, there are many ways the XML parsing functionality might be installed.
 # the following code attempts to find and import the best...
@@ -38,7 +43,6 @@ from cspace_django_site.main import cspace_django_site
 config = cspace_django_site.getConfig()
 TITLE = 'Review accessions by date updated'
 
-
 @login_required()
 def workflow(request):
     if 'start_date' in request.GET and request.GET['start_date']:
@@ -58,13 +62,15 @@ def workflow(request):
         #search_terms = urllib.quote_plus(search_terms % (start_date, end_date))
         search_terms = search_terms % (start_date_timestamp, end_date_timestamp)
         search_terms = search_terms.replace(' ', '%20')
-        print 'cspace-services/%s?%s&pgSz=%s&wf_deleted=false' % ('collectionobjects', search_terms, size_limit)
+        logger.info('%s :: %s' % ('workflow', 'cspace-services/%s?%s&pgSz=%s&wf_deleted=false' % ('collectionobjects', search_terms, size_limit)))
         (url, data, statusCode,elapsedtime) = connection.make_get_request('cspace-services/%s?%s&pgSz=%s&wf_deleted=false' % ('collectionobjects', search_terms, size_limit))
         # ...collectionobjects?kw=%27orchid%27&wf_deleted=false
         results = []
         error_message = ''
         try:
             cspaceXML = fromstring(data)
+            fieldsReturned = cspaceXML.find('fieldsReturned').text.split('|')
+            fieldsReturned = [ f for f in fieldsReturned if not f in 'objectNumber|csid|uri|refName|workflowState|responsibleDepartment'.split('|')]
             items = cspaceXML.findall('.//list-item')
             for i in items:
                 outputrow = []
@@ -75,13 +81,12 @@ def workflow(request):
                     objectNumber = objectNumber.text
                 else:
                     objectNumber = 'No accession number'
-                hostname = connection.protocol + ':' + connection.hostname
-                if connection.port != '': hostname = hostname + ':' + connection.port
+                hostname = '%s://%s' % (connection.protocol, connection.hostname)
                 link = '%s/collectionspace/ui/%s/html/cataloging.html?csid=%s' % (hostname, connection.tenant, csid)
                 outputrow.append(link)
                 outputrow.append(objectNumber)
                 additionalfields = []
-                for field in ['taxon', 'typeSpecimenKind', 'updatedAt']:
+                for field in fieldsReturned:
                     element = i.find('.//%s' % field)
                     element = '' if element is None else element.text
                     # extract display name if a refname... nb: this pattern might do damage in some cases!
@@ -92,10 +97,12 @@ def workflow(request):
         except:
             raise
             error_message = 'Query failed.'
+
+        logger.info('%s :: %s' % ('workflow', len(results)))
         return render(request, 'workflow.html',
                       {'apptitle': TITLE, 'results': results, 'start_date': start_date, 'end_date': end_date,
                        'error': error_message, 'size_limit': size_limit,
-                       'labels': 'Accession Number|Taxon Name|Type Specimen Kind|Updated At'.split('|')})
+                       'labels': fieldsReturned})
 
     else:
         return render(request, 'workflow.html', {'apptitle': TITLE})
