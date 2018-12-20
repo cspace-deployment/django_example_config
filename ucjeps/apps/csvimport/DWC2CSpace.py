@@ -11,6 +11,8 @@ import cgi
 
 import re
 
+from utils import load_mapping_file
+
 CONFIGDIRECTORY = ''
 
 
@@ -90,7 +92,7 @@ def createXMLpayload(template, values, institution):
     return payload
 
 
-def DWC2CSPACE(xmlTemplate, fimsDataDict, config):
+def DWC2CSPACE(xmlTemplate, input_dataDict, config):
     try:
         realm = config.get('connect', 'realm')
         hostname = config.get('connect', 'hostname')
@@ -105,23 +107,23 @@ def DWC2CSPACE(xmlTemplate, fimsDataDict, config):
         raise
 
     # objectCSID = getCSID('objectnumber', cspaceElements['objectnumber'], config)
-    objectNumber = fimsDataDict['barcodenumber']
-    if objectNumber == [] or objectNumber is None:
-        print "could not get (i.e. find) objectnumber's csid: %s." % cspaceElements['objectnumber']
-        # raise Exception("<span style='color:red'>Object Number not found: %s!</span>" % cspaceElements['objectnumber'])
-    else:
-        uri = 'collectionobjects'
+    messages = []
+    try:
+        objectNumber = input_dataDict['catalogNumber']
+    except:
+        messages.append('could not find an accession number')
+        return ['', '', messages]
 
-        messages = []
-        messages.append("posting to cspace REST API...")
-        payload = createXMLpayload(xmlTemplate, fimsDataDict, INSTITUTION)
-        # print payload
-        (url, data, objectCSID, elapsedtime) = postxml('POST', uri, realm, protocol, hostname, port, username, password, payload)
-        return [objectNumber, objectCSID]
-        messages.append('got cspacecsid %s elapsedtime %s ' % (objectCSID, elapsedtime))
-        messages.append("cspace REST API post succeeded...")
+    uri = 'collectionobjects'
 
-    return cspaceElements
+    messages.append("posting to cspace REST API...")
+    payload = createXMLpayload(xmlTemplate, input_dataDict, INSTITUTION)
+    # print payload
+    (url, data, objectCSID, elapsedtime) = postxml('POST', uri, realm, protocol, hostname, port, username, password, payload)
+    messages.append('got cspacecsid %s elapsedtime %s ' % (objectCSID, elapsedtime))
+    messages.append("cspace REST API post succeeded...")
+
+    return [objectNumber, objectCSID, messages]
 
 
 class CleanlinesFile(file):
@@ -130,11 +132,11 @@ class CleanlinesFile(file):
         return line.replace('\r', '').replace('\n', '') + '\n'
 
 
-def getRecords(rawFile):
+def getRecords(rawFile, delimiter):
     # csvfile = csv.reader(codecs.open(rawFile,'rb','utf-8'),delimiter="\t")
     try:
         f = CleanlinesFile(rawFile, 'rb')
-        csvfile = csv.reader(f, delimiter="\t")
+        csvfile = csv.reader(f, delimiter=delimiter)
     except IOError:
         message = 'Expected to be able to read %s, but it was not found or unreadable' % rawFile
         return message, -1
@@ -157,7 +159,7 @@ def getRecords(rawFile):
                     cell_values[col_name][row[col_number]] = 0
                     #cell_values[col_name]['bcid'] = row[0]
                 cell_values[col_name][row[col_number]] += 1
-        return cell_values, len(rows)
+        return cell_values, rows, rowNumber, header
     except IOError:
         raise
         message = 'could not read (or maybe parse) rows from %s' % rawFile
@@ -165,13 +167,25 @@ def getRecords(rawFile):
     except:
         raise
 
+def map_items(input_data, file_header):
+    data_dict = {}
+    for i,cell in enumerate(input_data):
+        data_dict[file_header[i]] = cell
+    return data_dict
 
-if __name__ == "__main__":
+
+def validate_items(input_data, file_header):
+    validated_items = []
+    for i,cell in enumerate(input_data):
+        validated_items.append(cell)
+    return validated_items
+
+def main():
 
     header = "*" * 80
 
-    if len(sys.argv) < 6:
-        print('%s <FIMS input file> <config file> <mapping file> <template> <output file>') % sys.argv[0]
+    if len(sys.argv) < 7:
+        print('%s <FIMS input file> <config file> <mapping file> <template> <output file> <action>') % sys.argv[0]
         sys.exit()
 
     print header
@@ -180,14 +194,26 @@ if __name__ == "__main__":
     print "DWC2CSPACE: mapping file:   %s" % sys.argv[3]
     print "DWC2CSPACE: template:       %s" % sys.argv[4]
     print "DWC2CSPACE: output file:    %s" % sys.argv[5]
+    print "DWC2CSPACE: action:         %s" % sys.argv[6]
     print header
 
+
     try:
-        fimsRecords, lines = getRecords(sys.argv[1])
-        print 'DWC2CSPACE: %s lines and %s records found in file %s' % (lines, len(fimsRecords), sys.argv[1])
+        action = sys.argv[6]
+        actions = 'validate add update both'
+        if not action in actions.split(' '):
+            print 'DWC2CSPACE: Error! not a valid action: %s' % action
+            sys.exit()
+    except:
+        print "DWC2CSPACE: action could not be understood: should be one of: %s" % actions
+        sys.exit()
+
+    try:
+        dataDict, inputRecords, lines, file_header = getRecords(sys.argv[1], ',')
+        print 'DWC2CSPACE: %s lines and %s records found in file %s' % (lines, len(inputRecords), sys.argv[1])
         print header
         if lines == -1:
-            print 'DWC2CSPACE: Error! %s' % fimsRecords
+            print 'DWC2CSPACE: Error! %s' % inputRecords
             sys.exit()
     except:
         print "DWC2CSPACE: could not get FIMS records to load"
@@ -203,8 +229,8 @@ if __name__ == "__main__":
         sys.exit()
 
     try:
-        mapping, numitems = getRecords(sys.argv[3])
-        print 'DWC2CSPACE: %s lines and %s records found in mapping file %s' % (numitems, len(mapping), sys.argv[3])
+        mapping = load_mapping_file(sys.argv[3])
+        print 'DWC2CSPACE: %s records found in mapping file %s' % (len(mapping), sys.argv[3])
         # print mapping
         print header
     except:
@@ -227,22 +253,57 @@ if __name__ == "__main__":
 
     successes = 0
     recordsprocessed = 0
-    for bcid, fimsData in fimsRecords.items():
 
-        elapsedtimetotal = time.time()
-        try:
-            cspaceElements = DWC2CSPACE(xmlTemplate, fimsData, config)
-            cspaceElements.append(time.time() - elapsedtimetotal)
-            print "DWC2CSPACE: objectnumber %s, objectcsid: %s %8.2f" % tuple(cspaceElements)
-            if cspaceElements[1] != '':
-                successes += 1
-            outputfh.writerow(cspaceElements)
-        except:
-            print "DWC2CSPACE: create failed for objectnumber %s, %8.2f" % (
-                fimsData['barcodenumber'], (time.time() - elapsedtimetotal))
-            # raise
-        recordsprocessed += 1
+    if action == 'validate':
+        outputfh.writerow(file_header)
 
+    for input_data in inputRecords:
+
+        if action == 'validate':
+            input_dict = validate_items(input_data, file_header)
+            outputfh.writerow(input_dict)
+            recordsprocessed += 1
+            successes += 1
+
+        elif action == 'add':
+
+            cspaceElements = ['', '']
+            elapsedtimetotal = time.time()
+            try:
+                input_dict = map_items(input_data, file_header)
+                cspaceElements = DWC2CSPACE(xmlTemplate, input_dict, config)
+                del cspaceElements[2]
+                cspaceElements.append(time.time() - elapsedtimetotal)
+                print "DWC2CSPACE: objectnumber: %s, objectcsid: %s %8.2f" % tuple(cspaceElements)
+                if cspaceElements[1] != '':
+                    successes += 1
+                outputfh.writerow(cspaceElements)
+            except:
+                print "DWC2CSPACE: create failed for objectnumber %s, %8.2f" % (cspaceElements, (time.time() - elapsedtimetotal))
+                raise
+            recordsprocessed += 1
+
+        elif action == 'update':
+
+            cspaceElements = ['', '']
+            elapsedtimetotal = time.time()
+            try:
+                input_dict = map_items(input_data, file_header)
+                cspaceElements = DWC2CSPACE(xmlTemplate, input_dict, config)
+                del cspaceElements[2]
+                cspaceElements.append(time.time() - elapsedtimetotal)
+                print "DWC2CSPACE: objectnumber: %s, objectcsid: %s %8.2f" % tuple(cspaceElements)
+                if cspaceElements[1] != '':
+                    successes += 1
+                outputfh.writerow(cspaceElements)
+            except:
+                print "DWC2CSPACE: create failed for objectnumber %s, %8.2f" % (
+                cspaceElements, (time.time() - elapsedtimetotal))
+                raise
+            recordsprocessed += 1
+
+    print "DWC2CSPACE: %s records %s, %s successful" % (recordsprocessed, action, successes)
     print header
-    print "DWC2CSPACE: %s records processed, %s successful PUTs" % (recordsprocessed, successes)
-    print header
+
+if __name__ == "__main__":
+    main()

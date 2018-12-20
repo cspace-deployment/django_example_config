@@ -12,20 +12,30 @@
                 <h2>Caveat utilizator!</h2>
                 Importing into CollectionSpace is not for the faint of heart.
                 Even though you have a nice, clean "flat file" in the form of a spreadsheet or .csv file
-                you are not out of the woods <i>at all</i>.</br>
+                you are not out of the woods <i>at all</i>.</br><br/>
                 It is
                 <emph>highly recommended</emph> that you <a href="">read the documentation</a> if you run into even the
-                slightest difficulty!<br>
-                <br/>
-                <ul>
-                    <li>You are encouraged to experiment first. There is a workflow to allow you to work out
-                        the inevitable bugs efficiently: <i>Count</i> first (this will ensure the app undertstands your
-                        file format);
-                        then <i>Validate</i> (which will check the actual content of the columns).
-                        These two steps
-                        are quick and easy even for large files and can save you trouble going forward.
-                    </li>
+                slightest difficulty!
+                <br/><br/>
+                You are encouraged to experiment first, and to take an incremental approach to getting for file (can
+                CSpace) prepared for each other.
+                There is no harm that can come from using the first two steps below (<i>Count</i> and <i>Validate</i>);
+                however, once you have <i>Count</i>ed or <i>Validate</i>ed, it will be a challenge to back out --
+                there is no <i>Undo</i>. The procedure for removing records you have added is described in the
+                documentation above, but it is far from simple.
+                <br/><br/>
+                There is a suggested workflow that may help you sort out
+                the inevitable data bugs efficiently:
+                <ol>
+                    <li><i>Count</i> first (this will ensure the app undertstands your
+                        file format);</li>
+                    <li><i>Validate</i> (which will check the actual content of the columns).
+                        These three steps
+                        are quick and easy even for large files and can save you trouble going forward.</li>
                     <li><b>then</b> try to <i>Upload</i>.</li>
+                </ol>
+                A couple additional pointers:
+                <ol>
                     <li>If you are wondering how to match your columns to CSpace records, try clicking
                         <i>Show Configuration</i> below to see which fields this webapp knows about.
                     </li>
@@ -34,7 +44,7 @@
                         columns to specify for
                         matching rows to CSpace records.
                     </li>
-                </ul>
+                </ol>
                 <br/>
                 <hr/>
                 <table>
@@ -97,10 +107,10 @@
                         <td>
                             You can use this function for a variety of tasks. For example, you can count "types and
                             tokens" in <i>any</i> accepted file format
-                            using <i>Count</i>, even if you never intend to upload the data to CSpace (your input file
+                            using <i>Count</i>, even if you never intend to upload the data to CSpace (NB: your input file
                             is not retained unless you
                             actually upload the data to CSpace).
-                            You can use it to check to see if a list of elements already exist in CSpace or not (<i>Validate</i>.
+                            You can use it to check to see if a list of elements already exist in CSpace or not using <i>Validate</i>.
                             You can add new records or use your input to update existing records. If you specify Add,
                             we'll check to make sure
                             the identifier you provided is not already present. If Update, we'll search for the
@@ -144,6 +154,18 @@
                             map the columns to CSpace fields yourself after you've uploaded it.
                         </td>
                     </tr -->
+
+                    <tr>
+                        <th>Make a group of these records?</th>
+                        <td>
+                            <input type="checkbox" name="make_group" value="yes">
+                        </td>
+                        <td>
+                            Making a group allows you to find all the records you have mentioned in your file
+                            once they have entered CSpace. This can be useful for a variety of maintenance and
+                            reporting purposes.
+                        </td>
+                    </tr>
                 </table>
                 <input type="hidden" name="use_header" value="use">
                 {% if errors|length > 0 %}

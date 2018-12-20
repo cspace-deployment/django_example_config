@@ -22,7 +22,7 @@ SERVERINFO = {
 }
 
 def load_mapping_file(mapping_file):
-    print "mapping file: %s" % mapping_file
+    # print "mapping file: %s" % mapping_file
     mapping_file = path.join(path.join(settings.BASE_PARENT_DIR, 'config'), mapping_file)
     delim = '\t'
     cspace_mapping = {}
