@@ -1,0 +1,70 @@
+{% extends "cspace_django_site/base_site.html" %}
+{% load i18n admin_static %}
+{% load staticfiles %}
+
+{% block content %}
+    {% spaceless %}
+        {% include "toggled.html" %}
+
+
+        {% if error %}
+            <p style="color: red;">Please submit a search term.</p>
+        {% endif %}
+        <form action="" method="get">
+            start date (YYYY-MM-DD): <input type="text" name="start_date" value="{{ start_date }}">
+            end date (optional. start date is the default): <input type="text" name="end_date" value="{{ end_date }}">
+            <input class="prettyBtn" type="submit" value="Search">
+            <hr/>
+            {% for field in form.hidden_fields %}
+                <div style="display:none;">{{ field }}</div>
+            {% endfor %}
+
+            <div id="content-main">
+                {% if start_date != None %}
+                    {% if results|length == 0 %}
+                        <h3>No records found.</h3>
+                    {% else %}
+                        <div class="results">
+                            page {{ page }}. {{ results|length }} items displayed of {{ totalItems }} (max {{ size_limit }} items per page)
+                            {% if page > 1 %}
+                                <input style="padding: 4px 4px;" type="submit" value="&laquo;" name="prev"/>
+                            {% else %}
+                                <span style="padding: 4px 4px;">&laquo;</span>
+                            {% endif %}
+                            <input type="hidden" value="{{ totalItems }}" name="totalItems"/>
+                            <input style="width:30px; text-align: center;" name="page" type="text" value="{{ page }}">
+                            <input style="padding: 4px 4px;" type="submit" value="&raquo;" name="next"/>
+                            <hr/>
+                            <table cellspace="1" id="resultsListing" class="tablesorter-blue">
+                                <thead>
+                                <tr>
+                                    <th>Object Number</th>
+                                    {% for label in labels %}
+                                        <th>{{ label }}</th>
+                                    {% endfor %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for row in results %}
+                                    <tr>
+                                        <td><a target="cspace" href="{{ row.0 }}">
+                                            {% if row.1 == 'No object number' %}
+                                                <span style="background-color: red; color: whitesmoke"> {{ row.1 }}</span>
+                                            {% else %}
+                                                {{ row.1 }}
+                                            {% endif %}
+                                        </a></td>
+                                        {% for cell in row.2 %}
+                                            <td>{{ cell }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </form>
+    {% endspaceless %}
+{% endblock %}
