@@ -41,5 +41,6 @@ INSTALLED_APPS = (
     #'simplesearch',
     'uploadmedia',
     'uploadtricoder',
+    'workflow',
 )
 

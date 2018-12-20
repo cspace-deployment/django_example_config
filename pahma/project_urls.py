@@ -55,6 +55,7 @@ urlpatterns = patterns('',
                        # url(r'^cswa/', include('cswa.urls', namespace='cswa')),
                        url(r'^uploadmedia/', include('uploadmedia.urls', namespace='uploadmedia')),
                        url(r'^uploadtricoder/', include('uploadtricoder.urls', namespace='uploadtricoder')),
+                       url(r'^workflow/', include('workflow.urls', namespace='workflow')),
 
                        # these two paths are special: they are used to create permalinks for objects and media
                        url(r'^(media)/', include('permalinks.urls', namespace='permalinks')),
