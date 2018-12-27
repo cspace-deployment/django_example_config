@@ -1,17 +1,15 @@
 import csv
-import sys, os
-import codecs
+import sys
 import ConfigParser
 from copy import deepcopy
 from xml.sax.saxutils import escape
 
-import time, datetime
-import httplib, urllib2
-import cgi
+import time
+import urllib2
 
 import re
 
-from utils import load_mapping_file
+from utils import load_mapping_file, validate_columns, map2cspace, count_columns, dump_row
 
 CONFIGDIRECTORY = ''
 
@@ -132,16 +130,25 @@ class CleanlinesFile(file):
         return line.replace('\r', '').replace('\n', '') + '\n'
 
 
-def getRecords(rawFile, delimiter):
+def getRecords(rawFile):
     # csvfile = csv.reader(codecs.open(rawFile,'rb','utf-8'),delimiter="\t")
+    delimiters = '\t ,'.split(' ')
     try:
         f = CleanlinesFile(rawFile, 'rb')
-        csvfile = csv.reader(f, delimiter=delimiter)
+        # see if the sniffer can figger out the csv dialect
+        sample = f.read(2048)
+        dialect = csv.Sniffer().sniff(sample, delimiters = ',\t')
+        f.seek(0)
+        csvfile = csv.reader(f, dialect)
     except IOError:
         message = 'Expected to be able to read %s, but it was not found or unreadable' % rawFile
         return message, -1
     except:
-        raise
+        for delimiter in delimiters:
+            if delimiter in sample:
+                f.seek(0)
+                csvfile = csv.reader(f, delimiter=delimiter)
+                break
 
     try:
         rows = []
@@ -167,6 +174,7 @@ def getRecords(rawFile, delimiter):
     except:
         raise
 
+
 def map_items(input_data, file_header):
     data_dict = {}
     for i,cell in enumerate(input_data):
@@ -174,18 +182,22 @@ def map_items(input_data, file_header):
     return data_dict
 
 
-def validate_items(input_data, file_header):
+def validate_items(CSPACE_MAPPING, input_data, file_header):
+    stats = validate_columns(CSPACE_MAPPING, input_data, file_header)
     validated_items = []
-    for i,cell in enumerate(input_data):
-        validated_items.append(cell)
-    return validated_items
+    for i,row in enumerate(input_data):
+        output_row = []
+        for j,cell in enumerate(row):
+            output_row.append(map2cspace(CSPACE_MAPPING,cell, j, stats, file_header))
+        validated_items.append(output_row)
+    return validated_items, stats
 
 def main():
 
-    header = "*" * 80
+    header = "*" * 100
 
     if len(sys.argv) < 7:
-        print('%s <FIMS input file> <config file> <mapping file> <template> <output file> <action>') % sys.argv[0]
+        print('%s <csv input file> <config file> <mapping file> <template> <output file> <action>') % sys.argv[0]
         sys.exit()
 
     print header
@@ -200,7 +212,7 @@ def main():
 
     try:
         action = sys.argv[6]
-        actions = 'validate add update both'
+        actions = 'count validate add update both'
         if not action in actions.split(' '):
             print 'DWC2CSPACE: Error! not a valid action: %s' % action
             sys.exit()
@@ -209,14 +221,15 @@ def main():
         sys.exit()
 
     try:
-        dataDict, inputRecords, lines, file_header = getRecords(sys.argv[1], ',')
+        dataDict, inputRecords, lines, file_header = getRecords(sys.argv[1])
         print 'DWC2CSPACE: %s lines and %s records found in file %s' % (lines, len(inputRecords), sys.argv[1])
         print header
         if lines == -1:
             print 'DWC2CSPACE: Error! %s' % inputRecords
             sys.exit()
     except:
-        print "DWC2CSPACE: could not get FIMS records to load"
+        raise
+        print "DWC2CSPACE: could not get CSV records to load"
         sys.exit()
 
     try:
@@ -229,10 +242,14 @@ def main():
         sys.exit()
 
     try:
-        mapping = load_mapping_file(sys.argv[3])
-        print 'DWC2CSPACE: %s records found in mapping file %s' % (len(mapping), sys.argv[3])
+        print "DWC2CSPACE: loading mapping file %s\n" % sys.argv[3]
+        mapping, errors = load_mapping_file(sys.argv[3])
+        print '\nDWC2CSPACE: %s valid records found in mapping file %s' % (len(mapping), sys.argv[3])
         # print mapping
         print header
+        if errors != 0:
+            print "DWC2CSPACE: terminating due to %s errors detected in mapping configuration" % errors
+            sys.exit()
     except:
         print "DWC2CSPACE: could not get mapping configuration"
         sys.exit()
@@ -254,18 +271,49 @@ def main():
     successes = 0
     recordsprocessed = 0
 
-    if action == 'validate':
+
+    if action == 'count':
+        stats = count_columns(inputRecords, file_header)
+        print '%-35s %10s %10s' % tuple(stats[1])
+        print
+        for s in stats[0]:
+            print '%-35s %10s %10s' % tuple(s)
+        print
+        recordsprocessed = len(inputRecords)
+        successes = len(inputRecords)
+
+    elif action == 'validate':
+        validated_data, stats = validate_items(mapping, inputRecords, file_header)
+        ok_count = 0
+        bad_count = 0
+        bad_values = 0
+        print '%-35s %10s %10s  %-10s %10s' % tuple(stats[1][:5])
+        for s in stats[0]:
+            if s[3] == 'OK':
+                ok_count += 1
+                print '%-35s %10s %10s  %-10s %10s' % tuple(s[:5])
+            else:
+                bad_count += 1
+                print '%-35s %10s %10s  %-10s %10s' % tuple(s[:5])
+                items = s[7]
+                for item_key in sorted(items):
+                    if items[item_key][0] != 'OK':
+                        print '%15s: %s' % (items[item_key][0], item_key)
+                        bad_values += 1
+        if bad_count != 0:
+            print "DWC2CSPACE: validation failed (%s fields had %s values in error)" % (bad_count, bad_values)
+            print "DWC2CSPACE: cowardly refusal to write invalid output file"
+            sys.exit(1)
+
         outputfh.writerow(file_header)
-
-    for input_data in inputRecords:
-
-        if action == 'validate':
-            input_dict = validate_items(input_data, file_header)
-            outputfh.writerow(input_dict)
+        for input_data in validated_data:
+            outputfh.writerow(input_data)
             recordsprocessed += 1
             successes += 1
 
-        elif action == 'add':
+    for input_data in inputRecords:
+
+        if action == 'add':
 
             cspaceElements = ['', '']
             elapsedtimetotal = time.time()
@@ -302,7 +350,7 @@ def main():
                 raise
             recordsprocessed += 1
 
-    print "DWC2CSPACE: %s records %s, %s successful" % (recordsprocessed, action, successes)
+    print "DWC2CSPACE: %s records. %s processed, %s successful" % (action, recordsprocessed, successes)
     print header
 
 if __name__ == "__main__":
