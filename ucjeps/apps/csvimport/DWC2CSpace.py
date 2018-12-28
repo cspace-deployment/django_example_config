@@ -1,8 +1,13 @@
+# -*- coding: utf-8 -*-
 import csv
 import sys
 import ConfigParser
 from copy import deepcopy
 from xml.sax.saxutils import escape
+
+sys.path.append("../../ucjeps")
+
+from common.unicode_hack import UnicodeReader, UnicodeWriter
 
 import time
 import urllib2
@@ -40,7 +45,7 @@ def postxml(requestType, uri, realm, protocol, hostname, port, username, passwor
     url = "%s/cspace-services/%s" % (server, uri)
 
     elapsedtime = time.time()
-    request = urllib2.Request(url, payload, {'Content-Type': 'application/xml'})
+    request = urllib2.Request(url, payload.encode('utf-8'), {'Content-Type': 'application/xml'})
     # default method for urllib2 with payload is POST
     if requestType == 'PUT': request.get_method = lambda: 'PUT'
     try:
@@ -90,7 +95,7 @@ def createXMLpayload(template, values, institution):
     return payload
 
 
-def DWC2CSPACE(xmlTemplate, input_dataDict, config):
+def DWC2CSPACE(action, xmlTemplate, input_dataDict, config):
     try:
         realm = config.get('connect', 'realm')
         hostname = config.get('connect', 'hostname')
@@ -107,9 +112,9 @@ def DWC2CSPACE(xmlTemplate, input_dataDict, config):
     # objectCSID = getCSID('objectnumber', cspaceElements['objectnumber'], config)
     messages = []
     try:
-        objectNumber = input_dataDict['catalogNumber']
+        objectNumber = input_dataDict['objectNumber']
     except:
-        messages.append('could not find an accession number')
+        messages.append('could not find an object number')
         return ['', '', messages]
 
     uri = 'collectionobjects'
@@ -127,7 +132,7 @@ def DWC2CSPACE(xmlTemplate, input_dataDict, config):
 class CleanlinesFile(file):
     def next(self):
         line = super(CleanlinesFile, self).next()
-        return line.replace('\r', '').replace('\n', '') + '\n'
+        return line.replace('\r', '').replace('\n', '').encode('utf-8') + '\n'
 
 
 def getRecords(rawFile):
@@ -136,10 +141,11 @@ def getRecords(rawFile):
     try:
         f = CleanlinesFile(rawFile, 'rb')
         # see if the sniffer can figger out the csv dialect
-        sample = f.read(2048)
+        sample = f.read(4096)
         dialect = csv.Sniffer().sniff(sample, delimiters = ',\t')
         f.seek(0)
-        csvfile = csv.reader(f, dialect)
+        #csvfile = csv.reader(f, dialect)
+        csvfile = UnicodeReader(f, dialect)
     except IOError:
         message = 'Expected to be able to read %s, but it was not found or unreadable' % rawFile
         return message, -1
@@ -147,7 +153,8 @@ def getRecords(rawFile):
         for delimiter in delimiters:
             if delimiter in sample:
                 f.seek(0)
-                csvfile = csv.reader(f, delimiter=delimiter)
+                #csvfile = csv.reader(f, delimiter=delimiter)
+                csvfile = UnicodeReader(f, delimiter=delimiter)
                 break
 
     try:
@@ -263,7 +270,8 @@ def main():
         sys.exit()
 
     try:
-        outputfh = csv.writer(open(sys.argv[5], 'wb'), delimiter="\t")
+        #outputfh = csv.writer(open(sys.argv[5], 'wb'), delimiter="\t")
+        outputfh = UnicodeWriter(open(sys.argv[5], 'wb'), delimiter="\t", quoting=csv.QUOTE_NONE, quotechar=chr(255))
     except:
         print "DWC2CSPACE: could not open output file for write %s" % sys.argv[5]
         sys.exit()
@@ -305,24 +313,31 @@ def main():
             print "DWC2CSPACE: cowardly refusal to write invalid output file"
             sys.exit(1)
 
-        outputfh.writerow(file_header)
+        cspace_header = []
+        for h in file_header:
+            if h in mapping:
+                cspace_header.append(mapping[h][0])
+            else:
+                cspace_header.append('unmapped')
+        outputfh.writerow(cspace_header)
+        outputfh.writerow(file_header )
         for input_data in validated_data:
             outputfh.writerow(input_data)
             recordsprocessed += 1
             successes += 1
 
-    for input_data in inputRecords:
+    elif action in 'add update both'.split(' '):
 
-        if action == 'add':
+        for input_data in inputRecords:
 
             cspaceElements = ['', '']
             elapsedtimetotal = time.time()
             try:
                 input_dict = map_items(input_data, file_header)
-                cspaceElements = DWC2CSPACE(xmlTemplate, input_dict, config)
+                cspaceElements = DWC2CSPACE(action, xmlTemplate, input_dict, config)
                 del cspaceElements[2]
-                cspaceElements.append(time.time() - elapsedtimetotal)
-                print "DWC2CSPACE: objectnumber: %s, objectcsid: %s %8.2f" % tuple(cspaceElements)
+                cspaceElements.append('%8.2f' % (time.time() - elapsedtimetotal))
+                print "DWC2CSPACE: objectnumber: %s, objectcsid: %s %s" % tuple(cspaceElements)
                 if cspaceElements[1] != '':
                     successes += 1
                 outputfh.writerow(cspaceElements)
@@ -331,24 +346,6 @@ def main():
                 raise
             recordsprocessed += 1
 
-        elif action == 'update':
-
-            cspaceElements = ['', '']
-            elapsedtimetotal = time.time()
-            try:
-                input_dict = map_items(input_data, file_header)
-                cspaceElements = DWC2CSPACE(xmlTemplate, input_dict, config)
-                del cspaceElements[2]
-                cspaceElements.append(time.time() - elapsedtimetotal)
-                print "DWC2CSPACE: objectnumber: %s, objectcsid: %s %8.2f" % tuple(cspaceElements)
-                if cspaceElements[1] != '':
-                    successes += 1
-                outputfh.writerow(cspaceElements)
-            except:
-                print "DWC2CSPACE: create failed for objectnumber %s, %8.2f" % (
-                cspaceElements, (time.time() - elapsedtimetotal))
-                raise
-            recordsprocessed += 1
 
     print "DWC2CSPACE: %s records. %s processed, %s successful" % (action, recordsprocessed, successes)
     print header

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import csv
 import sys
 import json
@@ -7,7 +8,7 @@ import urllib
 from requests.auth import HTTPBasicAuth
 from xml.etree.ElementTree import tostring, parse, Element, fromstring
 
-sys.path.append("/Users/jblowe/PyCharmProjects/ucjeps")
+sys.path.append("../../ucjeps")
 
 from common import cspace  # we use the config file reading function
 from cspace_django_site import settings
@@ -195,11 +196,11 @@ def count_columns(matrix, header):
 
 def check_cell_in_cspace(mapping_key, key, value):
     if value == '':
-        return 0, '', value
+        return 0, '', u''
     if mapping_key[2] == 'literal':
-        return 0, 'a literal', value
+        return 0, 'a literal', value.decode('utf-8')
     elif mapping_key[2] == 'date':
-        return 0, 'a date', value
+        return 0, 'a date', value.decode('utf-8')
     elif mapping_key[2] == 'key':
         return 0, 'key', value
     elif mapping_key[2] == 'refname':
@@ -209,21 +210,22 @@ def check_cell_in_cspace(mapping_key, key, value):
         else:
             return 0, 'a refname', refname
     elif mapping_key[2] == 'static':
-        return 1, 'static vocab terms not validated yet', 'NotValidated X X X X'.split(' ')
+        return 0, 'a static value', value
+        #return 1, 'static vocab terms not validated yet', 'NotValidated X X X X'.split(' ')
     elif mapping_key[2] == 'integer':
         try:
             int(value)
-            return 0, 'an integer', int(value)
+            return 0, 'an integer', unicode(int(value))
         except:
             return 1, '"%s" is not an integer. ' % value
     elif mapping_key[2] == 'float':
         try:
             float(value)
-            return 0, 'a float', float(value)
+            return 0, 'a float', unicode(float(value))
         except:
             return 1, '"%s" is not a float. ' % value
     else:
-        return 0, 'unvalidated', value
+        return 0, 'unvalidated', value.decode('utf-8')
 
 
 def validate_cell(CSPACE_MAPPING, key, values):
@@ -325,13 +327,13 @@ def extract_tag(xml, tag):
     return element.text
 
 
-def extract_refname(xml):
+def extract_refname(xml, term):
 
     try:
         cspaceXML = fromstring(xml)
         totalItems = int(cspaceXML.find('.//totalItems').text)
         if totalItems == 0:
-            return 'NotFound X X X X'.split(' ')
+            return 'ZeroResults X X X X'.split(' ')
         items = cspaceXML.findall('.//list-item')
         for i in items:
             csid = i.find('.//csid')
@@ -343,19 +345,25 @@ def extract_refname(xml):
                     try:
                         termDisplayName = extract_tag(i, 'displayName')
                     except:
-                        pass
+                        return 'NoDisplayName X X X X'.split(' ')
                 refName = extract_tag(i, 'refName')
                 updated_at = extract_tag(i, 'updatedAt')
             except:
                 print 'could not get termDisplayName or refName or updatedAt from %s' % csid
                 return 'Failed X X X X'.split(' ')
-            return ['OK', csid, termDisplayName, refName, updated_at]
+            if term.encode('utf-8').lower() == termDisplayName.encode('utf-8').lower():
+                return ['OK', csid, unicode(termDisplayName), refName, updated_at]
+        return 'NoMatch X X X X'.split(' ')
     except:
+        raise
         return 'Failed X X X X'.split(' ')
 
 
 def get_auth_item(term, authority):
-    url = '%s/cspace-services/%s/items?kw=%s&wf_deleted=false&pgSz=%s' % (http_parms.server, authority, urllib.quote_plus(term), 2)
+    querystring = {'kw': term.encode('utf-8').replace('-',' '), 'wf_deleted': 'false', 'pgSz': 5}
+    querystring = urllib.urlencode(querystring)
+    print querystring
+    url = '%s/cspace-services/%s/items?%s' % (http_parms.server, authority, querystring)
     # response = requests.get(url, params={'q': taxon_prefix})
     response = requests.get(url, auth=HTTPBasicAuth(http_parms.username, http_parms.password))
     if response.status_code != 200:
@@ -364,10 +372,10 @@ def get_auth_item(term, authority):
         #print response.content
         error_msg = "HTTP%s X X X X" % response.status_code
         return error_msg.split(' ')
-    response.raise_for_status()
+    # response.raise_for_status()
 
     response.encoding = 'utf-8'
-    refname_result = extract_refname(response.content)
+    refname_result = extract_refname(response.content, term)
     return refname_result
     #return extract_refname(response)
 
