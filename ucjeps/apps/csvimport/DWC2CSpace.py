@@ -146,9 +146,9 @@ def getRecords(rawFile):
         f.seek(0)
         #csvfile = csv.reader(f, dialect)
         csvfile = UnicodeReader(f, dialect)
-    except IOError:
-        message = 'Expected to be able to read %s, but it was not found or unreadable' % rawFile
-        return message, -1
+    except IOError, e:
+        print "DWC2CSPACE: %s " % e
+        sys.exit(1)
     except:
         for delimiter in delimiters:
             if delimiter in sample:
@@ -174,10 +174,9 @@ def getRecords(rawFile):
                     #cell_values[col_name]['bcid'] = row[0]
                 cell_values[col_name][row[col_number]] += 1
         return cell_values, rows, rowNumber, header
-    except IOError:
-        raise
-        message = 'could not read (or maybe parse) rows from %s' % rawFile
-        return message, -1
+    except IOError, e:
+        print "DWC2CSPACE: %s " % e
+        sys.exit(1)
     except:
         raise
 
@@ -203,8 +202,8 @@ def main():
 
     header = "*" * 100
 
-    if len(sys.argv) < 7:
-        print('%s <csv input file> <config file> <mapping file> <template> <output file> <action>') % sys.argv[0]
+    if len(sys.argv) < 8:
+        print('%s <csv input file> <config file> <mapping file> <template> <output file> <terms file> <action>') % sys.argv[0]
         sys.exit()
 
     print header
@@ -213,12 +212,13 @@ def main():
     print "DWC2CSPACE: mapping file:   %s" % sys.argv[3]
     print "DWC2CSPACE: template:       %s" % sys.argv[4]
     print "DWC2CSPACE: output file:    %s" % sys.argv[5]
-    print "DWC2CSPACE: action:         %s" % sys.argv[6]
+    print "DWC2CSPACE: terms file:     %s" % sys.argv[6]
+    print "DWC2CSPACE: action:         %s" % sys.argv[7]
     print header
 
 
     try:
-        action = sys.argv[6]
+        action = sys.argv[7]
         actions = 'count validate add update both'
         if not action in actions.split(' '):
             print 'DWC2CSPACE: Error! not a valid action: %s' % action
@@ -233,11 +233,10 @@ def main():
         print header
         if lines == -1:
             print 'DWC2CSPACE: Error! %s' % inputRecords
-            sys.exit()
+            sys.exit(1)
     except:
-        raise
         print "DWC2CSPACE: could not get CSV records to load"
-        sys.exit()
+        sys.exit(1)
 
     try:
         config = getConfig(sys.argv[2])
@@ -266,14 +265,19 @@ def main():
             xmlTemplate = f.read()
             # print xmlTemplate
     except:
-        print "DWC2CSPACE: could not get template"
+        print "DWC2CSPACE: could not get template %s" % sys.argv[4]
         sys.exit()
 
     try:
-        #outputfh = csv.writer(open(sys.argv[5], 'wb'), delimiter="\t")
         outputfh = UnicodeWriter(open(sys.argv[5], 'wb'), delimiter="\t", quoting=csv.QUOTE_NONE, quotechar=chr(255))
     except:
         print "DWC2CSPACE: could not open output file for write %s" % sys.argv[5]
+        sys.exit()
+
+    try:
+        termsfh = UnicodeWriter(open(sys.argv[6], 'wb'), delimiter="\t", quoting=csv.QUOTE_NONE, quotechar=chr(255))
+    except:
+        print "DWC2CSPACE: could not open test file for write %s" % sys.argv[5]
         sys.exit()
 
     successes = 0
@@ -306,8 +310,26 @@ def main():
                 items = s[7]
                 for item_key in sorted(items):
                     if items[item_key][0] != 'OK':
-                        print '%15s: %s' % (items[item_key][0], item_key)
+                        if s[0] in mapping:
+                            if mapping[s[0]][2] == 'refname' or mapping[s[0]][2] == 'static':
+                                label = items[item_key][0]
+                            else:
+                                label = 'invalid value:'
+                        print '  %15s: %s' % (label, item_key)
                         bad_values += 1
+
+        for s in stats[0]:
+            if 'column ignored' in s[5]:
+                continue
+            term_row = [str(x) for x in s[:5]]
+            for i,t in enumerate(s[6]):
+                term_extra = (t, str(s[6][t]))
+                if t in s[7].keys() and type(s[7][t]) == type([]):
+                    term_extra += tuple(s[7][t])
+                else:
+                    term_extra += ('OK', s[7][t], '', '', '')
+                termsfh.writerow(tuple(term_row) + term_extra)
+
         if bad_count != 0:
             print "DWC2CSPACE: validation failed (%s fields had %s values in error)" % (bad_count, bad_values)
             print "DWC2CSPACE: cowardly refusal to write invalid output file"
@@ -341,6 +363,9 @@ def main():
                 if cspaceElements[1] != '':
                     successes += 1
                 outputfh.writerow(cspaceElements)
+                # flush output buffers so we get a much data as possible if there is a failure
+                outputfh.flush()
+                sys.stdout.flush()
             except:
                 print "DWC2CSPACE: create failed for objectnumber %s, %8.2f" % (cspaceElements, (time.time() - elapsedtimetotal))
                 raise

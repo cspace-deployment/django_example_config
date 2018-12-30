@@ -17,6 +17,20 @@ from os.path import isfile, isdir, join
 from common.Counter import Counter
 from common.unicode_hack import UnicodeReader, UnicodeWriter
 
+from extractOptions import get_lists
+static_lists = get_lists('cspace-ui-config-ucjeps.json')
+
+# this hack provides a means to 'overlay' existing static lists with other lists.
+# it is specifically implemented to allow the recoding of 'stateProvince' values for UCJEPS
+with open('extra-lists.json', 'rb') as e:
+    extralists = e.read().encode('utf-8')
+    e.close()
+try:
+    extra_static_lists = json.loads(extralists.replace('\n', ''))
+except:
+    print 'could not parse "extra-lists.json". aborting.'
+    sys.exit(1)
+
 config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'csvimport')
 TITLE = config.get('info', 'apptitle')
 SERVERINFO = {
@@ -210,7 +224,15 @@ def check_cell_in_cspace(mapping_key, key, value):
         else:
             return 0, 'a refname', refname
     elif mapping_key[2] == 'static':
-        return 0, 'a static value', value
+        if value in static_lists[mapping_key[5]]:
+            return 0, 'a static value', ['OK', value, '', value]
+        elif mapping_key[5] in extra_static_lists:
+            if value in extra_static_lists[mapping_key[5]]:
+                return 0, 'a static value', ['OK', value, '', extra_static_lists[mapping_key[5]][value]]
+            else:
+                return 1, "'%s' not found in extra static list '%s'" % (value, mapping_key[5]), ['NotFoundExtra', value, '', '']
+        else:
+            return 1, "'%s' not found in static list '%s'" % (value, mapping_key[5]), ['NotFoundStatic', value, '', '']
         #return 1, 'static vocab terms not validated yet', 'NotValidated X X X X'.split(' ')
     elif mapping_key[2] == 'integer':
         try:
@@ -234,7 +256,7 @@ def validate_cell(CSPACE_MAPPING, key, values):
     validated_values = {}
     if key in CSPACE_MAPPING:
         for v in values:
-            isaproblem, m, validated_value = check_cell_in_cspace(CSPACE_MAPPING[key], key, v)
+            isaproblem, message, validated_value = check_cell_in_cspace(CSPACE_MAPPING[key], key, v)
             validated_values[v] = validated_value
             num_problems += isaproblem
             if isaproblem != 0:
@@ -243,7 +265,7 @@ def validate_cell(CSPACE_MAPPING, key, values):
                 elif num_problems > 10:
                     continue
                 else:
-                    messages.append(m)
+                    messages.append(message)
     else:
         messages = ['column ignored: not a mapped field']
     valid_label = 'OK' if num_problems == 0 else 'Not OK'
@@ -362,7 +384,7 @@ def extract_refname(xml, term):
 def get_auth_item(term, authority):
     querystring = {'kw': term.encode('utf-8').replace('-',' '), 'wf_deleted': 'false', 'pgSz': 5}
     querystring = urllib.urlencode(querystring)
-    print querystring
+    # print querystring
     url = '%s/cspace-services/%s/items?%s' % (http_parms.server, authority, querystring)
     # response = requests.get(url, params={'q': taxon_prefix})
     response = requests.get(url, auth=HTTPBasicAuth(http_parms.username, http_parms.password))
@@ -380,85 +402,51 @@ def get_auth_item(term, authority):
     #return extract_refname(response)
 
 
-def getVocab(vocabcsid, request):
+def get_static_lists(list_names):
+    pass
+
+
+# at the moment it seems we won't need this function: vocabularies work pretty much like regular authorities
+def getVocab(uri):
+    pgSz = 500
     '''
-    
-    https://pahma-dev.cspace.berkeley.edu/cspace-services/vocabularies
-    
-    <ns2:abstract-common-list xmlns:ns2="http://collectionspace.org/services/jaxb">
-    <pageNum>0</pageNum>
-    <pageSize>40</pageSize>
-    <itemsInPage>40</itemsInPage>
-    <totalItems>62</totalItems>
-    <fieldsReturned>
-    csid|uri|refName|updatedAt|workflowState|shortIdentifier|displayName|vocabType
-    </fieldsReturned>
-    <list-item>
-    <csid>92a0f614-de7e-4959-8870</csid>
-    <uri>/vocabularies/92a0f614-de7e-4959-8870</uri>
-    <refName>
-    urn:cspace:pahma.cspace.berkeley.edu:vocabularies:name(assocpeople)'assocpeople'
-    </refName>
-    <updatedAt>2017-06-21T20:38:07Z</updatedAt>
-    <workflowState>project</workflowState>
-    <shortIdentifier>assocpeople</shortIdentifier>
-    <displayName>assocpeople</displayName>
-    </list-item>
-    
-    https://pahma-dev.cspace.berkeley.edu/cspace-services/vocabularies/92a0f614-de7e-4959-8870/items
-    
-    <ns2:abstract-common-list xmlns:ns2="http://collectionspace.org/services/jaxb">
-    <pageNum>0</pageNum>
-    <pageSize>40</pageSize>
-    <itemsInPage>10</itemsInPage>
-    <totalItems>10</totalItems>
-    <fieldsReturned>
-    csid|uri|refName|updatedAt|workflowState|order|termStatus|displayName|shortIdentifier
-    </fieldsReturned>
-    <list-item>
-    <csid>604f27b0-d9a6-4c1c-8380</csid>
-    <uri>
-    /vocabularies/92a0f614-de7e-4959-8870/items/604f27b0-d9a6-4c1c-8380
-    </uri>
-    <refName>
-    urn:cspace:pahma.cspace.berkeley.edu:vocabularies:name(assocpeople):item:name(assocpeopletype00)'gathered/collected by'
-    </refName>
-    <updatedAt>2017-06-21T20:38:07Z</updatedAt>
-    <workflowState>project</workflowState>
-    <termStatus>active</termStatus>
-    <displayName>gathered/collected by</displayName>
-    <shortIdentifier>assocpeopletype00</shortIdentifier>
-    </list-item>
-    
-    :param vocabcsid: 
-    :param request: 
-    :return: 
-    ''''''
-        connection = cspace.connection.create_connection(config, request.user)
-        (url, data, statusCode,elapsedtime) = connection.make_get_request(
-            'cspace-services/%s?kw=%s&wf_deleted=false' % ('collectionobjects', vocabcsid))
-        # ...collectionobjects?kw=%27orchid%27&wf_deleted=false
-        cspaceXML = fromstring(data)
+    uri = 'vocabularies'
+    uri = '/vocabularies/csid/items
+    '''
+    url = '%s/cspace-services/%s?pgSz=%s' % (http_parms.server, uri, pgSz)
+    # response = requests.get(url, params={'q': taxon_prefix})
+    response = requests.get(url, auth=HTTPBasicAuth(http_parms.username, http_parms.password))
+    if response.status_code != 200:
+        return "HTTP %s" % response.status_code
+    response.raise_for_status()
+    response.encoding = 'utf-8'
+
+    list_items = []
+    try:
+        cspaceXML = fromstring(response.content)
+        totalItems = int(cspaceXML.find('.//totalItems').text)
+        if totalItems == 0:
+            return []
         items = cspaceXML.findall('.//list-item')
-        results = []
         for i in items:
-            outputrow = []
             csid = i.find('.//csid')
             csid = csid.text
-            objectNumber = i.find('.//objectNumber')
-            objectNumber = objectNumber.text
-            hostname = connection.protocol + ':' + connection.hostname
-            if connection.port != '': hostname = hostname + ':' + connection.port
-            link = '%s/collectionspace/ui/%s/html/cataloging.html?csid=%s' % (hostname, connection.tenant, csid)
-            outputrow.append(link)
-            outputrow.append(objectNumber)
-            additionalfields = []
-            for field in ['objectName', 'title', 'updatedAt']:
-                element = i.find('.//%s' % field)
-                element = '' if element is None else element.text
-                # extract display name if a refname... nb: this pattern might do damage in some cases!
-                element = re.sub(r"^.*\)'(.*)'$", "\\1", element)
-                additionalfields.append(element)
-            outputrow.append(additionalfields)
-            results.append(outputrow)
-            '''
+            try:
+                try:
+                    termDisplayName = extract_tag(i, 'termDisplayName')
+                except:
+                    try:
+                        termDisplayName = extract_tag(i, 'displayName')
+                    except:
+                        termDisplayName =  ''
+                refName = extract_tag(i, 'refName')
+                updated_at = extract_tag(i, 'updatedAt')
+            except:
+                print 'could not get termDisplayName or refName or updatedAt from %s' % csid
+                continue
+            list_items.append([csid, unicode(termDisplayName), refName, updated_at])
+    except:
+        raise
+        return []
+
+    return list_items
