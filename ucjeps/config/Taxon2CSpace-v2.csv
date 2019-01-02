@@ -1,0 +1,82 @@
+1	#################################################################								
+2	# DWC to Cspace field name mapping								
+3	# being a specification of how to match DarwinCore fields to UCJEPS Cspace fields								
+4	# Columns								
+5	# 	A	sequence number. Only facultative.						
+6	# 	B	DWC field name						
+7	# 	C	Cspace fieldname						
+8	# 	D	context tag (currently unused)						
+9	# 	E	datatype of the element						
+10	# 	F	type of check to peform						
+11	# 	G	Cspace authority name (including CSID)						
+12	# 	H	Remarks (ignored by the program)						
+13	# Darwin Core ('DWC') field name	Cspace collectionobject tag	context tag	data type	type of check	authority	remarks		
+14	kingdom	kingdom					taxon field	2	21
+15	phylum	phylum					taxon field	3	21
+16	class	class					taxon field	3	21
+17	family	family		refname		taxonomyauthority/87036424-e55f-4e39-bd12	taxon field	10	21
+18	scientificName	taxon		refname		taxonomyauthority/87036424-e55f-4e39-bd12	taxon field	16	22
+19	taxonID							15	21
+20	scientificNameAuthorship	taxonAuthor					taxon field	13	21
+21	genus						taxon field	15	21
+22	specificEpithet						taxon field	11	14
+23	taxonRank						taxon field	0	0
+24	infraspecificEpithet						taxon field	0	0
+25	taxonRemarks						taxon field	0	0
+26		taxonomicIdentHybridName					cspace field only		
+27		taxonomicIdentHybridParent					cspace field only		
+28		taxonomicIdentHybridParentQualifier					cspace field only		
+29		taxonomicRange					cspace field only		
+31		proposed					cspace field only		
+32		taxonAuthor					cspace field only		
+33		taxonAuthorType					cspace field only		
+34		taxonCitation					cspace field only		
+35		taxonCurrency					cspace field only		
+36		taxonIsNamedHybrid					cspace field only		
+37		taxonomicStatus					cspace field only		
+38		taxonRecordTypes					cspace field only		
+39		termFlag					cspace field only		
+41		termLanguage					cspace field only		
+42		termName					cspace field only		
+43		termPrefForLang					cspace field only		
+44		termQualifier					cspace field only		
+45		termSource					cspace field only		
+46		termSourceDetail					cspace field only		
+47		termSourceID					cspace field only		
+48		termSourceNote					cspace field only		
+49		termStatus					cspace field only		
+50		termType					cspace field only		
+51	majorgroup	taxonMajorGroup		static		taxonMajorGroups			
+52		coordUncertaintyUnit		static		coordUncertaintyUnits			
+53		coordinateSystem		static		coordinateSystems			
+54	county	county		static		counties			
+55	country	country		static		countries			
+56		depthUnit		static		depthUnits			
+57		dimension		static		dimensions			
+58		distanceAboveSurfaceUnit		static		distanceAboveSurfaceUnits			
+59		elevationUnit		static		elevationUnits			
+60		gender		static		genders			
+61		geoRefProtocol		static		geoRefProtocols			
+62		geoRefVerificationStatus		static		geoRefVerificationStatuses			
+63		geodeticDatum		static		geodeticDatums			
+64		georefProtocol		static		georefProtocols			
+65		georefVerificationStatus		static		georefVerificationStatuses			
+66		higherGeography		static		higherGeographies			
+67		localityUnit		static		localityUnits			
+68		measuredPart		static		measuredParts			
+69		measurementMethod		static		measurementMethods			
+70		measurementUnit		static		measurementUnits			
+71		mediaType		static		mediaTypes			
+72		numberType		static		numberTypes			
+73		objectStatus		static		objectStatuses			
+74	phase	phase		static		phases			
+75	sex	sex		static		sexes			
+76		spatialRefSystem		static		spatialRefSystems			
+77	state	state		static		states			
+78		taxonIdentKind		static		taxonIdentKinds			
+79		taxonRank		static		taxonRanks			
+80		taxonTermSource		static		taxonTermSources			
+81		taxonTermStatus		static		taxonTermStatuses			
+82		taxonTermType		static		taxonTermTypes			
+83		taxonomicStatus		static		taxonomicStatuses			
+84		typeSpecimenKind		static		typeSpecimenKinds			
