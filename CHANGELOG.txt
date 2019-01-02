@@ -3,12 +3,30 @@ CHANGELOG for the cspace_django_webapps
 OK, it is not a *real* change log, but a list of changes resulting from git log
 with some human annotation after the fact.
 
-This is version djconfig_5.0-2
-Thu Dec  6 08:27:21 PST 2018
+This is version djconfig_5.0-3
+Wed Jan  2 06:25:14 PST 2019
 
-e84a2b3 (HEAD -> master, jblowe/master) NOJIRA: make toolbox available to UCJEPS; NB: much customization needed
+37a39d3 (HEAD -> master, origin/master, origin/HEAD) UJ-56: improved versions of mapping config files
+bc0d6e8 UJ-54: refactoring to allow online and command line versions of import to play nice
+b68d92b UJ-57: handle validation of 'static lists'
+4ed43ef UJ-56: minor refactoring of 'options parsing script'
+3ce6867 UJ-58: handle various unicode encoding issue in add
+d79e13a UJ-55: XML templates for collectionobject
+87d3e12 UJ-55: further improvements to validation
+d55cf3a UJ-48: update installed app list for PAHMA
+0873de1 UJ-48: pages limited to 500 items; add workflow app to pahma
+8f03764 UJ-55, UJ-58: next iteration of csvimport scripts
+49a2dc3 HM-66: some code to help keep track of which webapps are which
+819e6b0 UJ-48: implement pagination of results
+936c7cc NOJIRA: correct list of available apps for CineFiles
+3218b71 Merge pull request #14 from jblowe/master
+35ae926 (jblowe/master) UJ-48: use fieldsReturned element from CSpace to configure what to show
+1b07153 NOJIRA: remove this stray file
+b1f67d2 UJ-53: csvimport: UX clarifications and improvements
+b5a8ed4 (tag: djconfig_5.0-2) revise change log and VERSION file for version djconfig_5.0-2
+e84a2b3 NOJIRA: make toolbox available to UCJEPS; NB: much customization needed
 9f78732 NOJIRA: move in progress toolbox rewrite to 'adhocreporting'
-decdbce (origin/master, origin/HEAD) UJ-43: initial prototype of 'accession review tool'
+decdbce UJ-43: initial prototype of 'accession review tool'
 9b538ee UCJEPS-667: minor revisions to text in csvimport
 60520fa (tag: djconfig_5.0-1) revise change log and VERSION file for version djconfig_5.0-1
 2d45385 UJ-31: repair the 3 bugs noted in this webapps
