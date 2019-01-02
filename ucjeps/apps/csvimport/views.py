@@ -7,8 +7,10 @@ import sys
 from django.shortcuts import render, HttpResponse, render_to_response
 from django.template import RequestContext
 import time, datetime, re
-from utils import SERVERINFO, TITLE, handle_uploaded_file, getCSID, get_import_file, loginfo, RECORDTYPES
-from utils import check_columns, count_columns, validate_columns
+from utils import SERVERINFO, TITLE, handle_uploaded_file, getCSID, get_import_file, loginfo
+from utils import check_columns, count_columns, validate_items, get_recordtypes
+
+RECORDTYPES = get_recordtypes()
 
 # read common config file, just for the version info
 from common.appconfig import loadConfiguration
@@ -28,7 +30,7 @@ def prepareFiles(request, mergeinput):
         today = time.strftime("%Y-%m-%d", time.localtime())
         try:
             print "%s %s: %s %s (%s %s)" % ('id', lineno, 'name', afile.name, 'size', afile.size)
-            count, matrix = handle_uploaded_file(afile)
+            cell_values, matrix, count, header = handle_uploaded_file(afile)
             fileinfo['status'] = 'OK'
         except:
             fileinfo['status'] = "error! %s" % traceback.format_exc()
@@ -139,12 +141,15 @@ def upload_file(request):
                 matrix, labels = count_columns(matrix, labels)
             elif action == 'validate':
                 message = '%s rows validated.' % len(matrix)
-                CSPACE_MAPPING = RECORDTYPES[recordtype][2]
-                matrix, labels = validate_columns(CSPACE_MAPPING, matrix, labels)
+                CSPACE_MAPPING = RECORDTYPES[recordtype][2][0]
+                validated_items, matrix2 = validate_items(CSPACE_MAPPING, matrix, labels)
+                # strip off values validated and validation results -- too big to display
+                matrix = [m[:5] for m in matrix2]
+                del matrix2
             elif action in 'add update both'.split(' '):
                 message = '%s rows validated.' % len(matrix)
-                CSPACE_MAPPING = RECORDTYPES[recordtype][2]
-                matrix, labels = validate_columns(CSPACE_MAPPING, matrix, labels)
+                CSPACE_MAPPING = RECORDTYPES[recordtype][2][0]
+                matrix, labels = validate_items(CSPACE_MAPPING, matrix, labels)
             columnhandling = check_columns(labels, request.POST['use_header'], request.POST['recordtype'])
             try:
                 keyrow = labels.index('id')
@@ -222,7 +227,7 @@ def show_csv_config(request):
     action = None
     numProblems = 0
 
-    matrix = RECORDTYPES[recordtype][2]
+    matrix = RECORDTYPES[recordtype][2][0]
     # convert from dict of tuples to list of tuples
     matrix = [[m,] + matrix[m] for m in matrix]
     matrix = sorted(matrix, key=lambda x: x[5])

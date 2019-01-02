@@ -14,7 +14,7 @@ import urllib2
 
 import re
 
-from utils import load_mapping_file, validate_columns, map2cspace, count_columns, dump_row
+from utils import load_mapping_file, validate_items, count_columns, getRecords, map_items, dump_row
 
 CONFIGDIRECTORY = ''
 
@@ -129,75 +129,6 @@ def DWC2CSPACE(action, xmlTemplate, input_dataDict, config):
     return [objectNumber, objectCSID, messages]
 
 
-class CleanlinesFile(file):
-    def next(self):
-        line = super(CleanlinesFile, self).next()
-        return line.replace('\r', '').replace('\n', '').encode('utf-8') + '\n'
-
-
-def getRecords(rawFile):
-    # csvfile = csv.reader(codecs.open(rawFile,'rb','utf-8'),delimiter="\t")
-    delimiters = '\t ,'.split(' ')
-    try:
-        f = CleanlinesFile(rawFile, 'rb')
-        # see if the sniffer can figger out the csv dialect
-        sample = f.read(4096)
-        dialect = csv.Sniffer().sniff(sample, delimiters = ',\t')
-        f.seek(0)
-        #csvfile = csv.reader(f, dialect)
-        csvfile = UnicodeReader(f, dialect)
-    except IOError, e:
-        print "DWC2CSPACE: %s " % e
-        sys.exit(1)
-    except:
-        for delimiter in delimiters:
-            if delimiter in sample:
-                f.seek(0)
-                #csvfile = csv.reader(f, delimiter=delimiter)
-                csvfile = UnicodeReader(f, delimiter=delimiter)
-                break
-
-    try:
-        rows = []
-        cell_values = {}
-        for rowNumber, row in enumerate(csvfile):
-            if rowNumber == 0:
-                header = row
-                continue
-            rows.append(row)
-            for col_number, cell in enumerate(row):
-                if cell == "#": continue  # skip comments
-                col_name = header[col_number]
-                cell_values.setdefault(col_name, {})
-                if not row[col_number] in cell_values[col_name]:
-                    cell_values[col_name][row[col_number]] = 0
-                    #cell_values[col_name]['bcid'] = row[0]
-                cell_values[col_name][row[col_number]] += 1
-        return cell_values, rows, rowNumber, header
-    except IOError, e:
-        print "DWC2CSPACE: %s " % e
-        sys.exit(1)
-    except:
-        raise
-
-
-def map_items(input_data, file_header):
-    data_dict = {}
-    for i,cell in enumerate(input_data):
-        data_dict[file_header[i]] = cell
-    return data_dict
-
-
-def validate_items(CSPACE_MAPPING, input_data, file_header):
-    stats = validate_columns(CSPACE_MAPPING, input_data, file_header)
-    validated_items = []
-    for i,row in enumerate(input_data):
-        output_row = []
-        for j,cell in enumerate(row):
-            output_row.append(map2cspace(CSPACE_MAPPING,cell, j, stats, file_header))
-        validated_items.append(output_row)
-    return validated_items, stats
-
 def main():
 
     header = "*" * 100
@@ -228,12 +159,13 @@ def main():
         sys.exit()
 
     try:
-        dataDict, inputRecords, lines, file_header = getRecords(sys.argv[1])
-        print 'DWC2CSPACE: %s lines and %s records found in file %s' % (lines, len(inputRecords), sys.argv[1])
-        print header
-        if lines == -1:
-            print 'DWC2CSPACE: Error! %s' % inputRecords
-            sys.exit(1)
+        with open(sys.argv[1], 'rb') as f:
+            dataDict, inputRecords, lines, file_header = getRecords(f)
+            print 'DWC2CSPACE: %s lines and %s records found in file %s' % (lines, len(inputRecords), sys.argv[1])
+            print header
+            if lines == -1:
+                print 'DWC2CSPACE: Error! %s' % inputRecords
+                sys.exit(1)
     except:
         print "DWC2CSPACE: could not get CSV records to load"
         sys.exit(1)
@@ -315,7 +247,7 @@ def main():
                                 label = items[item_key][0]
                             else:
                                 label = 'invalid value:'
-                        print '  %15s: %s' % (label, item_key)
+                        print '  %15s: %s' % (label, item_key.encode('utf-8'))
                         bad_values += 1
 
         for s in stats[0]:

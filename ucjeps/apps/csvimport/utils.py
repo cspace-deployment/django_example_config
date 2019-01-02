@@ -18,11 +18,11 @@ from common.Counter import Counter
 from common.unicode_hack import UnicodeReader, UnicodeWriter
 
 from extractOptions import get_lists
-static_lists = get_lists('cspace-ui-config-ucjeps.json')
+static_lists = get_lists(path.join(settings.BASE_PARENT_DIR, 'config/cspace-ui-config-ucjeps.json'))
 
 # this hack provides a means to 'overlay' existing static lists with other lists.
 # it is specifically implemented to allow the recoding of 'stateProvince' values for UCJEPS
-with open('extra-lists.json', 'rb') as e:
+with open(path.join(settings.BASE_PARENT_DIR, 'config/extra-lists.json'), 'rb') as e:
     extralists = e.read().encode('utf-8')
     e.close()
 try:
@@ -106,8 +106,8 @@ def load_mapping_file(mapping_file):
             dump_row(row, 'OK','')
     return cspace_mapping, errors
 
-online = False
-if online is True:
+
+def get_recordtypes():
     RECORDTYPES = config.get('info', 'recordtypes')
     try:
         RECORDTYPES = json.loads(RECORDTYPES.replace('\n', ''))
@@ -117,6 +117,8 @@ if online is True:
         raise
         RECORDTYPES = {'configerror': ['Configuration Error', []]}
         print 'Error loading mapping file'
+    return RECORDTYPES
+
 
 IMPORTDIR = config.get('files', 'directory')
 if isdir(IMPORTDIR):
@@ -174,6 +176,59 @@ def get_import_filelist():
     return import_filelist[0:500], errors, len(import_filelist), len(errors)
 
 
+class CleanlinesFile(file):
+    def next(self):
+        line = super(CleanlinesFile, self).next()
+        return line.replace('\r', '').replace('\n', '').encode('utf-8') + '\n'
+
+
+def getRecords(rawFile):
+    rawFile.seek(0)
+    # csvfile = csv.reader(codecs.open(rawFile,'rb','utf-8'),delimiter="\t")
+    delimiters = '\t ,'.split(' ')
+    try:
+        #f = CleanlinesFile(rawFile, 'rb')
+        # see if the sniffer can figger out the csv dialect
+        sample = rawFile.read(4096)
+        dialect = csv.Sniffer().sniff(sample, delimiters = ',\t')
+        rawFile.seek(0)
+        #csvfile = csv.reader(f, dialect)
+        csvfile = UnicodeReader(rawFile, dialect)
+    except IOError, e:
+        print "DWC2CSPACE: %s " % e
+        sys.exit(1)
+    except:
+        for delimiter in delimiters:
+            if delimiter in sample:
+                rawFile.seek(0)
+                #csvfile = csv.reader(f, delimiter=delimiter)
+                csvfile = UnicodeReader(rawFile, delimiter=delimiter)
+                break
+
+    try:
+        rows = []
+        cell_values = {}
+        for rowNumber, row in enumerate(csvfile):
+            if rowNumber == 0:
+                header = row
+                continue
+            rows.append(row)
+            for col_number, cell in enumerate(row):
+                if cell == "#": continue  # skip comments
+                col_name = header[col_number]
+                cell_values.setdefault(col_name, {})
+                if not row[col_number] in cell_values[col_name]:
+                    cell_values[col_name][row[col_number]] = 0
+                    #cell_values[col_name]['bcid'] = row[0]
+                cell_values[col_name][row[col_number]] += 1
+        return cell_values, rows, rowNumber, header
+    except IOError, e:
+        print "DWC2CSPACE: %s " % e
+        sys.exit(1)
+    except:
+        raise
+
+
 def check_file(file_handle):
     file_handle.seek(0)
     lines = file_handle.read().splitlines()
@@ -188,7 +243,7 @@ def handle_uploaded_file(f):
         for chunk in f.chunks():
             destination.write(chunk)
     destination.close()
-    return check_file(f)
+    return getRecords(f)
 
 
 def count_columns(matrix, header):
@@ -308,7 +363,26 @@ def validate_columns(CSPACE_MAPPING, matrix, header):
     return stats, 'column types tokens status problems message types valid_values'.split(' ')
 
 
+def map_items(input_data, file_header):
+    data_dict = {}
+    for i,cell in enumerate(input_data):
+        data_dict[file_header[i]] = cell
+    return data_dict
+
+
+def validate_items(CSPACE_MAPPING, input_data, file_header):
+    stats = validate_columns(CSPACE_MAPPING, input_data, file_header)
+    validated_items = []
+    for i,row in enumerate(input_data):
+        output_row = []
+        for j,cell in enumerate(row):
+            output_row.append(map2cspace(CSPACE_MAPPING,cell, j, stats, file_header))
+        validated_items.append(output_row)
+    return validated_items, stats
+
+
 def check_columns(labels, header, field_map):
+    RECORDTYPES = get_recordtypes()
     cspace_fields = RECORDTYPES[field_map][2]
     handling = []
     if header == 'use':
@@ -382,7 +456,7 @@ def extract_refname(xml, term):
 
 
 def get_auth_item(term, authority):
-    querystring = {'kw': term.encode('utf-8').replace('-',' '), 'wf_deleted': 'false', 'pgSz': 5}
+    querystring = {'kw': term.encode('utf-8').replace('-',' '), 'wf_deleted': 'false', 'pgSz': 20}
     querystring = urllib.urlencode(querystring)
     # print querystring
     url = '%s/cspace-services/%s/items?%s' % (http_parms.server, authority, querystring)
