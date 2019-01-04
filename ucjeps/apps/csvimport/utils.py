@@ -96,7 +96,7 @@ def load_mapping_file(mapping_file):
                     errors += 1
                     continue
                 if not data_type in 'static literal refname float integer date key'.split(' '):
-                    dump_row(row, 'Error', 'unrecognized datatype: %s' % data_type)
+                    dump_row(row, 'Error', 'unrecognized datatype: "%s"' % data_type)
                     errors += 1
                     continue
                 cspace_mapping[input_field] = [cspace_field, context_tag, data_type, check_exists, int(row_id), authority]
@@ -176,32 +176,23 @@ def get_import_filelist():
     return import_filelist[0:500], errors, len(import_filelist), len(errors)
 
 
-class CleanlinesFile(file):
-    def next(self):
-        line = super(CleanlinesFile, self).next()
-        return line.replace('\r', '').replace('\n', '').encode('utf-8') + '\n'
-
-
 def getRecords(rawFile):
     rawFile.seek(0)
-    # csvfile = csv.reader(codecs.open(rawFile,'rb','utf-8'),delimiter="\t")
     delimiters = '\t ,'.split(' ')
     try:
-        #f = CleanlinesFile(rawFile, 'rb')
         # see if the sniffer can figger out the csv dialect
         sample = rawFile.read(4096)
         dialect = csv.Sniffer().sniff(sample, delimiters = ',\t')
         rawFile.seek(0)
-        #csvfile = csv.reader(f, dialect)
         csvfile = UnicodeReader(rawFile, dialect)
     except IOError, e:
         print "DWC2CSPACE: %s " % e
         sys.exit(1)
     except:
+        # nope, can't sniff: try a brute force approach, look for tabs, then commas...
         for delimiter in delimiters:
             if delimiter in sample:
                 rawFile.seek(0)
-                #csvfile = csv.reader(f, delimiter=delimiter)
                 csvfile = UnicodeReader(rawFile, delimiter=delimiter)
                 break
 
@@ -273,7 +264,7 @@ def check_cell_in_cspace(mapping_key, key, value):
     elif mapping_key[2] == 'key':
         return 0, 'key', value
     elif mapping_key[2] == 'refname':
-        refname = get_auth_item(value, mapping_key[5])
+        refname = rest_query(value, '%s/items' % mapping_key[5])
         if refname[0] != 'OK':
             return 1, "refname for '%s' not found" % value, refname
         else:
@@ -285,7 +276,7 @@ def check_cell_in_cspace(mapping_key, key, value):
             if value in extra_static_lists[mapping_key[5]]:
                 return 0, 'a static value', ['OK', value, '', extra_static_lists[mapping_key[5]][value]]
             else:
-                return 1, "'%s' not found in extra static list '%s'" % (value, mapping_key[5]), ['NotFoundExtra', value, '', '']
+                return 1, "'%s' not found in 'extra' static list '%s'" % (value, mapping_key[5]), ['NotFoundExtra', value, '', '']
         else:
             return 1, "'%s' not found in static list '%s'" % (value, mapping_key[5]), ['NotFoundStatic', value, '', '']
         #return 1, 'static vocab terms not validated yet', 'NotValidated X X X X'.split(' ')
@@ -306,6 +297,7 @@ def check_cell_in_cspace(mapping_key, key, value):
 
 
 def validate_cell(CSPACE_MAPPING, key, values):
+    max_problems_to_log = 4
     num_problems = 0
     messages = []
     validated_values = {}
@@ -315,12 +307,12 @@ def validate_cell(CSPACE_MAPPING, key, values):
             validated_values[v] = validated_value
             num_problems += isaproblem
             if isaproblem != 0:
-                if num_problems == 10:
-                    messages.append('[...]')
-                elif num_problems > 10:
+                if num_problems > max_problems_to_log:
                     continue
                 else:
                     messages.append(message)
+        if num_problems > max_problems_to_log:
+            messages.append('[... and %s more.]' % num_problems)
     else:
         messages = ['column ignored: not a mapped field']
     valid_label = 'OK' if num_problems == 0 else 'Not OK'
@@ -356,11 +348,11 @@ def validate_columns(CSPACE_MAPPING, matrix, header):
     stats = []
     for key in header:
         valid_label, num_problems, message, validated_values = validate_cell(CSPACE_MAPPING, key, types[key])
-        stats.append((key, len(types[key]), sum(types[key].values()), valid_label, num_problems, message, types[key], validated_values))
+        stats.append([key, len(types[key]), sum(types[key].values()), valid_label, num_problems, message, types[key], validated_values])
 
     # filter out columns that have no data.
     #stats = [s for s in stats if s[1] > 0]
-    return stats, 'column types tokens status problems message types valid_values'.split(' ')
+    return stats, 'column types tokens status problems messages types valid_values'.split(' ')
 
 
 def map_items(input_data, file_header):
@@ -370,16 +362,35 @@ def map_items(input_data, file_header):
     return data_dict
 
 
-def validate_items(CSPACE_MAPPING, input_data, file_header):
+def validate_items(CSPACE_MAPPING, input_data, file_header, action):
     stats = validate_columns(CSPACE_MAPPING, input_data, file_header)
+
+    try:
+        for field in CSPACE_MAPPING:
+            if CSPACE_MAPPING[field][2] == 'key':
+                keyfield = field
+        keyrow = file_header.index(keyfield)
+    except:
+        keyrow = -1
+
     validated_items = []
     for i,row in enumerate(input_data):
         output_row = []
         for j,cell in enumerate(row):
             output_row.append(map2cspace(CSPACE_MAPPING,cell, j, stats, file_header))
         validated_items.append(output_row)
-    return validated_items, stats
+    number_check = check_key(stats[0][keyrow][7], action)
+    return validated_items, stats, number_check, keyrow
 
+
+def check_key(key_dict, action):
+    for k in key_dict:
+        refname = rest_query(k, 'collectionobjects')
+        if refname[0] != 'ZeroResults':
+            key_dict[k] = refname[1]
+        else:
+            key_dict[k] = ''
+    return key_dict
 
 def check_columns(labels, header, field_map):
     RECORDTYPES = get_recordtypes()
@@ -435,15 +446,15 @@ def extract_refname(xml, term):
             csid = i.find('.//csid')
             csid = csid.text
             try:
+                refName = extract_tag(i, 'refName')
+                updated_at = extract_tag(i, 'updatedAt')
                 try:
                     termDisplayName = extract_tag(i, 'termDisplayName')
                 except:
                     try:
                         termDisplayName = extract_tag(i, 'displayName')
                     except:
-                        return 'NoDisplayName X X X X'.split(' ')
-                refName = extract_tag(i, 'refName')
-                updated_at = extract_tag(i, 'updatedAt')
+                        return ['NoDisplayName', csid, '', refName, updated_at]
             except:
                 print 'could not get termDisplayName or refName or updatedAt from %s' % csid
                 return 'Failed X X X X'.split(' ')
@@ -455,12 +466,11 @@ def extract_refname(xml, term):
         return 'Failed X X X X'.split(' ')
 
 
-def get_auth_item(term, authority):
+def rest_query(term, authority):
     querystring = {'kw': term.encode('utf-8').replace('-',' '), 'wf_deleted': 'false', 'pgSz': 20}
     querystring = urllib.urlencode(querystring)
     # print querystring
-    url = '%s/cspace-services/%s/items?%s' % (http_parms.server, authority, querystring)
-    # response = requests.get(url, params={'q': taxon_prefix})
+    url = '%s/cspace-services/%s?%s' % (http_parms.server, authority, querystring)
     response = requests.get(url, auth=HTTPBasicAuth(http_parms.username, http_parms.password))
     if response.status_code != 200:
         #print "search failed!"

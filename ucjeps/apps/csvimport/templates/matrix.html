@@ -29,14 +29,10 @@
         <tr>
             {% for cell in row %}
                 <td>
-                    {% if forloop.counter0 == keyrow %}
+                    {% if action == 'count' or action == 'validate' or action == 'add' or action == 'update' %}
                         {{ cell }}
                     {% else %}
-                        {% if action == 'count' or action == 'validate' or action == 'add'%}
-                            {{ cell }}
-                        {% else %}
-                            <input type="text" name="col.{{ forloop.counter }}" value="{{ cell }}">
-                        {% endif %}
+                        <input type="text" name="col.{{ forloop.counter }}" value="{{ cell }}">
                     {% endif %}
                 </td>
             {% endfor %}

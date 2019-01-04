@@ -227,7 +227,7 @@ def main():
         successes = len(inputRecords)
 
     elif action == 'validate':
-        validated_data, stats = validate_items(mapping, inputRecords, file_header)
+        validated_data, stats, number_check, keyrow = validate_items(mapping, inputRecords, file_header, action)
         ok_count = 0
         bad_count = 0
         bad_values = 0
@@ -249,6 +249,18 @@ def main():
                                 label = 'invalid value:'
                         print '  %15s: %s' % (label, item_key.encode('utf-8'))
                         bad_values += 1
+        not_found = 0
+        found = 0
+        total = 0
+
+        for key in number_check:
+            if number_check[key] == '':
+                not_found += 1
+            else:
+                found +=1
+            total += 1
+
+        print "\n%s:  %s found, %s not found, %s total\n" % ('numbers', found, not_found, total)
 
         for s in stats[0]:
             if 'column ignored' in s[5]:
