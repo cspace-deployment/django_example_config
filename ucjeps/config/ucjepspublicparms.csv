@@ -37,8 +37,8 @@ field	23	maxelevation	Max elevation	maxelevation_f			keyword					20			19	x
 field	24	elevationunit	Elevation unit	elevationunit_s			keyword					21			20	x
 field	25	habitat	Habitat	habitat_s			keyword					22			21	x
 field	26	latlong	LatLong	latlong_p			location								22	x
-field	27	L1	L1	location_1_coordinate											23	x
-field	28	L2	L2	location_2_coordinate											24	x
+field	27	L1	L1	location_0_d											23	x
+field	28	L2	L2	location_1_d											24	x
 field	29	trscoordinates	TRS coordinates	trscoordinates_s			dropdown							1	25	x
 field	30	datum	Datum	datum_s			dropdown			14				2	26	x
 field	31	coordinatesource	Coordinate source	coordinatesource_s			dropdown							3	27	x
