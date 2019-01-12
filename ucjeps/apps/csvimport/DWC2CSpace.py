@@ -160,14 +160,18 @@ def main():
 
     try:
         with open(sys.argv[1], 'rb') as f:
-            dataDict, inputRecords, lines, file_header = getRecords(f)
-            print 'DWC2CSPACE: %s lines and %s records found in file %s' % (lines, len(inputRecords), sys.argv[1])
-            print header
-            if lines == -1:
-                print 'DWC2CSPACE: Error! %s' % inputRecords
+            try:
+                dataDict, inputRecords, lines, file_header = getRecords(f)
+                print 'DWC2CSPACE: %s lines and %s records found in file %s' % (lines, len(inputRecords), sys.argv[1])
+                print header
+                if lines == -1:
+                    print 'DWC2CSPACE: Error! %s' % inputRecords
+                    sys.exit(1)
+            except:
+                print "DWC2CSPACE: could not get CSV records to load"
                 sys.exit(1)
     except:
-        print "DWC2CSPACE: could not get CSV records to load"
+        print "DWC2CSPACE: could not open %s" % sys.argv[1]
         sys.exit(1)
 
     try:
@@ -276,19 +280,19 @@ def main():
 
         if bad_count != 0:
             print "DWC2CSPACE: validation failed (%s fields had %s values in error)" % (bad_count, bad_values)
-            print "DWC2CSPACE: cowardly refusal to write invalid output file"
-            sys.exit(1)
+            #print "DWC2CSPACE: cowardly refusal to write invalid output file"
+            #sys.exit(1)
 
-        cspace_header = []
+        cspace_header = ['csid']
         for h in file_header:
             if h in mapping:
                 cspace_header.append(mapping[h][0])
             else:
                 cspace_header.append('unmapped')
         outputfh.writerow(cspace_header)
-        outputfh.writerow(file_header )
+        outputfh.writerow(['csid'] + file_header)
         for input_data in validated_data:
-            outputfh.writerow(input_data)
+            outputfh.writerow([number_check[input_data[keyrow]]] + input_data)
             recordsprocessed += 1
             successes += 1
 

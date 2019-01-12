@@ -8,6 +8,9 @@ import urllib
 from requests.auth import HTTPBasicAuth
 from xml.etree.ElementTree import tostring, parse, Element, fromstring
 
+reload(sys)
+sys.setdefaultencoding('utf8')
+
 sys.path.append("../../ucjeps")
 
 from common import cspace  # we use the config file reading function
@@ -95,7 +98,7 @@ def load_mapping_file(mapping_file):
                     dump_row(row, 'Error', 'refname specified but no authority provided')
                     errors += 1
                     continue
-                if not data_type in 'static literal refname float integer date key'.split(' '):
+                if not data_type in 'constant static literal refname float integer date key'.split(' '):
                     dump_row(row, 'Error', 'unrecognized datatype: "%s"' % data_type)
                     errors += 1
                     continue
@@ -259,6 +262,8 @@ def check_cell_in_cspace(mapping_key, key, value):
         return 0, '', u''
     if mapping_key[2] == 'literal':
         return 0, 'a literal', value.decode('utf-8')
+    elif mapping_key[2] == 'constant':
+        return 0, 'a constant', mapping_key[5]
     elif mapping_key[2] == 'date':
         return 0, 'a date', value.decode('utf-8')
     elif mapping_key[2] == 'key':
@@ -365,13 +370,15 @@ def map_items(input_data, file_header):
 def validate_items(CSPACE_MAPPING, input_data, file_header, action):
     stats = validate_columns(CSPACE_MAPPING, input_data, file_header)
 
+    keyrow = -1
     try:
         for field in CSPACE_MAPPING:
             if CSPACE_MAPPING[field][2] == 'key':
                 keyfield = field
-        keyrow = file_header.index(keyfield)
+                keyrow = file_header.index(keyfield)
+                break
     except:
-        keyrow = -1
+        pass
 
     validated_items = []
     for i,row in enumerate(input_data):
