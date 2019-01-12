@@ -1,342 +1,346 @@
-1	#################################################################										
-2	# DWC to Cspace field name mapping										
-3	# being a specification of how to match DarwinCore fields to UCJEPS Cspace fields										
-4	# Columns										
-5	# 	A	sequence number. Only facultative.								
-6	# 	B	DWC field name								
-7	# 	C	Cspace fieldname								
-8	# 	D	context tag (currently unused)								
-9	# 	E	datatype of the element								
-10	# 	F	type of check to peform								
-11	# 	G	Cspace authority name (including CSID)								
-12	# 	H	Remarks (ignored by the program)								
-13	# 										
-14	#################################################################										
-15	# v0.9 jbl 12/26/18										
-16	#################################################################										
-17	# Darwin Core field name	Cspace collectionobject tag	context tag	data type	type of check	authority	remarks				
-18	id							24	24		
-19	institutionCode	institution		literal				1	24	1	79328
-20	collectionCode							0	0	2	79328
-21	ownerInstitutionCode						unused	0	0		
-22	basisOfRecord							1	24	1	79328
-23	occurrenceID							24	24	79328	79328
-24	catalogNumber	objectNumber		key				23	24	79310	79328
-25	otherCatalogNumbers							7	7	2331	2386
-26	kingdom						taxon field	2	21		
-27	phylum						taxon field	3	21		
-28	class						taxon field	3	21		
-29	order						redundant	9	21	1	263
-30	family						taxon field	10	21	166	78360
-31	scientificName	taxon		refname		taxonomyauthority/87036424-e55f-4e39-bd12		16	22	3102	79328
-32	taxonID							15	21		
-33	scientificNameAuthorship						taxon field	13	21		
-34	genus						taxon field	15	21		
-35	specificEpithet						taxon field	11	14		
-36	taxonRank	taxonRank		static		taxonRanks	taxon field	0	0		
-37	infraspecificEpithet						taxon field	0	0		
-38	identifiedBy	identBy		refname		orgauthorities/751023ec-d953-45f9-a0a8	unused	0	0		
-39	dateIdentified	identDateVerbatim		date			unused	0	0		
-40	identificationReferences						unused	0	0		
-41	identificationRemarks						unused	0	0		
-42	taxonRemarks						taxon field	0	0		
-43	identificationQualifier							0	0	3	10
-44	typeStatus						unused	0	0	1997	2234
-45	recordedBy	fieldCollector		refname		orgauthorities/751023ec-d953-45f9-a0a8		15	22	4174	77349
-46	recordedByID						unused	0	0		
-47	associatedCollectors	assocPerson		refname		orgauthorities/6d89bda7-867a-4b97-b22f		1	1		
-48	recordNumber							13	22	21888	58160
-49	eventDate			date				18	21	13245	69560
-50	year						redundant	15	20		
-51	month						redundant	11	20		
-52	day						redundant	11	19		
-53	startDayOfYear							13	15		
-54	endDayOfYear						unused	0	0		
-55	verbatimEventDate							1	1	21505	74477
-56	occurrenceRemarks							1	2	864	1358
-57	habitat			literal				6	7	3057	4191
-58	substrate							1	1		
-59	verbatimAttributes						unused	0	0		
-60	fieldNumber						unused	0	0		
-61	informationWithheld						unused	0	0		
-62	dataGeneralizations						unused	0	0		
-63	dynamicProperties							0	0	923	1040
-64	associatedTaxa	associatedTaxon		refname		taxonomyauthority/87036424-e55f-4e39-bd12		1	1	127	226
-65	reproductiveCondition						unused	0	0	4	7
-66	establishmentMeans							0	0	1	30149
-67	cultivationStatus						unused	0	0		
-68	lifeStage	phase		static		phases	unused	0	0		
-69	sex	sex		static		sexes	unused	0	0	1	8
-70	individualCount						unused	0	0		
-71	samplingProtocol						unused	0	0		
-72	samplingEffort						unused	0	0		
-73	preparations						unused	0	0		
-74	country	fieldLocCountry		static		countries		13	22	146	79194
-75	stateProvince	fieldLocState		static		states		16	20	140	71145
-76	county	fieldLocCounty		static		counties		11	14	185	58714
-77	municipality						unused	0	0		
-78	verbatimLocality	fieldLocVerbatim		literal						29799	78619
-79	locality	fieldLocVerbatim		literal				18	22	90	130
-80	locationRemarks						unused	0	0		
-81	localitySecurity							1	14		
-82	localitySecurityReason						unused	0	0		
-83	decimalLatitude	decimalLatitude		float				17	21	3041	55428
-84	decimalLongitude	decimalLongitude		float				17	21	3080	55421
-85	geodeticDatum	geodeticDatum		static		geodeticDatums		1	20	2	42877
-86	coordinateUncertaintyInMeters							17	20	52	2900
-87	verbatimCoordinates	vCoordinates		literal			unused	0	0		
-88	georeferencedBy							1	1		
-89	georeferenceProtocol						unused	0	0		
-90	georeferenceSources	geoRefSource		refname		vocabularies/0b2c17d1-fcbc-4705-b2c1		2	20	8	42906
-91	georeferenceVerificationStatus							1	1		
-92	georeferenceRemarks						unused	0	0	0	0
-93	minimumElevationInMeters	minElevation		float			unused	0	0		
-94	maximumElevationInMeters	maxElevation		float			unused	0	0		
-95	minimumDepthInMeters	minDepth		float			unused	0	0		
-96	maximumDepthInMeters	maxDepth		float			unused	0	0		
-97	verbatimDepth	vDepth		literal			unused	0	0	86	824
-98	verbatimElevation	vElevation		literal			unused	0	0	5	5
-99	disposition						unused	0	0		
-100	language						unused	0	0		
-101	genericcolumn1						unused	0	0		
-102	genericcolumn2							2	2		
-103	storageLocation						unused	0	0		
-104	observerUid							1	12		
-105	processingStatus							4	24		
-106	duplicateQuantity						unused	0	0		
-107	recordEnteredBy							2	22		
-108	dateEntered			date				24	24		
-109	dateLastModified			date				19	24		
-110	modified							19	24	78335	79328
-111	sourcePrimaryKey-dbpk						unused	0	0		
-112	recordId							24	24		
-113	references							24	24		
-114	# fields in collectionobject record										
-115		affinityTaxon					cspace field only				
-116		annotationAuthor					cspace field only				
-117		annotationDate					cspace field only				
-118		annotationNote					cspace field only				
-119		annotationType					cspace field only				
-120		assocActivity					cspace field only				
-121		assocActivityNote					cspace field only				
-122		assocActivityType					cspace field only				
-123		assocConcept					cspace field only				
-124		assocConceptNote					cspace field only				
-125		assocConceptType					cspace field only				
-126		assocCulturalContext					cspace field only				
-127		assocCulturalContextNote					cspace field only				
-128		assocCulturalContextType					cspace field only				
-129		assocDateNote					cspace field only				
-130		assocDateType					cspace field only				
-131		assocEventOrganization					cspace field only				
-132		assocEventPeople					cspace field only				
-133		assocEventPerson					cspace field only				
-134		assocEventPlace					cspace field only				
-135		assocObject					cspace field only				
-136		assocObjectNote					cspace field only				
-137		assocObjectType					cspace field only				
-138		assocOrganization					cspace field only				
-139		assocOrganizationNote					cspace field only				
-140		assocOrganizationType					cspace field only				
-141		assocPeople					cspace field only				
-142		assocPeopleNote					cspace field only				
-143		assocPeopleType					cspace field only				
-144		assocPerson					cspace field only			using for Associated Collectors for now	
-145		assocPersonNote					cspace field only				
-146		assocPersonType					cspace field only				
-147		assocPlace					cspace field only				
-148		assocPlaceNote					cspace field only				
-149		assocPlaceType					cspace field only				
-150		assocStructuredDateScalar					cspace field only				
-151		assocStructuredDateVerbatim					cspace field only				
-152		briefDescription					cspace field only				
-153		collection					cspace field only				
-154		collectionLocationVerbatim					cspace field only				
-155		collectionPlace					cspace field only				
-156		color					cspace field only				
-157		comment					cspace field only				
-158		commonName					cspace field only				
-159		contentActivity					cspace field only				
-160		contentConcept					cspace field only				
-161		contentDateScalar					cspace field only				
-162		contentDateVerbatim					cspace field only				
-163		contentEventName					cspace field only				
-164		contentEventNameType					cspace field only				
-165		contentLanguage					cspace field only				
-166		contentObject					cspace field only				
-167		contentObjectType					cspace field only				
-168		contentOrganization					cspace field only				
-169		contentOther					cspace field only				
-170		contentOtherType					cspace field only				
-171		contentPeople					cspace field only				
-172		contentPerson					cspace field only				
-173		contentPlace					cspace field only				
-174		contentPosition					cspace field only				
-175		contentScript					cspace field only				
-176		coordPrecision					cspace field only				
-177		coordUncertainty					cspace field only				
-178		createdAt					core				
-179		createdBy					core				
-180		cultivated					cspace field only				
-181		dimension					cspace field only				
-182		dimensionNote					cspace field only				
-183		dimensionSummary					cspace field only				
-184		distribution					cspace field only				
-185		donorDateScalar					cspace field only				
-186		donorDateVerbatim					cspace field only				
-187		elevationUnit					cspace field only				
-188		fieldColEventName					cspace field only				
-189		fieldCollectionDateScalar					cspace field only				
-190		fieldCollectionDateVerbatim					cspace field only				
-191		fieldCollectionMethod					cspace field only				
-192		fieldCollectionNote					cspace field only				
-193		fieldCollectionNumber					cspace field only				
-194		fieldCollectionNumberAssignor					cspace field only				
-195		fieldCollectionSource					cspace field only				
-196		fieldLocHigherGeography					cspace field only				
-197		fieldLocPlace					cspace field only				
-198		filledDate					cspace field only				
-199		footprintSpatialFit					cspace field only				
-200		footprintSRS					cspace field only				
-201		footprintWKT					cspace field only				
-202		form					cspace field only				
-203		geoRefDateScalar					cspace field only				
-204		geoRefDateVerbatim					cspace field only				
-205		geoRefencedBy					cspace field only				
-206		geoRefPlaceName					cspace field only				
-207		geoRefRemarks					cspace field only				
-208		hybridFlag					cspace field only				
-209		hybridParent					cspace field only				
-210		hybridParentQualifier					cspace field only				
-211		identDateScalar					cspace field only				
-212		identKind					cspace field only				
-213	interaction	interaction		static		associatedTaxaInteractions	cspace field only				
-214		inventoryStatusList					cspace field only				
-215		labelHeader					cspace field only				
-216		localityNote					cspace field only				
-217		localitySource					cspace field only				
-218		localitySourceDetail					cspace field only				
-219		localName					cspace field only				
-220		localNameLanguage					cspace field only				
-221		material					cspace field only				
-222		materialComponent					cspace field only				
-223		materialComponentNote					cspace field only				
-224		materialName					cspace field only				
-225		materialSource					cspace field only				
-226		materialType					cspace field only				
-227		maxDistanceAboveSurface					cspace field only				
-228		measuredBy					cspace field only				
-229		minDistanceAboveSurface					cspace field only				
-230		notes					cspace field only				
-231		numberValue					cspace field only				
-232		objectComponentInformation					cspace field only				
-233		objectComponentName					cspace field only				
-234		objectName					cspace field only				
-235		objectNameCurrency					cspace field only				
-236		objectNameLanguage					cspace field only				
-237		objectNameLevel					cspace field only				
-238		objectNameNote					cspace field only				
-239		objectNameSystem					cspace field only				
-240		objectNameType					cspace field only				
-241		objectProductionDateScalar					cspace field only				
-242		objectProductionDateVerbatim					cspace field only				
-243		objectProductionOrganization					cspace field only				
-244		objectProductionOrganizationRole					cspace field only				
-245		objectProductionPeople					cspace field only				
-246		objectProductionPeopleRole					cspace field only				
-247		objectProductionPerson					cspace field only				
-248		objectProductionPersonRole					cspace field only				
-249		objectProductionPlace					cspace field only				
-250		objectProductionPlaceRole					cspace field only				
-251		objectProductionReason					cspace field only				
-252		owner					cspace field only				
-253		ownershipDateScalar					cspace field only				
-254		ownershipDateVerbatim					cspace field only				
-255		ownershipExchangePriceCurrency					cspace field only				
-256		ownersReference					cspace field only				
-257		pointRadiusSpatialFit					cspace field only				
-258		postToPublic					cspace field only				
-259		publishToList					cspace field only				
-260		qualifier					cspace field only				
-261		recordStatus					cspace field only				
-262		reference					cspace field only				
-263		referenceNote					cspace field only				
-264		refName					cspace field only				
-265		refPage					cspace field only				
-266		requestDate					cspace field only				
-267		responsibleDepartment					cspace field only				
-268		style					cspace field only				
-269		taxonomicIdentHybridName					cspace field only				
-270		taxonomicIdentHybridParent					cspace field only				
-271		taxonomicIdentHybridParentQualifier					cspace field only				
-272		taxonomicRange					cspace field only				
-273		technicalAttribute					cspace field only				
-274		technicalAttributeMeasurement					cspace field only				
-275		technicalAttributeMeasurementUnit					cspace field only				
-276		technique					cspace field only				
-277		techniqueType					cspace field only				
-278		tenantId					cspace field only				
-279		title					cspace field only				
-280		titleLanguage					cspace field only				
-281		titleTranslation					cspace field only				
-282		titleTranslationLanguage					cspace field only				
-283		titleType					cspace field only				
-284		typeSpecimenAssertionBy					cspace field only				
-285		typeSpecimenBasionym					cspace field only				
-286		typeSpecimenNotes					cspace field only				
-287		typeSpecimenReference					cspace field only				
-288		typeSpecimenRefPage					cspace field only				
-289		updatedAt					core				
-290		updatedBy					core				
-291		uri					core				
-292		usage					cspace field only				
-293		usageNote					cspace field only				
-294		usedIn					cspace field only				
-295		useNotes					cspace field only				
-296		useType					cspace field only				
-297		value					cspace field only				
-298		valueDate					cspace field only				
-299		valueQualifier					cspace field only				
-300		vCoordSys					cspace field only				
-301		vDistanceAboveSurface					cspace field only				
-302		viewersReference					cspace field only				
-303	decimalLatitude	vLatitude		literal							
-304	decimalLongitude	vLongitude		literal							
-305		vOtherCoords					cspace field only				
-306		vSpatialReferenceSystem					cspace field only				
-307		workflowState					core				
-308	# static vocabularies										
-309	majorgroup	taxonMajorGroup		static		taxonMajorGroups					
-310		coordUncertaintyUnit		static		coordUncertaintyUnits					
-311		coordinateSystem		static		coordinateSystems					
-312		depthUnit		static		depthUnits					
-313		dimension		static		dimensions					
-314		distanceAboveSurfaceUnit		static		distanceAboveSurfaceUnits					
-315		elevationUnit		static		elevationUnits					
-316		gender		static		genders					
-317		geoRefProtocol		static		geoRefProtocols	cspace field only				
-318		geoRefVerificationStatus		static		geoRefVerificationStatuses					
-319		georefProtocol		static		georefProtocols					
-320		georefVerificationStatus		static		georefVerificationStatuses					
-321		higherGeography		static		higherGeographies					
-322		localityUnit		static		localityUnits					
-323		measuredPart		static		measuredParts					
-324		measurementMethod		static		measurementMethods					
-325		measurementUnit		static		measurementUnits					
-326		mediaType		static		mediaTypes					
-327		numberType		static		numberTypes					
-328		objectStatus		static		objectStatuses					
-329		spatialRefSystem		static		spatialRefSystems					
-330		taxonIdentKind		static		taxonIdentKinds					
-331		taxonTermSource		static		taxonTermSources					
-332		taxonTermStatus		static		taxonTermStatuses					
-333		taxonTermType		static		taxonTermTypes					
-334		taxonomicStatus		static		taxonomicStatuses					
-335		typeSpecimenKind		static		typeSpecimenKinds					
-336	localityRemarks										
-337	originalNameUsage										
-338	previousIdentifications									1180	5268
-338	rights									1	79328
-340	accessRights									1	79328
-341	associatedMedia									79111	79328
-342	vernacularName									22	25
+1	#################################################################												
+2	# DWC to Cspace field name mapping												
+3	# being a specification of how to match DarwinCore fields to UCJEPS Cspace fields												
+4	# Columns												
+5	# 	A	sequence number. Only facultative.										
+6	# 	B	DWC field name										
+7	# 	C	Cspace fieldname										
+8	# 	D	context tag (currently unused)										
+9	# 	E	datatype of the element										
+10	# 	F	type of check to peform										
+11	# 	G	Cspace authority name (including CSID)										
+12	# 	H	Remarks (ignored by the program)										
+13	# 												
+14	#################################################################												
+15	# v0.9 jbl 12/26/18												
+16	#################################################################												
+17	# Darwin Core field name	Cspace collectionobject tag	context tag	data type	type of check	authority	remarks						
+18	id							24	24				
+19	institutionCode	institution		literal				1	24	1	79328		
+20	collectionCode							0	0	2	79328		
+21	ownerInstitutionCode						unused	0	0				
+22	basisOfRecord							1	24	1	79328		
+23	occurrenceID	numberValue		literal				24	24	79328	79328	symbiota GUID	othernumber??
+24	xxx	numberType		constant		symbiota GUID						“symbiota GUID”	numbertype??
+25	catalogNumber	objectNumber		key				23	24	79310	79328		
+26	otherCatalogNumbers	numberValue		literal				7	7	2331	2386		
+27	xxx	numberType		constant		old instituion accession number						“old instituion accession number”	numbertype??
+28	kingdom						taxon field	2	21				
+29	phylum						taxon field	3	21				
+30	class						taxon field	3	21				
+31	order						taxon field	9	21	1	263		
+32	family						taxon field	10	21	166	78360		
+33	scientificName	taxon		refname		taxonomyauthority/87036424-e55f-4e39-bd12		16	22	3102	79328		
+34	taxonID						taxon field	15	21				
+35	scientificNameAuthorship						taxon field	13	21				
+36	genus						taxon field	15	21				
+37	specificEpithet						taxon field	11	14				
+38	taxonRank						taxon field	0	0			not used in object records	
+39	infraspecificEpithet						taxon field	0	0				
+40	identifiedBy	identBy		refname		orgauthorities/751023ec-d953-45f9-a0a8	unused	0	0				
+41	dateIdentified	identDateVerbatim		date			unused	0	0				
+42	identificationReferences						unused	0	0				
+43	identificationRemarks						unused	0	0				
+44	taxonRemarks						taxon field	0	0				
+45	identificationQualifier							0	0	3	10	ignore for now, handle by hand if needed	
+46	typeStatus			static				0	0	1997	2234	map to “kind of type”	
+47	recordedBy	fieldCollectionNumberAssignor		refname		orgauthorities/6d89bda7-867a-4b97-b22f		15	22	4174	77349		
+48	recordedByID						unused	0	0				
+49	fieldCollector	fieldCollector		refname		orgauthorities/6d89bda7-867a-4b97-b22f		1	1			need to update...	
+50	recordNumber	fieldCollectionNumber		literal				13	22	21888	58160		
+51	eventDate	fieldCollectionDateScalar		date				18	21	13245	69560		
+52	year						redundant	15	20				
+53	month						redundant	11	20				
+54	day						redundant	11	19				
+55	startDayOfYear							13	15				
+56	endDayOfYear							0	0				
+57	verbatimEventDate	fieldCollectionDateVerbatim		literal				1	1	21505	74477		
+58	occurrenceRemarks	briefDescription		literal				1	2	864	1358	Jason will double check	
+59	habitat	habitat		literal				6	7	3057	4191	will be combined with habitat	
+60	substrate	habitat		literal				1	1				
+61	verbatimAttributes						unused	0	0				
+62	fieldNumber						unused	0	0				
+63	informationWithheld						unused	0	0				
+64	dataGeneralizations						unused	0	0				
+65	dynamicProperties							0	0	923	1040		
+66	associatedTaxa	habitat		literal				1	1	127	226	will be combined with habitat	
+67	reproductiveCondition	phase		static		phases	unused	0	0	4	7		
+68	establishmentMeans	cultivated		static		yesNoValues		0	0	1	30149	yes or no	
+69	cultivationStatus						unused	0	0				
+70	lifeStage						unused	0	0				
+71	sex	sex		static		sexes	unused	0	0	1	8		
+72	individualCount						unused	0	0				
+73	samplingProtocol						unused	0	0				
+74	samplingEffort						unused	0	0				
+75	preparations						unused	0	0				
+76	country	fieldLocCountry		static		countries		13	22	146	79194		
+77	stateProvince	fieldLocState		static		states		16	20	140	71145		
+78	county	fieldLocCounty		static		counties		11	14	185	58714		
+79	municipality						unused	0	0				
+80	verbatimLocality	fieldLocVerbatim		literal						29799	78619		
+81	locality	fieldLocVerbatim		literal				18	22	90	130	jason will double check, and combine	
+82	locationRemarks						unused	0	0				
+83	localitySecurity							1	14				
+84	localitySecurityReason						unused	0	0				
+85	decimalLatitude	decimalLatitude		float				17	21	3041	55428		
+86	decimalLongitude	decimalLongitude		float				17	21	3080	55421		
+87	geodeticDatum	geodeticDatum		static		geodeticDatums		1	20	2	42877		
+88	coordinateUncertaintyInMeters	coordUncertainty		float				17	20	52	2900		
+89	coordinateUncertainty	coordUncertaintyUnit		static		coordUncertaintyUnits						constant “meters”	
+90	verbatimCoordinates	vCoordinates		literal			unused	0	0				
+91	georeferencedBy							1	1				
+92	georeferenceProtocol						unused	0	0				
+93	georeferenceSources	geoRefSource		refname		vocabularies/0b2c17d1-fcbc-4705-b2c1		2	20	8	42906		
+94	georeferenceVerificationStatus							1	1				
+95	georeferenceRemarks						unused	0	0	0	0		
+96	minimumElevationInMeters	minElevation		float			unused	0	0				
+97	maximumElevationInMeters	maxElevation		float			unused	0	0				
+98	minimumDepthInMeters	minDepth		float			unused	0	0				
+99	maximumDepthInMeters	maxDepth		float			unused	0	0				
+100	verbatimDepth	vDepth		literal			unused	0	0	86	824		
+101	verbatimElevation	vElevation		literal			unused	0	0	5	5		
+102	disposition						unused	0	0				
+103	language						unused	0	0				
+104	genericcolumn1						unused	0	0				
+105	genericcolumn2							2	2				
+106	storageLocation						unused	0	0				
+107	observerUid							1	12				
+108	processingStatus							4	24				
+109	duplicateQuantity						unused	0	0				
+110	recordEnteredBy							2	22				
+111	dateEntered			date				24	24				
+112	dateLastModified			date				19	24				
+113	modified			date				19	24	78335	79328		
+114	sourcePrimaryKey-dbpk						unused	0	0				
+115	recordId							24	24				
+116	references							24	24				
+117	# fields in collectionobject record												
+118		affinityTaxon					cspace field only						
+119		annotationAuthor					cspace field only						
+120		annotationDate					cspace field only						
+121		annotationNote					cspace field only						
+122		annotationType					cspace field only						
+123		assocActivity					cspace field only						
+124		assocActivityNote					cspace field only						
+125		assocActivityType					cspace field only						
+126		assocConcept					cspace field only						
+127		assocConceptNote					cspace field only						
+128		assocConceptType					cspace field only						
+129		assocCulturalContext					cspace field only						
+130		assocCulturalContextNote					cspace field only						
+131		assocCulturalContextType					cspace field only						
+132		assocDateNote					cspace field only						
+133		assocDateType					cspace field only						
+134		assocEventOrganization					cspace field only						
+135		assocEventPeople					cspace field only						
+136		assocEventPerson					cspace field only						
+137		assocEventPlace					cspace field only						
+138		assocObject					cspace field only						
+139		assocObjectNote					cspace field only						
+140		assocObjectType					cspace field only						
+141		assocOrganization					cspace field only						
+142		assocOrganizationNote					cspace field only						
+143		assocOrganizationType					cspace field only						
+144		assocPeople					cspace field only						
+145		assocPeopleNote					cspace field only						
+146		assocPeopleType					cspace field only						
+147		assocPerson					cspace field only			using for Associated Collectors for now			
+148		assocPersonNote					cspace field only						
+149		assocPersonType					cspace field only						
+150		assocPlace					cspace field only						
+151		assocPlaceNote					cspace field only						
+152		assocPlaceType					cspace field only						
+153		assocStructuredDateScalar					cspace field only						
+154		assocStructuredDateVerbatim					cspace field only						
+155		briefDescription					cspace field only						
+156		collection					cspace field only						
+157		collectionLocationVerbatim					cspace field only						
+158		collectionPlace					cspace field only						
+159		color					cspace field only						
+160		comment					cspace field only						
+161		commonName					cspace field only						
+162		contentActivity					cspace field only						
+163		contentConcept					cspace field only						
+164		contentDateScalar					cspace field only						
+165		contentDateVerbatim					cspace field only						
+166		contentEventName					cspace field only						
+167		contentEventNameType					cspace field only						
+168		contentLanguage					cspace field only						
+169		contentObject					cspace field only						
+170		contentObjectType					cspace field only						
+171		contentOrganization					cspace field only						
+172		contentOther					cspace field only						
+173		contentOtherType					cspace field only						
+174		contentPeople					cspace field only						
+175		contentPerson					cspace field only						
+176		contentPlace					cspace field only						
+177		contentPosition					cspace field only						
+178		contentScript					cspace field only						
+179		coordPrecision					cspace field only						
+180		coordUncertainty					cspace field only						
+181		createdAt					core						
+182		createdBy					core						
+183		cultivated					cspace field only						
+184		dimension					cspace field only						
+185		dimensionNote					cspace field only						
+186		dimensionSummary					cspace field only						
+187		distribution					cspace field only						
+188		donorDateScalar					cspace field only						
+189		donorDateVerbatim					cspace field only						
+190		elevationUnit					cspace field only						
+191		fieldColEventName					cspace field only						
+192		fieldCollectionDateScalar					cspace field only						
+193		fieldCollectionDateVerbatim					cspace field only						
+194		fieldCollectionMethod					cspace field only						
+195		fieldCollectionNote					cspace field only						
+196		fieldCollectionNumber					cspace field only						
+197		fieldCollectionNumberAssignor					cspace field only						
+198		fieldCollectionSource					cspace field only						
+199		fieldLocHigherGeography					cspace field only						
+200		fieldLocPlace					cspace field only						
+201		filledDate					cspace field only						
+202		footprintSpatialFit					cspace field only						
+203		footprintSRS					cspace field only						
+204		footprintWKT					cspace field only						
+205		form					cspace field only						
+206		geoRefDateScalar					cspace field only						
+207		geoRefDateVerbatim					cspace field only						
+208		geoRefencedBy					cspace field only						
+209		geoRefPlaceName					cspace field only						
+210		geoRefRemarks					cspace field only						
+211		hybridFlag					cspace field only						
+212		hybridParent					cspace field only						
+213		hybridParentQualifier					cspace field only						
+214		identDateScalar					cspace field only						
+215		identKind					cspace field only						
+216	interaction	interaction		static		associatedTaxaInteractions	cspace field only						
+217		inventoryStatusList					cspace field only						
+218		labelHeader					cspace field only						
+219		localityNote					cspace field only						
+220		localitySource					cspace field only						
+221		localitySourceDetail					cspace field only						
+222		localName					cspace field only						
+223		localNameLanguage					cspace field only						
+224		material					cspace field only						
+225		materialComponent					cspace field only						
+226		materialComponentNote					cspace field only						
+227		materialName					cspace field only						
+228		materialSource					cspace field only						
+229		materialType					cspace field only						
+230		maxDistanceAboveSurface					cspace field only						
+231		measuredBy					cspace field only						
+232		minDistanceAboveSurface					cspace field only						
+233		notes					cspace field only						
+234		numberValue					cspace field only						
+235		objectComponentInformation					cspace field only						
+236		objectComponentName					cspace field only						
+237		objectName					cspace field only						
+238		objectNameCurrency					cspace field only						
+239		objectNameLanguage					cspace field only						
+240		objectNameLevel					cspace field only						
+241		objectNameNote					cspace field only						
+242		objectNameSystem					cspace field only						
+243		objectNameType					cspace field only						
+244		objectProductionDateScalar					cspace field only						
+245		objectProductionDateVerbatim					cspace field only						
+246		objectProductionOrganization					cspace field only						
+247		objectProductionOrganizationRole					cspace field only						
+248		objectProductionPeople					cspace field only						
+249		objectProductionPeopleRole					cspace field only						
+250		objectProductionPerson					cspace field only						
+251		objectProductionPersonRole					cspace field only						
+252		objectProductionPlace					cspace field only						
+253		objectProductionPlaceRole					cspace field only						
+254		objectProductionReason					cspace field only						
+255		owner					cspace field only						
+256		ownershipDateScalar					cspace field only						
+257		ownershipDateVerbatim					cspace field only						
+258		ownershipExchangePriceCurrency					cspace field only						
+259		ownersReference					cspace field only						
+260		pointRadiusSpatialFit					cspace field only						
+261		postToPublic					cspace field only						
+262		publishToList					cspace field only						
+263		qualifier					cspace field only						
+264		recordStatus					cspace field only						
+265		reference					cspace field only						
+266		referenceNote					cspace field only						
+267		refName					cspace field only						
+268		refPage					cspace field only						
+269		requestDate					cspace field only						
+270		responsibleDepartment					cspace field only						
+271		style					cspace field only						
+272		taxonomicIdentHybridName					cspace field only						
+273		taxonomicIdentHybridParent					cspace field only						
+274		taxonomicIdentHybridParentQualifier					cspace field only						
+275		taxonomicRange					cspace field only						
+276		technicalAttribute					cspace field only						
+277		technicalAttributeMeasurement					cspace field only						
+278		technicalAttributeMeasurementUnit					cspace field only						
+279		technique					cspace field only						
+280		techniqueType					cspace field only						
+281		tenantId					cspace field only						
+282		title					cspace field only						
+283		titleLanguage					cspace field only						
+284		titleTranslation					cspace field only						
+285		titleTranslationLanguage					cspace field only						
+286		titleType					cspace field only						
+287		typeSpecimenAssertionBy					cspace field only						
+288		typeSpecimenBasionym					cspace field only						
+289		typeSpecimenNotes					cspace field only						
+290		typeSpecimenReference					cspace field only						
+291		typeSpecimenRefPage					cspace field only						
+292		updatedAt					core						
+293		updatedBy					core						
+294		uri					core						
+295		usage					cspace field only						
+296		usageNote					cspace field only						
+297		usedIn					cspace field only						
+298		useNotes					cspace field only						
+299		useType					cspace field only						
+300		value					cspace field only						
+301		valueDate					cspace field only						
+302		valueQualifier					cspace field only						
+303		vCoordSys					cspace field only						
+304		vDistanceAboveSurface					cspace field only						
+305		viewersReference					cspace field only						
+306	decimalLatitude	vLatitude		literal									
+307	decimalLongitude	vLongitude		literal									
+308		vOtherCoords					cspace field only						
+309		vSpatialReferenceSystem					cspace field only						
+310		workflowState					core						
+311	# static vocabularies												
+312	majorgroup	taxonMajorGroup		static		taxonMajorGroups							
+313													
+314		coordinateSystem		static		coordinateSystems							
+315		depthUnit		static		depthUnits							
+316		dimension		static		dimensions							
+317		distanceAboveSurfaceUnit		static		distanceAboveSurfaceUnits							
+318		elevationUnit		static		elevationUnits							
+319		gender		static		genders							
+320		geoRefProtocol		static		geoRefProtocols	cspace field only						
+321		geoRefVerificationStatus		static		geoRefVerificationStatuses							
+322		georefProtocol		static		georefProtocols							
+323		georefVerificationStatus		static		georefVerificationStatuses							
+324		higherGeography		static		higherGeographies							
+325		localityUnit		static		localityUnits							
+326		measuredPart		static		measuredParts							
+327		measurementMethod		static		measurementMethods							
+328		measurementUnit		static		measurementUnits							
+329		mediaType		static		mediaTypes							
+330		numberType		static		numberTypes							
+331		objectStatus		static		objectStatuses							
+332		spatialRefSystem		static		spatialRefSystems							
+333		taxonIdentKind		static		taxonIdentKinds							
+334		taxonTermSource		static		taxonTermSources							
+335		taxonTermStatus		static		taxonTermStatuses							
+336		taxonTermType		static		taxonTermTypes							
+337		taxonomicStatus		static		taxonomicStatuses							
+338		typeSpecimenKind		static		typeSpecimenKinds							
+339	localityRemarks												
+340	originalNameUsage												
+341	previousIdentifications									1180	5268		
+342	rights									1	79328		
+343	accessRights									1	79328		
+344	associatedMedia									79111	79328	save!	
+345	vernacularName									22	25		
+346		taxonRank		static		taxonRanks							
