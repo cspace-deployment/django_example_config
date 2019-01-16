@@ -3,10 +3,22 @@ CHANGELOG for the cspace_django_webapps
 OK, it is not a *real* change log, but a list of changes resulting from git log
 with some human annotation after the fact.
 
-This is version djconfig_5.0-3
-Wed Jan  2 06:25:14 PST 2019
+This is version djconfig_5.0-4
+Wed Jan 16 10:14:33 PST 2019
 
-37a39d3 (HEAD -> master, origin/master, origin/HEAD) UJ-56: improved versions of mapping config files
+5409b3b (HEAD -> master, origin/master, origin/HEAD) UJ-77: improved validation config file
+0a829d4 Merge branch 'master' of https://github.com/cspace-deployment/django_example_config
+6377505 UJ-77: validated file should contain found/unfound csids
+98b2227 Merge pull request #15 from cesarvh/UJ-71
+1d91e3d UJ-71: canged lat/long variables to location_0_d and location_1_d
+d5f7785 UJ-62: initial versions of test files and scripts for csvimport
+b0f78bb UJ-62: helper script that may come in handy
+088d1af UJ-57: further revisions to csv import configuration
+537259e UJ-77: initial implement of 'id checking' functionality
+d72efaa UJ-59: a list of data exceptions to be handled during validation
+3a1c148 (jblowe/master) DJAN-75: remove unneeded django scaffolding
+75e5f1d (tag: djconfig_5.0-3) revise change log and VERSION file for version djconfig_5.0-3
+37a39d3 UJ-56: improved versions of mapping config files
 bc0d6e8 UJ-54: refactoring to allow online and command line versions of import to play nice
 b68d92b UJ-57: handle validation of 'static lists'
 4ed43ef UJ-56: minor refactoring of 'options parsing script'
@@ -20,7 +32,7 @@ d55cf3a UJ-48: update installed app list for PAHMA
 819e6b0 UJ-48: implement pagination of results
 936c7cc NOJIRA: correct list of available apps for CineFiles
 3218b71 Merge pull request #14 from jblowe/master
-35ae926 (jblowe/master) UJ-48: use fieldsReturned element from CSpace to configure what to show
+35ae926 UJ-48: use fieldsReturned element from CSpace to configure what to show
 1b07153 NOJIRA: remove this stray file
 b1f67d2 UJ-53: csvimport: UX clarifications and improvements
 b5a8ed4 (tag: djconfig_5.0-2) revise change log and VERSION file for version djconfig_5.0-2
