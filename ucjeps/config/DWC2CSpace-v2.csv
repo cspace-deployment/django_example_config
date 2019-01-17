@@ -21,10 +21,10 @@
 21	ownerInstitutionCode						unused	0	0				
 22	basisOfRecord							1	24	1	79328		
 23	occurrenceID	numberValue		literal				24	24	79328	79328	symbiota GUID	othernumber??
-24	xxx	numberType		constant		symbiota GUID						“symbiota GUID”	numbertype??
+24	xxx	numberType	Symbiota GUID	constant		/vocabularies/dad35f58-5112-4485-9a5c						“symbiota GUID”	numbertype??
 25	catalogNumber	objectNumber		key				23	24	79310	79328		
 26	otherCatalogNumbers	numberValue		literal				7	7	2331	2386		
-27	xxx	numberType		constant		old instituion accession number						“old instituion accession number”	numbertype??
+27	xxx	numberType	Old Institution Accession Number	constant		/vocabularies/dad35f58-5112-4485-9a5c						“old instituion accession number”	numbertype??
 28	kingdom						taxon field	2	21				
 29	phylum						taxon field	3	21				
 30	class						taxon field	3	21				
@@ -37,16 +37,16 @@
 37	specificEpithet						taxon field	11	14				
 38	taxonRank						taxon field	0	0			not used in object records	
 39	infraspecificEpithet						taxon field	0	0				
-40	identifiedBy	identBy		refname		personauthorities/492326d1-efb1-4d2b-96d9	unused	0	0				
+40	identifiedBy	identBy		refname		orgauthorities/751023ec-d953-45f9-a0a8	unused	0	0				
 41	dateIdentified	identDateVerbatim		date			unused	0	0				
-42	identificationReferences					orgauthorities/751023ec-d953-45f9-a0a8	unused	0	0				
+42	identificationReferences						unused	0	0				
 43	identificationRemarks						unused	0	0				
 44	taxonRemarks						taxon field	0	0				
 45	identificationQualifier							0	0	3	10	ignore for now, handle by hand if needed	
 46	typeStatus			static				0	0	1997	2234	map to “kind of type”	
 47	recordedBy	fieldCollectionNumberAssignor		refname		orgauthorities/6d89bda7-867a-4b97-b22f		15	22	4174	77349		
 48	recordedByID						unused	0	0				
-49	fieldCollector	fieldCollector		refname		orgauthorities/6d89bda7-867a-4b97-b22f		1	1			need to update...	
+49	allCollectors	fieldCollector		refname		orgauthorities/6d89bda7-867a-4b97-b22f		1	1			need to update...	
 50	recordNumber	fieldCollectionNumber		literal				13	22	21888	58160		
 51	eventDate	fieldCollectionDateScalar		date				18	21	13245	69560		
 52	year						redundant	15	20				
@@ -57,13 +57,13 @@
 57	verbatimEventDate	fieldCollectionDateVerbatim		literal				1	1	21505	74477		
 58	occurrenceRemarks	briefDescription		literal				1	2	864	1358	Jason will double check	
 59	habitat	habitat		literal				6	7	3057	4191	will be combined with habitat	
-60	substrate	habitat		literal				1	1				
+60	substrate							1	1				
 61	verbatimAttributes						unused	0	0				
 62	fieldNumber						unused	0	0				
 63	informationWithheld						unused	0	0				
 64	dataGeneralizations						unused	0	0				
 65	dynamicProperties							0	0	923	1040		
-66	associatedTaxa	habitat		literal				1	1	127	226	will be combined with habitat	
+66	associatedTaxa							1	1	127	226	will be combined with habitat	
 67	reproductiveCondition	phase		static		phases	unused	0	0	4	7		
 68	establishmentMeans	cultivated		static		yesNoValues		0	0	1	30149	yes or no	
 69	cultivationStatus						unused	0	0				
@@ -73,9 +73,9 @@
 73	samplingProtocol						unused	0	0				
 74	samplingEffort						unused	0	0				
 75	preparations						unused	0	0				
-76	country	fieldLocCountry		static		vocabularies/105ba059-78bb-4810-b4f7		13	22	146	79194		
-77	stateProvince	fieldLocState		static		vocabularies/821b814b-921f-4dc9-8eda		16	20	140	71145		
-78	county	fieldLocCounty		static		vocabularies/3b14c47c-bdba-4a3e-a60a		11	14	185	58714		
+76	country	fieldLocCountry		refname		vocabularies/105ba059-78bb-4810-b4f7		13	22	146	79194		
+77	stateProvince	fieldLocState		refname		vocabularies/821b814b-921f-4dc9-8eda		16	20	140	71145		
+78	county	fieldLocCounty		refname		vocabularies/3b14c47c-bdba-4a3e-a60a		11	14	185	58714		
 79	municipality						unused	0	0				
 80	verbatimLocality	fieldLocVerbatim		literal						29799	78619		
 81	locality	fieldLocVerbatim		literal				18	22	90	130	jason will double check, and combine	
