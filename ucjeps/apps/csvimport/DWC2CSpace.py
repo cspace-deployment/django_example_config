@@ -1,140 +1,23 @@
 # -*- coding: utf-8 -*-
 import csv
 import sys
-import ConfigParser
-from copy import deepcopy
-from xml.sax.saxutils import escape
 
 sys.path.append("../../ucjeps")
 
 from common.unicode_hack import UnicodeReader, UnicodeWriter
 
-import time
-import urllib2
-
-import re
-
-from utils import load_mapping_file, validate_items, count_columns, getRecords, map_items, dump_row
+from utils import load_mapping_file, validate_items, count_columns, getRecords, write_intermediate_files
+from utils import send_to_cspace, count_stats, count_numbers, getConfig
 
 CONFIGDIRECTORY = ''
 
 
-def getConfig(fileName):
-    try:
-        config = ConfigParser.RawConfigParser()
-        config.read(fileName)
-        # test to see if it seems like it is really a config file
-        connect = config.get('connect', 'hostname')
-        return config
-    except:
-        return False
-
-
-def postxml(requestType, uri, realm, protocol, hostname, port, username, password, payload):
-    data = None
-    csid = ''
-
-    if port != '':
-        port = ':' + port
-    server = protocol + "://" + hostname + port
-    passman = urllib2.HTTPPasswordMgr()
-    passman.add_password(realm, server, username, password)
-    authhandler = urllib2.HTTPBasicAuthHandler(passman)
-    opener = urllib2.build_opener(authhandler)
-    urllib2.install_opener(opener)
-    url = "%s/cspace-services/%s" % (server, uri)
-
-    elapsedtime = time.time()
-    request = urllib2.Request(url, payload.encode('utf-8'), {'Content-Type': 'application/xml'})
-    # default method for urllib2 with payload is POST
-    if requestType == 'PUT': request.get_method = lambda: 'PUT'
-    try:
-        f = urllib2.urlopen(request)
-        data = f.read()
-        info = f.info()
-        # if a POST, the Location element contains the new CSID
-        if info.getheader('Location'):
-            csid = re.search(uri + '/(.*)', info.getheader('Location')).group(1)
-        else:
-            csid = ''
-    except urllib2.HTTPError, e:
-        sys.stderr.write('URL: ' + url + '\n')
-        sys.stderr.write('PUT failed, HTTP code: ' + str(e.code) + '\n')
-        print payload
-        print data
-        print info
-        sys.stderr.write('Data: ' + data + '\n')
-        raise
-    except urllib2.URLError, e:
-        sys.stderr.write('URL: ' + url + '\n')
-        if hasattr(e, 'reason'):
-            sys.stderr.write('We failed to reach a server.\n')
-            sys.stderr.write('Reason: ' + str(e.reason) + '\n')
-        if hasattr(e, 'code'):
-            sys.stderr.write('The server couldn\'t fulfill the request.\n')
-            sys.stderr.write('Error code: ' + str(e.code) + '\n')
-        if True:
-            # print 'Error in POSTing!'
-            sys.stderr.write("Error in POSTing!\n")
-            sys.stderr.write(payload)
-            raise
-    except:
-        sys.stderr.write('Some other error' + '\n')
-        raise
-
-    elapsedtime = time.time() - elapsedtime
-    return (url, data, csid, elapsedtime)
-
-
-def createXMLpayload(template, values, institution):
-    payload = deepcopy(template)
-    for v in values.keys():
-        payload = payload.replace('{' + v + '}', escape(values[v]))
-    # get rid of remaining unsubstituted template variables
-    payload = re.sub('(<.*?>){(.*)}(<.*>)', r'\1\3', payload)
-    return payload
-
-
-def DWC2CSPACE(action, xmlTemplate, input_dataDict, config):
-    try:
-        realm = config.get('connect', 'realm')
-        hostname = config.get('connect', 'hostname')
-        port = config.get('connect', 'port')
-        protocol = config.get('connect', 'protocol')
-        username = config.get('connect', 'username')
-        password = config.get('connect', 'password')
-        INSTITUTION = config.get('info', 'institution')
-    except:
-        print "could not get at least one of realm, hostname, username, password or institution from config file."
-        # print "can't continue, exiting..."
-        raise
-
-    # objectCSID = getCSID('objectnumber', cspaceElements['objectnumber'], config)
-    messages = []
-    try:
-        objectNumber = input_dataDict['objectNumber']
-    except:
-        messages.append('could not find an object number')
-        return ['', '', messages]
-
-    uri = 'collectionobjects'
-
-    messages.append("posting to cspace REST API...")
-    payload = createXMLpayload(xmlTemplate, input_dataDict, INSTITUTION)
-    # print payload
-    (url, data, objectCSID, elapsedtime) = postxml('POST', uri, realm, protocol, hostname, port, username, password, payload)
-    messages.append('got cspacecsid %s elapsedtime %s ' % (objectCSID, elapsedtime))
-    messages.append("cspace REST API post succeeded...")
-
-    return [objectNumber, objectCSID, messages]
-
-
 def main():
-
     header = "*" * 100
 
     if len(sys.argv) < 8:
-        print('%s <csv input file> <config file> <mapping file> <template> <output file> <terms file> <action>') % sys.argv[0]
+        print('%s <csv input file> <config file> <mapping file> <template> <output file> <terms file> <action>') % \
+             sys.argv[0]
         sys.exit()
 
     print header
@@ -146,7 +29,6 @@ def main():
     print "DWC2CSPACE: terms file:     %s" % sys.argv[6]
     print "DWC2CSPACE: action:         %s" % sys.argv[7]
     print header
-
 
     try:
         action = sys.argv[7]
@@ -211,14 +93,10 @@ def main():
         sys.exit()
 
     try:
-        termsfh = UnicodeWriter(open(sys.argv[6], 'wb'), delimiter="\t", quoting=csv.QUOTE_NONE, quotechar=chr(255))
+        termsfh = UnicodeWriter(open(sys.argv[6], 'wb'), delimiter="\t", quoting=csv.QUOTE_NONE, quotechar=chr(255), escapechar='\\')
     except:
         print "DWC2CSPACE: could not open test file for write %s" % sys.argv[5]
         sys.exit()
-
-    successes = 0
-    recordsprocessed = 0
-
 
     if action == 'count':
         stats = count_columns(inputRecords, file_header)
@@ -232,96 +110,28 @@ def main():
 
     elif action == 'validate':
         validated_data, stats, number_check, keyrow = validate_items(mapping, inputRecords, file_header, action)
-        ok_count = 0
-        bad_count = 0
-        bad_values = 0
-        print '%-35s %10s %10s  %-10s %10s' % tuple(stats[1][:5])
-        for s in stats[0]:
-            if s[3] == 'OK':
-                ok_count += 1
-                print '%-35s %10s %10s  %-10s %10s' % tuple(s[:5])
-            else:
-                bad_count += 1
-                print '%-35s %10s %10s  %-10s %10s' % tuple(s[:5])
-                items = s[7]
-                for item_key in sorted(items):
-                    if items[item_key][0] != 'OK':
-                        if s[0] in mapping:
-                            if mapping[s[0]][2] == 'refname' or mapping[s[0]][2] == 'static':
-                                label = items[item_key][0]
-                            else:
-                                label = 'invalid value:'
-                        print '  %15s: %s' % (label, item_key.encode('utf-8'))
-                        bad_values += 1
-        not_found = 0
-        found = 0
-        total = 0
 
-        for key in number_check:
-            if number_check[key] == '':
-                not_found += 1
-            else:
-                found +=1
-            total += 1
-
-        print "\n%s:  %s found, %s not found, %s total\n" % ('numbers', found, not_found, total)
-
-        for s in stats[0]:
-            if 'column ignored' in s[5]:
-                continue
-            term_row = [str(x) for x in s[:5]]
-            for i,t in enumerate(s[6]):
-                term_extra = (t, str(s[6][t]))
-                if t in s[7].keys() and type(s[7][t]) == type([]):
-                    term_extra += tuple(s[7][t])
-                else:
-                    term_extra += ('OK', s[7][t], '', '', '')
-                termsfh.writerow(tuple(term_row) + term_extra)
+        ok_count, bad_count, bad_values = count_stats(stats, mapping)
 
         if bad_count != 0:
             print "DWC2CSPACE: validation failed (%s fields had %s values in error)" % (bad_count, bad_values)
-            #print "DWC2CSPACE: cowardly refusal to write invalid output file"
-            #sys.exit(1)
+            # print "DWC2CSPACE: cowardly refusal to write invalid output file"
+            # sys.exit(1)
 
-        cspace_header = ['csid']
-        for h in file_header:
-            if h in mapping:
-                cspace_header.append(mapping[h][0])
-            else:
-                cspace_header.append('unmapped')
-        outputfh.writerow(cspace_header)
-        outputfh.writerow(['csid'] + file_header)
-        for input_data in validated_data:
-            outputfh.writerow([number_check[input_data[keyrow]]] + input_data)
-            recordsprocessed += 1
-            successes += 1
+        not_found, found, total = count_numbers(number_check)
+
+        print "\n%s:  %s found, %s not found, %s total\n" % ('numbers', found, not_found, total)
+
+        recordsprocessed, successes = write_intermediate_files(stats, validated_data, file_header, mapping,
+                                                                          outputfh, termsfh, number_check, keyrow)
 
     elif action in 'add update both'.split(' '):
 
-        for input_data in inputRecords:
-
-            cspaceElements = ['', '']
-            elapsedtimetotal = time.time()
-            try:
-                input_dict = map_items(input_data, file_header)
-                cspaceElements = DWC2CSPACE(action, xmlTemplate, input_dict, config)
-                del cspaceElements[2]
-                cspaceElements.append('%8.2f' % (time.time() - elapsedtimetotal))
-                print "DWC2CSPACE: objectnumber: %s, objectcsid: %s %s" % tuple(cspaceElements)
-                if cspaceElements[1] != '':
-                    successes += 1
-                outputfh.writerow(cspaceElements)
-                # flush output buffers so we get a much data as possible if there is a failure
-                outputfh.flush()
-                sys.stdout.flush()
-            except:
-                print "DWC2CSPACE: create failed for objectnumber %s, %8.2f" % (cspaceElements, (time.time() - elapsedtimetotal))
-                raise
-            recordsprocessed += 1
-
+        recordsprocessed, successes = send_to_cspace(inputRecords, file_header, action, xmlTemplate, outputfh)
 
     print "DWC2CSPACE: %s records. %s processed, %s successful" % (action, recordsprocessed, successes)
     print header
+
 
 if __name__ == "__main__":
     main()

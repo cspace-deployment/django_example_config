@@ -8,6 +8,17 @@ import urllib
 from requests.auth import HTTPBasicAuth
 from xml.etree.ElementTree import tostring, parse, Element, fromstring
 
+import ConfigParser
+from copy import deepcopy
+from xml.sax.saxutils import escape
+
+from common.unicode_hack import UnicodeReader, UnicodeWriter
+
+import time
+import urllib2
+
+import re
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -495,6 +506,216 @@ def rest_query(term, authority):
 
 def get_static_lists(list_names):
     pass
+
+def count_numbers(number_check):
+    found = 0
+    not_found = 0
+    total = 0
+    for key in number_check:
+        if number_check[key] == '':
+            not_found += 1
+        else:
+            found += 1
+        total += 1
+
+    return not_found, found, total
+
+def count_stats(stats, mapping):
+    ok_count = 0
+    bad_count = 0
+    bad_values = 0
+    print '%-35s %10s %10s  %-10s %10s' % tuple(stats[1][:5])
+    for s in stats[0]:
+        if s[3] == 'OK':
+            ok_count += 1
+            print '%-35s %10s %10s  %-10s %10s' % tuple(s[:5])
+        else:
+            bad_count += 1
+            print '%-35s %10s %10s  %-10s %10s' % tuple(s[:5])
+            items = s[7]
+            for item_key in sorted(items):
+                if items[item_key][0] != 'OK':
+                    if s[0] in mapping:
+                        if mapping[s[0]][2] == 'refname' or mapping[s[0]][2] == 'static':
+                            label = items[item_key][0]
+                        else:
+                            label = 'invalid value:'
+                    print '  %15s: %s' % (label, item_key.encode('utf-8'))
+                    bad_values += 1
+
+    return ok_count, bad_count, bad_values
+
+def write_intermediate_files(stats, validated_data, file_header, mapping, outputfh, termsfh, number_check, keyrow):
+
+    successes = 0
+    recordsprocessed = 0
+
+    for s in stats[0]:
+        if 'column ignored' in s[5]:
+            continue
+        term_row = [str(x) for x in s[:5]]
+        for i, t in enumerate(s[6]):
+            term_extra = (t, str(s[6][t]))
+            if t in s[7].keys() and type(s[7][t]) == type([]):
+                term_extra += tuple(s[7][t])
+            else:
+                term_extra += ('OK', s[7][t], '', '', '')
+            termsfh.writerow(tuple(term_row) + term_extra)
+
+    cspace_header = ['csid']
+    for h in file_header:
+        if h in mapping:
+            cspace_header.append(mapping[h][0])
+        else:
+            cspace_header.append('unmapped')
+    outputfh.writerow(cspace_header)
+    outputfh.writerow(['csid'] + file_header)
+    for input_data in validated_data:
+        outputfh.writerow([number_check[input_data[keyrow]]] + input_data)
+        recordsprocessed += 1
+        successes += 1
+
+    return recordsprocessed, successes
+
+def send_to_cspace(inputRecords, file_header, action, xmlTemplate, outputfh):
+    recordsprocessed = 0
+    successes = 0
+    for input_data in inputRecords:
+
+        cspaceElements = ['', '']
+        elapsedtimetotal = time.time()
+        try:
+            input_dict = map_items(input_data, file_header)
+            cspaceElements = DWC2CSPACE(action, xmlTemplate, input_dict, config)
+            del cspaceElements[2]
+            cspaceElements.append('%8.2f' % (time.time() - elapsedtimetotal))
+            print "DWC2CSPACE: objectnumber: %s, objectcsid: %s %s" % tuple(cspaceElements)
+            if cspaceElements[1] != '':
+                successes += 1
+            outputfh.writerow(cspaceElements)
+            # flush output buffers so we get a much data as possible if there is a failure
+            outputfh.flush()
+            sys.stdout.flush()
+        except:
+            print "DWC2CSPACE: create failed for objectnumber %s, %8.2f" % (
+            cspaceElements, (time.time() - elapsedtimetotal))
+            raise
+        recordsprocessed += 1
+    return recordsprocessed, successes
+
+
+def getConfig(fileName):
+    try:
+        config = ConfigParser.RawConfigParser()
+        config.read(fileName)
+        # test to see if it seems like it is really a config file
+        connect = config.get('connect', 'hostname')
+        return config
+    except:
+        return False
+
+
+def postxml(requestType, uri, realm, protocol, hostname, port, username, password, payload):
+    data = None
+    csid = ''
+
+    if port != '':
+        port = ':' + port
+    server = protocol + "://" + hostname + port
+    passman = urllib2.HTTPPasswordMgr()
+    passman.add_password(realm, server, username, password)
+    authhandler = urllib2.HTTPBasicAuthHandler(passman)
+    opener = urllib2.build_opener(authhandler)
+    urllib2.install_opener(opener)
+    url = "%s/cspace-services/%s" % (server, uri)
+
+    elapsedtime = time.time()
+    request = urllib2.Request(url, payload.encode('utf-8'), {'Content-Type': 'application/xml'})
+    # default method for urllib2 with payload is POST
+    if requestType == 'PUT': request.get_method = lambda: 'PUT'
+    try:
+        f = urllib2.urlopen(request)
+        data = f.read()
+        info = f.info()
+        # if a POST, the Location element contains the new CSID
+        if info.getheader('Location'):
+            csid = re.search(uri + '/(.*)', info.getheader('Location')).group(1)
+        else:
+            csid = ''
+    except urllib2.HTTPError, e:
+        sys.stderr.write('URL: ' + url + '\n')
+        sys.stderr.write('PUT failed, HTTP code: ' + str(e.code) + '\n')
+        #print payload
+        #print data
+        if info: print info
+        sys.stderr.write('Data: ' + data + '\n')
+        raise
+    except urllib2.URLError, e:
+        sys.stderr.write('URL: ' + url + '\n')
+        if hasattr(e, 'reason'):
+            sys.stderr.write('We failed to reach a server.\n')
+            sys.stderr.write('Reason: ' + str(e.reason) + '\n')
+        if hasattr(e, 'code'):
+            sys.stderr.write('The server couldn\'t fulfill the request.\n')
+            sys.stderr.write('Error code: ' + str(e.code) + '\n')
+        if True:
+            # print 'Error in POSTing!'
+            sys.stderr.write("Error in POSTing!\n")
+            sys.stderr.write(payload)
+            raise
+    except:
+        sys.stderr.write('Some other error' + '\n')
+        raise
+
+    elapsedtime = time.time() - elapsedtime
+    return (url, data, csid, elapsedtime)
+
+
+def createXMLpayload(template, values, institution):
+    payload = deepcopy(template)
+    for v in values.keys():
+        payload = payload.replace('{' + v + '}', escape(values[v]))
+    # get rid of remaining unsubstituted template variables
+    payload = re.sub('(<.*?>){(.*)}(<.*>)', r'\1\3', payload)
+    return payload
+
+
+def DWC2CSPACE(action, xmlTemplate, input_dataDict, config):
+    try:
+        realm = config.get('connect', 'realm')
+        hostname = config.get('connect', 'hostname')
+        port = config.get('connect', 'port')
+        protocol = config.get('connect', 'protocol')
+        username = config.get('connect', 'username')
+        password = config.get('connect', 'password')
+        INSTITUTION = config.get('info', 'institution')
+    except:
+        print "could not get at least one of realm, hostname, username, password or institution from config file."
+        # print "can't continue, exiting..."
+        raise
+
+    # objectCSID = getCSID('objectnumber', cspaceElements['objectnumber'], config)
+    messages = []
+    try:
+        objectNumber = input_dataDict['objectNumber']
+    except:
+        messages.append('could not find an object number')
+        return ['', '', messages]
+
+    uri = 'collectionobjects'
+
+    messages.append("posting to cspace REST API...")
+    payload = createXMLpayload(xmlTemplate, input_dataDict, INSTITUTION)
+    # print payload
+    try:
+        (url, data, objectCSID, elapsedtime) = postxml('POST', uri, realm, protocol, hostname, port, username, password, payload)
+        messages.append('got cspacecsid %s elapsedtime %s ' % (objectCSID, elapsedtime))
+        messages.append("cspace REST API post succeeded...")
+    except:
+        objectCSID = ''
+        messages.append("cspace REST API post failed...")
+
+    return [objectNumber, objectCSID, messages]
 
 
 # at the moment it seems we won't need this function: vocabularies work pretty much like regular authorities
