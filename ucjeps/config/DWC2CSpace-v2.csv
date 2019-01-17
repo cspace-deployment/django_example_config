@@ -37,9 +37,9 @@
 37	specificEpithet						taxon field	11	14				
 38	taxonRank						taxon field	0	0			not used in object records	
 39	infraspecificEpithet						taxon field	0	0				
-40	identifiedBy	identBy		refname		orgauthorities/751023ec-d953-45f9-a0a8	unused	0	0				
+40	identifiedBy	identBy		refname		personauthorities/492326d1-efb1-4d2b-96d9	unused	0	0				
 41	dateIdentified	identDateVerbatim		date			unused	0	0				
-42	identificationReferences						unused	0	0				
+42	identificationReferences					orgauthorities/751023ec-d953-45f9-a0a8	unused	0	0				
 43	identificationRemarks						unused	0	0				
 44	taxonRemarks						taxon field	0	0				
 45	identificationQualifier							0	0	3	10	ignore for now, handle by hand if needed	
@@ -73,9 +73,9 @@
 73	samplingProtocol						unused	0	0				
 74	samplingEffort						unused	0	0				
 75	preparations						unused	0	0				
-76	country	fieldLocCountry		static		countries		13	22	146	79194		
-77	stateProvince	fieldLocState		static		states		16	20	140	71145		
-78	county	fieldLocCounty		static		counties		11	14	185	58714		
+76	country	fieldLocCountry		static		vocabularies/105ba059-78bb-4810-b4f7		13	22	146	79194		
+77	stateProvince	fieldLocState		static		vocabularies/821b814b-921f-4dc9-8eda		16	20	140	71145		
+78	county	fieldLocCounty		static		vocabularies/3b14c47c-bdba-4a3e-a60a		11	14	185	58714		
 79	municipality						unused	0	0				
 80	verbatimLocality	fieldLocVerbatim		literal						29799	78619		
 81	locality	fieldLocVerbatim		literal				18	22	90	130	jason will double check, and combine	
