@@ -51,6 +51,7 @@ To deploy the tagged sources
 * Switch users to the “app_webapps”
 
 ```
+ssh cspace-dev-02.ist.berkeley.edu
 sudo su - app_webapps
 #move into the cspace_django_project folder
 cd cspace_django_project
@@ -71,8 +72,8 @@ cd cspace_django_project
 
 Then, normally, you should restart Apache
 
-At the moment, ’setup.sh’ script deploys the tip of the master branch?
-Someday, it should take an additional parameter, which is the tag to deploy
+At the moment, ’setup.sh’ script deploys the tip of the master branch.
+Someday, it should take an additional parameter, which is the tag to deploy.
 
 Good hunting!
 
