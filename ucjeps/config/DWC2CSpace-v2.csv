@@ -20,11 +20,11 @@
 20	collectionCode							0	0	2	79328		
 21	ownerInstitutionCode						unused	0	0				
 22	basisOfRecord							1	24	1	79328		
-23	occurrenceID	numberValue		literal				24	24	79328	79328	symbiota GUID	othernumber??
-24	xxx	numberType	Symbiota GUID	constant		/vocabularies/dad35f58-5112-4485-9a5c						“symbiota GUID”	numbertype??
+23	occurrenceID	occurrenceID		literal				24	24	79328	79328	symbiota GUID	othernumber??
+24	xxx	numberType	Symbiota GUID	constant		vocabularies/dad35f58-5112-4485-9a5c						“symbiota GUID”	numbertype??
 25	catalogNumber	objectNumber		key				23	24	79310	79328		
-26	otherCatalogNumbers	numberValue		literal				7	7	2331	2386		
-27	xxx	numberType	Old Institution Accession Number	constant		/vocabularies/dad35f58-5112-4485-9a5c						“old instituion accession number”	numbertype??
+26	otherCatalogNumbers	otherCatalogNumber		literal				7	7	2331	2386		
+27	xxx	numberType	Old Institution Accession Number	constant		vocabularies/dad35f58-5112-4485-9a5c						“old instituion accession number”	numbertype??
 28	kingdom						taxon field	2	21				
 29	phylum						taxon field	3	21				
 30	class						taxon field	3	21				
@@ -65,7 +65,7 @@
 65	dynamicProperties							0	0	923	1040		
 66	associatedTaxa							1	1	127	226	will be combined with habitat	
 67	reproductiveCondition	phase		static		phases	unused	0	0	4	7		
-68	establishmentMeans	cultivated		static		yesNoValues		0	0	1	30149	yes or no	
+68	establishmentMeans			static		yesNoValues		0	0	1	30149	Cultivated, yes or no	
 69	cultivationStatus						unused	0	0				
 70	lifeStage						unused	0	0				
 71	sex	sex		static		sexes	unused	0	0	1	8		
