@@ -1,4 +1,4 @@
-== CSV Import
+## CSV Import
 
 A tool to import delimited files (commas, tabs) into CSpace
 
@@ -11,8 +11,8 @@ git clone git@github.com:cspace-deployment/django_example_config.git
 git clone git@github.com:cspace-deployment/cspace_django_project.git
 ```
 
-
-2. Set things up
+2. Set things up (NB: this is not the "full" setup for Django webapps, just enough
+   to get the CLI version of csvimport working.
 
 ```
 cd cspace_django_project
@@ -37,7 +37,7 @@ NB: make sure the hostname in `csvimport` is the one you intend! Dev or Prod!
 vi ../config/csvimport.cfg
 ```
 
-3. Count, Validate, Add, Update...
+4. Count, Validate, Add, Update...
 
 You'll need to point to your input file. You can try one of the test files provided:
 
