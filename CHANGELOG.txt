@@ -3,10 +3,22 @@ CHANGELOG for the cspace_django_webapps
 OK, it is not a *real* change log, but a list of changes resulting from git log
 with some human annotation after the fact.
 
-This is version djconfig_5.0-4
-Wed Jan 16 10:14:33 PST 2019
+This is version djconfig_5.0-5
+Fri Jan 18 16:29:16 PST 2019
 
-5409b3b (HEAD -> master, origin/master, origin/HEAD) UJ-77: improved validation config file
+f758522 (HEAD -> master, origin/master, origin/HEAD) UJ-93: handle some special cases: insertion of constants, etc.
+355613c UJ-93: handle some special cases: insertion of constants, etc.
+2415b82 UJ-57: handle import of various 'other numbers'
+69be3a2 UJ-63: improve csvimport and ucb webapp documentation
+44a8e26 UJ-57: revised csv import configuration
+25d22ec UJ-77: refactoring to faciliate online and cli usage
+5851554 UJ-63: more csvimport documentation
+93f3413 UJ-62: csvimport is now a 'standard' UCJEPS webapp
+d5fd573 NOJIRA: improve deployment documentation for UCB webapps
+7cdfb3b UJ-63: a bit of documentation for csvimport
+6f1a68f UJ-93: use dynamic vocabs for country/state/country, also use correct authorities for other fields
+cf8d49e (tag: djconfig_5.0-4) revise change log and VERSION file for version djconfig_5.0-4
+5409b3b UJ-77: improved validation config file
 0a829d4 Merge branch 'master' of https://github.com/cspace-deployment/django_example_config
 6377505 UJ-77: validated file should contain found/unfound csids
 98b2227 Merge pull request #15 from cesarvh/UJ-71
