@@ -172,13 +172,13 @@
     </assocCulturalContextGroupList>
     <otherNumberList>
       <otherNumber>
-        <numberType>urn:cspace:ucjeps.cspace.berkeley.edu:vocabularies:name(numbertype):item:name(numbertype09)'Old Institution Accession Number'</numberType>
-        <numberValue>{otherCatalogNumber}</numberValue>
-     </otherNumber>
-      <otherNumber>
-        <numberType>urn:cspace:ucjeps.cspace.berkeley.edu:vocabularies:name(numbertype):item:name(SymbiotaGUID1533235580178)'Symbiota GUID'</numberType>
+        <numberType>{symbiotaGUID}</numberType>
         <numberValue>{occurrenceID}</numberValue>
       </otherNumber>
+      <otherNumber>
+        <numberType>{oldInstAccNo}</numberType>
+        <numberValue>{otherCatalogNumber}</numberValue>
+     </otherNumber>
     </otherNumberList>
     <objectProductionPeopleGroupList>
       <objectProductionPeopleGroup>
