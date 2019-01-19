@@ -87,6 +87,7 @@ def load_mapping_file(mapping_file):
     mapping_file = path.join(path.join(settings.BASE_PARENT_DIR, 'config'), mapping_file)
     delim = '\t'
     cspace_mapping = {}
+    constants = []
     dump_row('Row InputField CSpaceField X DataType X X'.split(' '), 'Status', 'Message')
     print
     with open(mapping_file, 'r') as f1:
@@ -100,25 +101,31 @@ def load_mapping_file(mapping_file):
                     errors += 1
                     continue
                 # id * FIMS field name * Cspace collectionobject tag * context tag * data type * check exists? * authority * csid
-                row_id, input_field, cspace_field, context_tag, data_type, check_exists, authority, remarks = row[:8]
+                row_id, input_field, cspace_field, additional_info, data_type, check_exists, authority, remarks = row[:8]
                 if input_field == '' or cspace_field == '':
                     #dump_row(row, 'Warning', 'need both an input field name and a cspace field name')
                     continue
                 #input_field = input_field.lower()
-                if data_type == 'refname' and authority == '':
-                    dump_row(row, 'Error', 'refname specified but no authority provided')
-                    errors += 1
-                    continue
                 if not data_type in 'constant static literal refname float integer date key'.split(' '):
                     dump_row(row, 'Error', 'unrecognized datatype: "%s"' % data_type)
                     errors += 1
                     continue
-                cspace_mapping[input_field] = [cspace_field, context_tag, data_type, check_exists, int(row_id), authority]
+                if data_type == 'refname' and authority == '':
+                    dump_row(row, 'Error', 'refname specified but no authority provided')
+                    errors += 1
+                    continue
+                if data_type == 'constant':
+                    constants.append([input_field, cspace_field, additional_info, data_type, check_exists, int(row_id), authority])
+                # if the field already exists, make an 'alias' so it can be mapped multiple times
+                if input_field in cspace_mapping:
+                    cspace_mapping['=%s' % cspace_field] = [input_field, additional_info, data_type, check_exists, int(row_id), authority]
+                else:
+                    cspace_mapping[input_field] = [cspace_field, additional_info, data_type, check_exists, int(row_id), authority]
             except:
                 dump_row(row, 'Error', 'unknown exception in mapping file')
                 errors += 1
             dump_row(row, 'OK','')
-    return cspace_mapping, errors
+    return cspace_mapping, errors, constants
 
 
 def get_recordtypes():
@@ -336,7 +343,6 @@ def validate_cell(CSPACE_MAPPING, key, values):
 
 
 def map2cspace(CSPACE_MAPPING, cell, j, stats, header):
-    #column = header[j]
     stat = stats[0][j]
     value_dict = stat[7]
     if cell in value_dict:
@@ -378,7 +384,7 @@ def map_items(input_data, file_header):
     return data_dict
 
 
-def validate_items(CSPACE_MAPPING, input_data, file_header, action):
+def validate_items(CSPACE_MAPPING, constants, input_data, file_header, action):
     stats = validate_columns(CSPACE_MAPPING, input_data, file_header)
 
     keyrow = -1
@@ -396,10 +402,27 @@ def validate_items(CSPACE_MAPPING, input_data, file_header, action):
         output_row = []
         for j,cell in enumerate(row):
             output_row.append(map2cspace(CSPACE_MAPPING,cell, j, stats, file_header))
+        output_row += extract_constants(constants, row, file_header)
         validated_items.append(output_row)
     number_check = check_key(stats[0][keyrow][7], action)
     return validated_items, stats, number_check, keyrow
 
+
+def extract_constants(constants, row, file_header):
+    constant_field_values = []
+    for fld in constants:
+        assoc_field_name = fld[4]
+        constant_value = fld[2]
+        if assoc_field_name == '':
+            constant_field_value = constant_value
+        else:
+            constant_field_index = file_header.index(assoc_field_name)
+            if row[constant_field_index] != '':
+                constant_field_value = constant_value
+            else:
+                constant_field_value = ''
+        constant_field_values.append(constant_field_value)
+    return constant_field_values
 
 def check_key(key_dict, action):
     for k in key_dict:
@@ -545,7 +568,7 @@ def count_stats(stats, mapping):
 
     return ok_count, bad_count, bad_values
 
-def write_intermediate_files(stats, validated_data, file_header, mapping, outputfh, termsfh, number_check, keyrow):
+def write_intermediate_files(stats, validated_data, constants, file_header, mapping, outputfh, termsfh, number_check, keyrow):
 
     successes = 0
     recordsprocessed = 0
@@ -568,8 +591,9 @@ def write_intermediate_files(stats, validated_data, file_header, mapping, output
             cspace_header.append(mapping[h][0])
         else:
             cspace_header.append('unmapped')
-    outputfh.writerow(cspace_header)
-    outputfh.writerow(['csid'] + file_header)
+
+    outputfh.writerow(cspace_header + [c[0] for c in constants])
+    outputfh.writerow(['csid'] + file_header + [c[0] for c in constants])
     for input_data in validated_data:
         outputfh.writerow([number_check[input_data[keyrow]]] + input_data)
         recordsprocessed += 1
@@ -577,7 +601,7 @@ def write_intermediate_files(stats, validated_data, file_header, mapping, output
 
     return recordsprocessed, successes
 
-def send_to_cspace(inputRecords, file_header, action, xmlTemplate, outputfh):
+def send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh):
     recordsprocessed = 0
     successes = 0
     for input_data in inputRecords:
@@ -704,9 +728,25 @@ def DWC2CSPACE(action, xmlTemplate, input_dataDict, config):
 
     uri = 'collectionobjects'
 
-    messages.append("posting to cspace REST API...")
-    payload = createXMLpayload(xmlTemplate, input_dataDict, INSTITUTION)
-    # print payload
+    if action == 'add':
+        messages.append("POSTing (add) to cspace REST API...")
+        payload = createXMLpayload(xmlTemplate, input_dataDict, INSTITUTION)
+    elif action == 'update':
+        messages.append("PUTting (update) to cspace REST API...")
+        objectCSID = input_dataDict['csid']
+        url = '%s/cspace-services/%s/%s' % (http_parms.server, 'collectionobjects', objectCSID)
+        try:
+            response = requests.get(url, auth=HTTPBasicAuth(http_parms.username, http_parms.password))
+            payload = response.content
+            if response.status_code != 200:
+                messages.append("HTTP %s" % response.status_code)
+            else:
+                (url, data, dummyCSID, elapsedtime) = postxml('PUT', '%s/%s' % (uri, objectCSID), realm, protocol, hostname, port, username, password, payload)
+                pass
+        except:
+            objectCSID = ''
+            messages.append("cspace REST API put failed...")
+        #payload = createXMLpayload(xmlTemplate, input_dataDict, INSTITUTION)
     try:
         (url, data, objectCSID, elapsedtime) = postxml('POST', uri, realm, protocol, hostname, port, username, password, payload)
         messages.append('got cspacecsid %s elapsedtime %s ' % (objectCSID, elapsedtime))

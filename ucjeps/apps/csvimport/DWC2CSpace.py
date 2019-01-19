@@ -67,7 +67,7 @@ def main():
 
     try:
         print "DWC2CSPACE: loading mapping file %s\n" % sys.argv[3]
-        mapping, errors = load_mapping_file(sys.argv[3])
+        mapping, errors, constants = load_mapping_file(sys.argv[3])
         print '\nDWC2CSPACE: %s valid records found in mapping file %s' % (len(mapping), sys.argv[3])
         # print mapping
         print header
@@ -109,7 +109,7 @@ def main():
         successes = len(inputRecords)
 
     elif action == 'validate':
-        validated_data, stats, number_check, keyrow = validate_items(mapping, inputRecords, file_header, action)
+        validated_data, stats, number_check, keyrow = validate_items(mapping, constants, inputRecords, file_header, action)
 
         ok_count, bad_count, bad_values = count_stats(stats, mapping)
 
@@ -122,12 +122,12 @@ def main():
 
         print "\n%s:  %s found, %s not found, %s total\n" % ('numbers', found, not_found, total)
 
-        recordsprocessed, successes = write_intermediate_files(stats, validated_data, file_header, mapping,
+        recordsprocessed, successes = write_intermediate_files(stats, validated_data, constants, file_header, mapping,
                                                                           outputfh, termsfh, number_check, keyrow)
 
     elif action in 'add update both'.split(' '):
 
-        recordsprocessed, successes = send_to_cspace(inputRecords, file_header, action, xmlTemplate, outputfh)
+        recordsprocessed, successes = send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh)
 
     print "DWC2CSPACE: %s records. %s processed, %s successful" % (action, recordsprocessed, successes)
     print header
