@@ -326,7 +326,13 @@ def validate_cell(CSPACE_MAPPING, key, values):
     validated_values = {}
     if key in CSPACE_MAPPING:
         for v in values:
-            isaproblem, message, validated_value = check_cell_in_cspace(CSPACE_MAPPING[key], key, v)
+            try:
+                isaproblem, message, validated_value = check_cell_in_cspace(CSPACE_MAPPING[key], key, v)
+            except:
+                print "problem key", key
+                print "problem value", v
+                print "mapping", CSPACE_MAPPING[key]
+                isaproblem, message, validated_value = 1, 'exception', v
             validated_values[v] = validated_value
             num_problems += isaproblem
             if isaproblem != 0:
@@ -345,16 +351,18 @@ def validate_cell(CSPACE_MAPPING, key, values):
 def map2cspace(CSPACE_MAPPING, cell, j, stats, header):
     stat = stats[0][j]
     value_dict = stat[7]
+    result = cell
+    OK = 0
     if cell in value_dict:
         if type(value_dict[cell]) == type([]):
             if value_dict[cell][0] == 'OK':
-                return value_dict[cell][3]
+                result = value_dict[cell][3]
             else:
-                return ''
+                OK = 1
+                result = ''
         else:
-            return value_dict[cell]
-    else:
-        return cell
+            result = value_dict[cell]
+    return OK, result
 
 
 def validate_columns(CSPACE_MAPPING, matrix, header):
@@ -398,14 +406,21 @@ def validate_items(CSPACE_MAPPING, constants, input_data, file_header, action):
         pass
 
     validated_items = []
+    nonvalidating_items = []
     for i,row in enumerate(input_data):
         output_row = []
+        validated = 0
         for j,cell in enumerate(row):
-            output_row.append(map2cspace(CSPACE_MAPPING,cell, j, stats, file_header))
+            validation_status, mapped_row = map2cspace(CSPACE_MAPPING,cell, j, stats, file_header)
+            validated += validation_status
+            output_row.append(mapped_row)
         output_row += extract_constants(constants, row, file_header)
-        validated_items.append(output_row)
+        if validated == 0:
+            validated_items.append(output_row)
+        else:
+            nonvalidating_items.append(row)
     number_check = check_key(stats[0][keyrow][7], action)
-    return validated_items, stats, number_check, keyrow
+    return validated_items, nonvalidating_items, stats, number_check, keyrow
 
 
 def extract_constants(constants, row, file_header):
@@ -501,6 +516,8 @@ def extract_refname(xml, term):
                 return 'Failed X X X X'.split(' ')
             if term.encode('utf-8').lower() == termDisplayName.encode('utf-8').lower():
                 return ['OK', csid, unicode(termDisplayName), refName, updated_at]
+        if totalItems > 300:
+            return 'MaybeMissed X X X X'.split(' ')
         return 'NoMatch X X X X'.split(' ')
     except:
         raise
@@ -508,7 +525,7 @@ def extract_refname(xml, term):
 
 
 def rest_query(term, authority):
-    querystring = {'kw': term.encode('utf-8').replace('-',' '), 'wf_deleted': 'false', 'pgSz': 20}
+    querystring = {'kw': term.encode('utf-8').replace('-',' '), 'wf_deleted': 'false', 'pgSz': 300}
     querystring = urllib.urlencode(querystring)
     # print querystring
     url = '%s/cspace-services/%s?%s' % (http_parms.server, authority, querystring)
@@ -568,9 +585,10 @@ def count_stats(stats, mapping):
 
     return ok_count, bad_count, bad_values
 
-def write_intermediate_files(stats, validated_data, constants, file_header, mapping, outputfh, termsfh, number_check, keyrow):
+def write_intermediate_files(stats, validated_data, nonvalidating_items, constants, file_header, mapping, outputfh, nonvalidfh, termsfh, number_check, keyrow):
 
     successes = 0
+    failures = 0
     recordsprocessed = 0
 
     for s in stats[0]:
@@ -595,11 +613,25 @@ def write_intermediate_files(stats, validated_data, constants, file_header, mapp
     outputfh.writerow(cspace_header + [c[0] for c in constants])
     outputfh.writerow(['csid'] + file_header + [c[0] for c in constants])
     for input_data in validated_data:
-        outputfh.writerow([number_check[input_data[keyrow]]] + input_data)
-        recordsprocessed += 1
-        successes += 1
+        try:
+            outputfh.writerow([number_check[input_data[keyrow]]] + input_data)
+            recordsprocessed += 1
+            successes += 1
+        except:
+            print 'could not write: ', number_check[input_data[keyrow]]
 
-    return recordsprocessed, successes
+
+    nonvalidfh.writerow(['csid'] + file_header)
+    for input_data in nonvalidating_items:
+        try:
+            nonvalidfh.writerow([number_check[input_data[keyrow]]] + input_data)
+            recordsprocessed += 1
+            failures += 1
+        except:
+            print 'could not write: ', number_check[input_data[keyrow]]
+
+
+    return recordsprocessed, successes, failures
 
 def send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh):
     recordsprocessed = 0
