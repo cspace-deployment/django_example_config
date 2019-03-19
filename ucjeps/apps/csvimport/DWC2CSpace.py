@@ -21,17 +21,18 @@ def main():
         sys.exit()
 
     print header
-    print "DWC2CSPACE: input  file:    %s" % sys.argv[1]
-    print "DWC2CSPACE: config file:    %s" % sys.argv[2]
-    print "DWC2CSPACE: mapping file:   %s" % sys.argv[3]
-    print "DWC2CSPACE: template:       %s" % sys.argv[4]
-    print "DWC2CSPACE: output file:    %s" % sys.argv[5]
-    print "DWC2CSPACE: terms file:     %s" % sys.argv[6]
-    print "DWC2CSPACE: action:         %s" % sys.argv[7]
+    print "DWC2CSPACE: input  file:       %s" % sys.argv[1]
+    print "DWC2CSPACE: config file:       %s" % sys.argv[2]
+    print "DWC2CSPACE: mapping file:      %s" % sys.argv[3]
+    print "DWC2CSPACE: template:          %s" % sys.argv[4]
+    print "DWC2CSPACE: validated file:    %s" % sys.argv[5]
+    print "DWC2CSPACE: unvalidated file:  %s" % sys.argv[6]
+    print "DWC2CSPACE: terms file:        %s" % sys.argv[7]
+    print "DWC2CSPACE: action:            %s" % sys.argv[8]
     print header
 
     try:
-        action = sys.argv[7]
+        action = sys.argv[8]
         actions = 'count validate add update both'
         if not action in actions.split(' '):
             print 'DWC2CSPACE: Error! not a valid action: %s' % action
@@ -89,14 +90,23 @@ def main():
     try:
         outputfh = UnicodeWriter(open(sys.argv[5], 'wb'), delimiter="\t", quoting=csv.QUOTE_NONE, quotechar=chr(255))
     except:
-        print "DWC2CSPACE: could not open output file for write %s" % sys.argv[5]
+        print "DWC2CSPACE: could not open validated file for write %s" % sys.argv[5]
         sys.exit()
 
     try:
-        termsfh = UnicodeWriter(open(sys.argv[6], 'wb'), delimiter="\t", quoting=csv.QUOTE_NONE, quotechar=chr(255), escapechar='\\')
+        nonvalidfh = UnicodeWriter(open(sys.argv[6], 'wb'), delimiter="\t", quoting=csv.QUOTE_NONE, quotechar=chr(255))
     except:
-        print "DWC2CSPACE: could not open test file for write %s" % sys.argv[5]
+        print "DWC2CSPACE: could not open nonvalidated file for write %s" % sys.argv[6]
         sys.exit()
+
+    try:
+        termsfh = UnicodeWriter(open(sys.argv[7], 'wb'), delimiter="\t", quoting=csv.QUOTE_NONE, quotechar=chr(255), escapechar='\\')
+    except:
+        print "DWC2CSPACE: could not open terms file for write %s" % sys.argv[5]
+        sys.exit()
+
+    successes = 0
+    failures = 0
 
     if action == 'count':
         stats = count_columns(inputRecords, file_header)
@@ -109,7 +119,7 @@ def main():
         successes = len(inputRecords)
 
     elif action == 'validate':
-        validated_data, stats, number_check, keyrow = validate_items(mapping, constants, inputRecords, file_header, action)
+        validated_data, nonvalidating_items, stats, number_check, keyrow = validate_items(mapping, constants, inputRecords, file_header, action)
 
         ok_count, bad_count, bad_values = count_stats(stats, mapping)
 
@@ -122,14 +132,14 @@ def main():
 
         print "\n%s:  %s found, %s not found, %s total\n" % ('numbers', found, not_found, total)
 
-        recordsprocessed, successes = write_intermediate_files(stats, validated_data, constants, file_header, mapping,
-                                                                          outputfh, termsfh, number_check, keyrow)
+        recordsprocessed, successes, failures = write_intermediate_files(stats, validated_data, nonvalidating_items, constants, file_header, mapping,
+                                                                          outputfh, nonvalidfh, termsfh, number_check, keyrow)
 
     elif action in 'add update both'.split(' '):
 
         recordsprocessed, successes = send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh)
 
-    print "DWC2CSPACE: %s records. %s processed, %s successful" % (action, recordsprocessed, successes)
+    print "DWC2CSPACE: '%s records': %s processed, %s successful, %s failures" % (action, recordsprocessed, successes, failures)
     print header
 
 
