@@ -13,11 +13,12 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     # 'demo' apps -- uncomment for debugging or demo
-    'hello',
-    'service',
+    #'hello',
+    #'service',
     # 'service' apps: no UI
     'common',
     #'csvimport',
+    #'curator',
     'suggest',
     'suggestpostgres',
     'suggestsolr',
@@ -32,6 +33,7 @@ INSTALLED_APPS = (
     'internal',
     'ireports',
     'landing',
+    #'locationhistory',
     'osteology',
     'permalinks',
     'search',
