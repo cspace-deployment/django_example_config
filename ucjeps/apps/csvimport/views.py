@@ -59,7 +59,7 @@ def prepareFiles(request, mergeinput):
     if import_files == []:
         import_files = [{'name': ''}]
 
-    return import_files, numProblems, errormsg, matrix, header
+    return import_files, numProblems, errormsg, matrix
 
 def get_fields(request):
     m = []
@@ -121,7 +121,7 @@ def upload_file(request):
 
         if len(errors) == 0:
 
-            import_files, numProblems, errormsg, matrix, header = prepareFiles(request, update_type)
+            import_files, numProblems, errormsg, matrix = prepareFiles(request, update_type)
             if errormsg != '':
                 errors.append(errormsg)
 
@@ -131,11 +131,8 @@ def upload_file(request):
             action = request.POST['action']
             recordtype = request.POST['recordtype']
             update_type = request.POST['update_type']
-
-            CSPACE_MAPPING = RECORDTYPES[recordtype][2][0]
-
             if 'use' in use_header or 'ignore' in use_header:
-                labels = header
+                labels = matrix[0]
                 matrix = matrix[1:]
             elif 'none' in use_header:
                 labels = ['column %s' % (i + 1) for i, v in enumerate(matrix[0])]
@@ -144,15 +141,20 @@ def upload_file(request):
                 matrix, labels = count_columns(matrix, labels)
             elif action == 'validate':
                 message = '%s rows validated.' % len(matrix)
-                validated_items, matrix_temp, number_check, keyrow = validate_items(CSPACE_MAPPING, matrix, labels, action)
+                CSPACE_MAPPING = RECORDTYPES[recordtype][2][0]
+                validated_items, matrix2 = validate_items(CSPACE_MAPPING, matrix, labels)
                 # strip off values validated and validation results -- too big to display
-                matrix = [m[:6] for m in matrix_temp[0]]
-                labels = matrix_temp[1][:6]
-                del matrix_temp
+                matrix = [m[:5] for m in matrix2]
+                del matrix2
             elif action in 'add update both'.split(' '):
                 message = '%s rows validated.' % len(matrix)
-                validated_items, matrix_temp, number_check, keyrow = validate_items(CSPACE_MAPPING, matrix, labels, action)
+                CSPACE_MAPPING = RECORDTYPES[recordtype][2][0]
+                matrix, labels = validate_items(CSPACE_MAPPING, matrix, labels)
             columnhandling = check_columns(labels, request.POST['use_header'], request.POST['recordtype'])
+            try:
+                keyrow = labels.index('id')
+            except:
+                keyrow = -1
             recordtype = request.POST['recordtype']
 
     cspaceaction = get_action(action)
