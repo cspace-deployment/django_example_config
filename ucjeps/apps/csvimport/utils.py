@@ -431,11 +431,11 @@ def extract_constants(constants, row, file_header):
         if assoc_field_name == '':
             constant_field_value = constant_value
         else:
-            constant_field_index = file_header.index(assoc_field_name)
-            if row[constant_field_index] != '':
-                constant_field_value = constant_value
-            else:
-                constant_field_value = ''
+            constant_field_value = ''
+            if assoc_field_name in file_header:
+                constant_field_index = file_header.index(assoc_field_name)
+                if row[constant_field_index] != '':
+                    constant_field_value = constant_value
         constant_field_values.append(constant_field_value)
     return constant_field_values
 
@@ -618,7 +618,11 @@ def write_intermediate_files(stats, validated_data, nonvalidating_items, constan
             recordsprocessed += 1
             successes += 1
         except:
-            print 'could not write: ', number_check[input_data[keyrow]]
+            outputfh.writerow([''] + input_data)
+            try:
+                print 'could not write: ', number_check[input_data[keyrow]]
+            except:
+                pass
 
 
     nonvalidfh.writerow(['csid'] + file_header)
@@ -628,8 +632,11 @@ def write_intermediate_files(stats, validated_data, nonvalidating_items, constan
             recordsprocessed += 1
             failures += 1
         except:
-            print 'could not write: ', number_check[input_data[keyrow]]
-
+            outputfh.writerow([''] + input_data)
+            try:
+                print 'could not write: ', number_check[input_data[keyrow]]
+            except:
+                pass
 
     return recordsprocessed, successes, failures
 
