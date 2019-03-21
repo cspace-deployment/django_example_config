@@ -1,3 +1,11 @@
 *.pyc
 *.DS_Store
-.idea
+.idea:
+*/apps/csvimport/test/*.invalid.csv
+*/apps/csvimport/test/*.results.csv
+*/apps/csvimport/test/*.terms.csv
+*/apps/csvimport/test/*.valid.csv
+*/apps/csvimport/test/*.upload.csv
+*/apps/csvimport/test/*.validate.log
+*/apps/csvimport/test/*.count.log
+*/apps/csvimport/test/*.add.log
