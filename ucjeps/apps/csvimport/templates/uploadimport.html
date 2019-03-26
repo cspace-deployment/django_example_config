@@ -4,188 +4,21 @@
 
 {% block content %}
     <div id="content-main">
-        <form enctype="multipart/form-data" action="{% url 'csvimport:upload' %}" method="post">
-            {% csrf_token %}
-            {% if status == 'down' %}
-                <h2><span style="color:red">System is down, please standby!</span></h2>
-            {% else %}
-                <h2>Caveat utilizator!</h2>
-                Importing into CollectionSpace is not for the faint of heart.
-                Even though you have a nice, clean "flat file" in the form of a spreadsheet or .csv file
-                you are not out of the woods <i>at all</i>.</br><br/>
-                It is
-                <emph>highly recommended</emph> that you <a href="">read the documentation</a> if you run into even the
-                slightest difficulty!
-                <br/><br/>
-                You are encouraged to experiment first, and to take an incremental approach to getting for file (can
-                CSpace) prepared for each other.
-                There is no harm that can come from using the first two steps below (<i>Count</i> and <i>Validate</i>);
-                however, once you have <i>Count</i>ed or <i>Validate</i>ed, it will be a challenge to back out --
-                there is no <i>Undo</i>. The procedure for removing records you have added is described in the
-                documentation above, but it is far from simple.
-                <br/><br/>
-                There is a suggested workflow that may help you sort out
-                the inevitable data bugs efficiently:
-                <ol>
-                    <li><i>Count</i> first (this will ensure the app undertstands your
-                        file format);</li>
-                    <li><i>Validate</i> (which will check the actual content of the columns).
-                        These three steps
-                        are quick and easy even for large files and can save you trouble going forward.</li>
-                    <li><b>then</b> try to <i>Upload</i>.</li>
-                </ol>
-                A couple additional pointers:
-                <ol>
-                    <li>If you are wondering how to match your columns to CSpace records, try clicking
-                        <i>Show Configuration</i> below to see which fields this webapp knows about.
-                    </li>
-                    <li>Fill in this form from top to bottom. Pretty much everything needs to be filled in.</li>
-                    <li>Ensure you have all the bits needed before you try: if updating, you'll need to know what
-                        columns to specify for
-                        matching rows to CSpace records.
-                    </li>
-                </ol>
-                <br/>
-                <hr/>
-                <table>
-                    <tr>
-                        <th>Show what can be imported</th>
-                        <td><input type=button onClick="location.href='{% url 'csvimport:showcsvconfig' %}'" value='Show Configuration'></td>
-                        <td style="width: 50%;">
-                            Shows the fields that are "understood" by this import facility, and how they map
-                            to CollectionSpace fields. (This webapp only accepts a subset of possible fields
-                            for importing.)
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="10">
-                            <hr/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Select a file</th>
-                        <td><input type="file" name="importfile" value="{{ importfile }}"></td>
-                        <td style="width: 50%;">
-                            The file must be a "csv file" (sometimes called a ".tsv file": fields separated from by
-                            tabs,
-                            and not "encapsulated" (i.e.
-                            cell values must not be wrapped in quotes.) You can create such a file using the
-                            Save As options in your spreadsheet program. Do make sure to verify the cell and record
-                            delimiters,
-                            and "quoting" options!
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Record type</th>
-                        <td>
-                            <select id="recordtype" name="recordtype">
-                                {% for displayname,cspacevalue in recordtypes %}
-                                    <option value="{{ cspacevalue }}">{{ displayname }}</option>
-                                {% endfor %}
-                            </select>
-                        </td>
-                        <td>
-                            Alas, only the record types your CSpace administrator has configured and currently be
-                            handled.
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Add, Update, Validate or Count?</th>
-                        <td>
-                            <input type="radio" name="action" value="count">Count types and tokens in the file. (a
-                            statistical summary.)<br/>
-                            <input type="radio" name="action" value="validate">Validate the file only. (check
-                            fields.)<br/>
-                            <!-- input type="radio" name="action" value="tableedit">My file validates OK. But I still want to edit the values online.<br/ -->
-                            <input type="radio" name="action" value="add">Add new records. (if an id matches, it's an
-                            error.)<br/>
-                            <input type="radio" name="action" value="update">Update existing records. (unmatched ids are
-                            errors.)<br/>
-                            <input type="radio" name="action" value="both">Both. (if an id matches, update the record,
-                            otherwise, make a new record.)<br/>
-                        </td>
-                        <td>
-                            You can use this function for a variety of tasks. For example, you can count "types and
-                            tokens" in <i>any</i> accepted file format
-                            using <i>Count</i>, even if you never intend to upload the data to CSpace (NB: your input file
-                            is not retained unless you
-                            actually upload the data to CSpace).
-                            You can use it to check to see if a list of elements already exist in CSpace or not using <i>Validate</i>.
-                            You can add new records or use your input to update existing records. If you specify Add,
-                            we'll check to make sure
-                            the identifier you provided is not already present. If Update, we'll search for the
-                            identifiers and use the input
-                            data to enhance existing records. If you select Both, it will turn off this checking: if a
-                            records with
-                            the identifier is not found, we'll assume it is new. If it
-                            <emph>is</emph>
-                            found we'll update the records using
-                            the <i>Merge or Replace?</i> setting below.
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>For updates: Merge or Replace?</th>
-                        <td>
-                            <input type="radio" name="update_type" value="merge">Merge input values, but don't replace
-                            any existing data.<br/>
-                            <input type="radio" name="update_type" value="replace">Replace all existing values with
-                            non-null input values. (leave the rest alone)<br/>
-                            <input type="radio" name="update_type" value="blast">Unconditionally replace existing values
-                            with input (even if input fields are empty).<br/>
-                        </td>
-                        <td>
-                            Specify how you'd like us to handle the individual cells in your table when updating CSpace.
-                            These settings allow you to control whether the incoming data should replace existing data
-                            or merely
-                            augment it. This is useful for "backfilling" empty values while preserving existing values.
-                            This selection is ignored for Add actions (i.e. Add means "Unconditionally replace").
-                        </td>
-                    </tr>
-                    <!-- tr>
-                        <th>Header?</th>
-                        <td>
-                            <input type="radio" name="use_header" value="use">Use my file's header to match to columns to CSpace fields.<br/>
-                            <input type="radio" name="use_header" value="ignore">My file has a header but don't use it. (I'll map the columns to fields myself.)<br/>
-                            <input type="radio" name="use_header" value="none">My file has no header. (I'll map the columns to fields myself.)<br/>
-                        </td>
-                        <td>
-                            We can try to match the values in a column header in your file to values in CSpace.
-                            If your file has a header that won't match the existing configured values, you can still
-                            map the columns to CSpace fields yourself after you've uploaded it.
-                        </td>
-                    </tr -->
-
-                    <tr>
-                        <th>Make a group of these records?</th>
-                        <td>
-                            <input type="checkbox" name="make_group" value="yes">
-                        </td>
-                        <td>
-                            Making a group allows you to find all the records you have mentioned in your file
-                            once they have entered CSpace. This can be useful for a variety of maintenance and
-                            reporting purposes.
-                        </td>
-                    </tr>
-                </table>
-                <input type="hidden" name="use_header" value="use">
-                {% if errors|length > 0 %}
-                    {% for e in errors %}
-                        <h4><span style="color:red">{{ e }}</span></h4>
-                    {% endfor %}
-                {% endif %}
-                <input class="prettyBtn" type="submit" name="upload" value="Upload ">
-            {% endif %}
-        </form>
-        <form enctype="multipart/form-data" action="{% url 'csvimport:process' %}" method="post">
-            {% csrf_token %}
-            {% if matrix %}
-                <hr/>
-                {% include "matrix.html" %}
-                {% if action != 'count' %}
-                    <hr/>
-                    <input class="prettyBtn" type="submit" name="action" value="{{ cspaceaction }}">
-                {% endif %}
-            {% endif %}
-        </form>
+        <div id="tabs">
+            <ul>
+                <li><a href="#check">Upload Queue</a></li>
+                <li><a href="#upload">Upload Files</a></li>
+                <li><a href="#View">View results</a></li>
+            </ul>
+        <div id="upload">
+            {% include 'csvimport_upload.html' %}
+        </div>
+        <div id="check">
+            {% include 'csvimport_check.html' %}
+        </div>
+        <div id="view">
+            {% include 'csvimport_view.html' %}
+        </div>
+        </div>
     </div>
 {% endblock %}
