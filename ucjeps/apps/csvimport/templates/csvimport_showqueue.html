@@ -1,0 +1,72 @@
+<hr/>
+<h2>{{ jobcount }} file{{ jobcount|pluralize }} in the queue.
+    {% if jobcount > jobs|length %}
+        Only the most recent {{ jobs|length }} jobs displayed.
+    {% endif %}
+</h2>
+<table cellspace="1" id="resultsListing" class="tablesorter">
+    <thead>
+    <tr>
+        <th>Job number</th>
+        <th>Date uploaded</th>
+        <th>Delete?</th>
+        <th>Next step</th>
+        {% for log in logs %}
+            <th style="width: 40px;">{{ log }}</th>
+        {% endfor %}
+        {% for status in statuses %}
+            <th style="width: 40px;">{{ status }}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for jobno,jobinfo,jobsummary in jobs %}
+        <tr>
+            <td>{{ jobno }}</td>
+            <td>{{ jobsummary.3 }}</td>
+            <td>
+                <a class="button" href="deletejob/{{ jobno }}"><span style="color: orange">delete</span></a>
+            </td>
+            <td>
+                {% if jobsummary.4 == 'problem' %}
+                    <span style="color: red; font-weight: bold">{{ jobsummary.4 }}</span>
+                {% elif jobsummary.4 == 'in progress'%}
+                    <span style="color: orangered">{{ jobsummary.4 }}</span>
+                {% elif jobsummary.4 == 'validate'%}
+                    validate:<br/>
+                    <a style="color: green" href="nextstep/validate-add/{{ jobno }}">add</a>
+                    update both
+                    <!-- a style="color: green" href="nextstep/validate-update/{{ jobno }}">update</a >
+                    <a style="color: green" href="nextstep/validate-both/{{ jobno }}">both</a -->
+                    <!-- select id="validate" name="validate">
+                        <option value="">Select an option</option>
+                        <option value="add">validate - add</option>
+                        <option value="update">validate - update</option>
+                    </select -->
+                {% else %}
+                    <a style="color: green" href="nextstep/{{ jobsummary.4 }}/{{ jobno }}">{{ jobsummary.4 }}</a>
+                {% endif %}
+            </td>
+            {% for log in logs %}
+                <td>
+                    {% for j in jobinfo %}
+                        {% if j.1 == log and 'log' in j.0 %}
+                            <a href="showresults/{{ j.0 }}">view</a>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+            {% endfor %}
+
+            {% for status in statuses %}
+                <td>
+                    {% for j in jobinfo %}
+                        {% if j.1 == status and 'csv' in j.0 %}
+                            <a href="downloadresults/{{ j.0 }}">{{ j.2 }}</a>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

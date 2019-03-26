@@ -1,0 +1,43 @@
+{% load staticfiles %}
+{% if logcontent %}
+    <pre><code style="white-space: pre;">{{ logcontent }}</code></pre>
+{% else %}
+    {% if count > 0 %}
+        <h2>{{ filename }}</h2>
+        {% if message %}
+            <h4>{{ message }}</h4>
+            <hr/>
+        {% endif %}
+        <h1>{{ count }} row{{ count|pluralize }}</h1>
+        <table cellspace="1" id="resultsListing" class="tablesorter">
+            <thead>
+            <tr>
+                {% for header in labels %}
+                    <th>
+                        {{ header }}
+                    </th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in matrix %}
+                <tr>
+                    {% for cell in row %}
+                        <td>
+                            {% if forloop.counter0 == keyrow %}
+                                {{ cell }}
+                            {% else %}
+                                {% if action == 'count' or action == 'validate' or action == 'add' %}
+                                    {{ cell }}
+                                {% else %}
+                                    <input type="text" name="col.{{ forloop.counter }}" value="{{ cell }}">
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+        <h4>({{ matrix|length }} rows in this table.)</h4>
+    {% endif %}
+{% endif %}
