@@ -1,6 +1,6 @@
 *.pyc
 *.DS_Store
-.idea:
+.idea
 */apps/csvimport/test/*.invalid.csv
 */apps/csvimport/test/*.results.csv
 */apps/csvimport/test/*.terms.csv
