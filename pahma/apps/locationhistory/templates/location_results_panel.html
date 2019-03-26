@@ -1,0 +1,23 @@
+{% load i18n admin_static %}
+{% load staticfiles %}
+
+<div id="resultsPanel">
+    {% if messages %}
+        {% for m in messages %}
+            <br/><span style="color: red">{{ m }}</span>
+        {% endfor %}
+    {% else %}
+        {% if searchterm %}
+            <h2>{{ clicked }}: {{ searchterm }}</h2>
+            {% if count > 0 %}
+                {{ count }} items found.
+                {% if time %}
+                    (in {{ time }} seconds.)
+                {% endif %}
+                {% include "history_short_results.html" %}
+            {% else %}
+                <br/><span style="color: red">No items found.</span>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+</div>
