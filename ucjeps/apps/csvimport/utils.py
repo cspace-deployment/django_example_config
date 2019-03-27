@@ -53,6 +53,17 @@ SERVERINFO = {
 }
 
 
+IMPORTDIR = config.get('files', 'directory')
+if isdir(IMPORTDIR):
+    print "Using %s as working directory for csvimport files" % IMPORTDIR
+else:
+    print "%s is not an existing directory, using /tmp instead for csvimport files" % IMPORTDIR
+    QUEUEDIR = '/tmp'
+    # raise Exception("csvImport working directory %s does not exist. this webapp will not work without it!" % QUEUEDIR)
+
+
+
+
 class http_parms:
     pass
 
@@ -141,60 +152,12 @@ def get_recordtypes():
     return RECORDTYPES
 
 
-IMPORTDIR = config.get('files', 'directory')
-if isdir(IMPORTDIR):
-    print "Using %s as working directory for import files and metadata files" % (IMPORTDIR)
-else:
-    print "Working directory %s does not exist. this webapp will not work!" % (IMPORTDIR)
-    print "Using /tmp as a placeholder"
-    IMPORTDIR = "/tmp"
-
-
-
 # Get an instance of a logger, log some startup info
 logger = logging.getLogger(__name__)
 
 
 def get_import_file(filename):
     return path.join(IMPORTDIR, '%s') % filename
-
-
-def import_filesummary(import_filestats):
-    result = [0, 0, 0, []]
-    for import_filename, status, count, filenames in import_filestats:
-        if 'pending' in status:
-            result[0] = count - 1
-        if 'submitted' in status:
-            result[0] = count - 1
-            inputfiles = filenames
-        if 'ingested' in status:
-            result[1] = count
-            try:
-                result[2] = result[0] - result[1]
-                result[3] = [image for image in inputfiles if image not in filenames and image != 'name']
-            except:
-                pass
-    return result
-
-
-def get_import_filelist():
-    filelist = [f for f in listdir(IMPORTDIR) if isfile(join(IMPORTDIR, f))]
-    import_filedict = {}
-    errors = []
-    for f in sorted(filelist):
-        linecount, importtypes = check_file(join(IMPORTDIR, f))
-        counts = [0, 0, 0, 0]
-        subtotal = 0
-        for i, recordtype in enumerate('M R C'.split(' ')):
-            for t in importtypes:
-                if '"%s"' % recordtype in t:
-                    counts[i] += 1
-                    subtotal += 1
-        counts[3] = subtotal
-        import_filedict[f] = counts
-    import_filelist = [[import_filekey, False, import_filedict[import_filekey]] for import_filekey in
-                       sorted(import_filedict.keys(), reverse=True)]
-    return import_filelist[0:500], errors, len(import_filelist), len(errors)
 
 
 def getRecords(rawFile):
@@ -250,7 +213,10 @@ def check_file(file_handle):
 
 # following function borrowed from Django docs, w modifications
 def handle_uploaded_file(f):
-    destination = open(path.join(IMPORTDIR, '%s') % f.name, 'wb+')
+    name_parts = f.name.split('.')
+    extension = name_parts[-1]
+    input_filename = f.name.replace('.%s' % extension, '.input.%s' % extension)
+    destination = open(path.join(IMPORTDIR, '%s') % input_filename, 'wb+')
     with destination:
         for chunk in f.chunks():
             destination.write(chunk)
@@ -476,15 +442,6 @@ def loginfo(infotype, line, request):
     logger.info('%s :: %s :: %s' % (infotype, line, logdata))
 
 
-def getQueue(import_filetypes):
-    return [x for x in listdir(IMPORTDIR) if '.csv' in x]
-
-
-def getCSID(objectnumber):
-    # dummy function, for now
-    objectCSID = objectnumber
-    return objectCSID
-
 def extract_tag(xml, tag):
     element = xml.find('.//%s' % tag)
     return element.text
@@ -543,9 +500,6 @@ def rest_query(term, authority):
     return refname_result
     #return extract_refname(response)
 
-
-def get_static_lists(list_names):
-    pass
 
 def count_numbers(number_check):
     found = 0
@@ -795,49 +749,3 @@ def DWC2CSPACE(action, xmlTemplate, input_dataDict, config):
         messages.append("cspace REST API post failed...")
 
     return [objectNumber, objectCSID, messages]
-
-
-# at the moment it seems we won't need this function: vocabularies work pretty much like regular authorities
-def getVocab(uri):
-    pgSz = 500
-    '''
-    uri = 'vocabularies'
-    uri = '/vocabularies/csid/items
-    '''
-    url = '%s/cspace-services/%s?pgSz=%s' % (http_parms.server, uri, pgSz)
-    # response = requests.get(url, params={'q': taxon_prefix})
-    response = requests.get(url, auth=HTTPBasicAuth(http_parms.username, http_parms.password))
-    if response.status_code != 200:
-        return "HTTP %s" % response.status_code
-    response.raise_for_status()
-    response.encoding = 'utf-8'
-
-    list_items = []
-    try:
-        cspaceXML = fromstring(response.content)
-        totalItems = int(cspaceXML.find('.//totalItems').text)
-        if totalItems == 0:
-            return []
-        items = cspaceXML.findall('.//list-item')
-        for i in items:
-            csid = i.find('.//csid')
-            csid = csid.text
-            try:
-                try:
-                    termDisplayName = extract_tag(i, 'termDisplayName')
-                except:
-                    try:
-                        termDisplayName = extract_tag(i, 'displayName')
-                    except:
-                        termDisplayName =  ''
-                refName = extract_tag(i, 'refName')
-                updated_at = extract_tag(i, 'updatedAt')
-            except:
-                print 'could not get termDisplayName or refName or updatedAt from %s' % csid
-                continue
-            list_items.append([csid, unicode(termDisplayName), refName, updated_at])
-    except:
-        raise
-        return []
-
-    return list_items

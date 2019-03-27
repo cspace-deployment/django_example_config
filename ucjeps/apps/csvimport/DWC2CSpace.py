@@ -118,7 +118,7 @@ def main():
         recordsprocessed = len(inputRecords)
         successes = len(inputRecords)
 
-    elif action == 'validate':
+    elif 'validate' in action:
         validated_data, nonvalidating_items, stats, number_check, keyrow = validate_items(mapping, constants, inputRecords, file_header, action)
 
         ok_count, bad_count, bad_values = count_stats(stats, mapping)
