@@ -12,7 +12,7 @@
 12	# 	H	Remarks (ignored by the program)										
 13	# 												
 14	#################################################################												
-15	# v0.9 jbl 3/14/19												
+15	# v1.0 jbl 3/28/19												
 16	#################################################################												
 17	# Darwin Core field name	Cspace collectionobject tag	Additional Info	data type	if exists	authority	remarks						
 18	# 	##################################											
@@ -62,7 +62,7 @@
 44	coll_month	dateLatestMonth	fieldCollectionDateGroup	integer			needswork						
 44	taxonRemarks						taxon field	0	0				
 45	coll_year	dateLatestYear	fieldCollectionDateGroup	integer			needswork						
-45	identificationQualifier							0	0	3	10	ignore for now, handle by hand if needed	
+45	identificationQualifier							0	0	3	10	ignore for now,  handle by hand if needed	
 46	typeStatus			static				0	0	1997	2234	map to “kind of type”	
 47	recordedBy	fieldCollectionNumberAssignor		refname		orgauthorities/6d89bda7-867a-4b97-b22f		15	22	4174	77349		
 47	# location info	##################################											
@@ -92,7 +92,7 @@
 65	dynamicProperties							0	0	923	1040		
 66	# associatedTaxa			refname		taxonomyauthority/87036424-e55f-4e39-bd12		1	1	127	226	will be combined with habitat	
 67	reproductiveCondition	phase		static		phases	unused	0	0	4	7		
-68	establishmentMeans			static		yesNoValues		0	0	1	30149	Cultivated, yes or no	
+68	establishmentMeans			static		yesNoValues		0	0	1	30149	Cultivated,  yes or no	
 69	# family	family					taxon field	10	21	166	78360		
 70	lifeStage						unused	0	0				
 71	sex	sex		static		sexes	unused	0	0	1	8		
@@ -102,12 +102,12 @@
 74	samplingEffort						unused	0	0				
 75	identifiedBy	identBy		refname		orgauthorities/225e44ef-7f3d-4660-a4d6							
 75	preparations						unused	0	0				
-76	country	fieldLocCountry		refname		vocabularies/b16a776c-ab2a-438e-aad3		13	22	146	79194		
-77	stateProvince	fieldLocState		refname		vocabularies/94a5b0dc-7957-4f1b-a4be		16	20	140	71145		
-78	county	fieldLocCounty		refname		vocabularies/054494b5-fa99-47df-b3fd		11	14	185	58714		
+76	country	fieldLocCountry		refname		vocabularies/fee054ee-0aa8-48f9-8ed9		13	22	146	79194		
+77	stateProvince	fieldLocState		refname		vocabularies/78897c57-f82b-436d-b293		16	20	140	71145		
+78	county	fieldLocCounty		refname		vocabularies/33c5b9d8-9ea6-4aab-a9d0		11	14	185	58714		
 79	municipality						unused	0	0				
 80	verbatimLocality	fieldLocVerbatim		literal						29799	78619		
-81	locality	fieldLocVerbatim		literal				18	22	90	130	jason will double check, and combine	
+81	locality	fieldLocVerbatim		literal				18	22	90	130	jason will double check	 and combine
 82	locationRemarks						unused	0	0				
 83	localitySecurity							1	14				
 84	associatedCollectors												
@@ -176,9 +176,9 @@
 171	Coll_Month	dateLatestMonth	fieldCollectionDateGroup	integer			needswork						
 172	Coll_Year	dateLatestYear	fieldCollectionDateGroup	integer			needswork						
 174	# location info	##################################											
-175	State_Province	fieldLocState		refname		vocabularies/94a5b0dc-7957-4f1b-a4be							
-176	Country	fieldLocCountry		refname		vocabularies/b16a776c-ab2a-438e-aad3							
-177	County	fieldLocCounty		refname		vocabularies/054494b5-fa99-47df-b3fd							
+175	State_Province	fieldLocState		refname		vocabularies/78897c57-f82b-436d-b293							
+176	Country	fieldLocCountry		refname		vocabularies/fee054ee-0aa8-48f9-8ed9							
+177	County	fieldLocCounty		refname		vocabularies/33c5b9d8-9ea6-4aab-a9d0							
 178	# determination info	##################################											
 179	DeterminedBy	identBy		refname		orgauthorities/6d89bda7-867a-4b97-b22f							
 180	Det_Date_Display	dateDisplayDate	identDateGroup	integer			needswork						
