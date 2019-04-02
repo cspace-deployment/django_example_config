@@ -15,8 +15,8 @@ CONFIGDIRECTORY = ''
 def main():
     header = "*" * 100
 
-    if len(sys.argv) < 8:
-        print('%s <csv input file> <config file> <mapping file> <template> <output file> <terms file> <action>') % \
+    if len(sys.argv) < 9:
+        print('%s <csv input file> <config file> <mapping file> <template> <output file> <terms file> <action> <uri>') % \
              sys.argv[0]
         sys.exit()
 
@@ -29,7 +29,25 @@ def main():
     print "DWC2CSPACE: unvalidated file:  %s" % sys.argv[6]
     print "DWC2CSPACE: terms file:        %s" % sys.argv[7]
     print "DWC2CSPACE: action:            %s" % sys.argv[8]
+    print "DWC2CSPACE: uri:               %s" % sys.argv[9]
     print header
+
+
+    try:
+        uri = sys.argv[9]
+        uris = 'collectionobjects orgauthorities'
+        valid_uri = False
+        for test_uri in uris.split(' '):
+            if test_uri in uri:
+                valid_uri = True
+        if not valid_uri:
+            print 'DWC2CSPACE: Error! not a valid URI: %s' % uri
+            sys.exit()
+    except:
+        raise
+        print "DWC2CSPACE: URI could not be understood: should be one of: %s" % uris
+        sys.exit()
+
 
     try:
         action = sys.argv[8]
@@ -137,7 +155,7 @@ def main():
 
     elif action in 'add update both'.split(' '):
 
-        recordsprocessed, successes = send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh)
+        recordsprocessed, successes = send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh, uri)
 
     print "DWC2CSPACE: '%s records': %s processed, %s successful, %s failures" % (action, recordsprocessed, successes, failures)
     print header

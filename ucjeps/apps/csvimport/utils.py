@@ -594,7 +594,7 @@ def write_intermediate_files(stats, validated_data, nonvalidating_items, constan
 
     return recordsprocessed, successes, failures
 
-def send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh):
+def send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh, uri):
     recordsprocessed = 0
     successes = 0
     for input_data in inputRecords:
@@ -603,10 +603,10 @@ def send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh):
         elapsedtimetotal = time.time()
         try:
             input_dict = map_items(input_data, file_header)
-            cspaceElements = DWC2CSPACE(action, xmlTemplate, input_dict, config)
+            cspaceElements = DWC2CSPACE(action, xmlTemplate, input_dict, config, uri)
             del cspaceElements[2]
             cspaceElements.append('%8.2f' % (time.time() - elapsedtimetotal))
-            print "DWC2CSPACE: objectnumber: %s, objectcsid: %s %s" % tuple(cspaceElements)
+            print "DWC2CSPACE: item: %s, csid: %s %s" % tuple(cspaceElements)
             if cspaceElements[1] != '':
                 successes += 1
             outputfh.writerow(cspaceElements)
@@ -697,7 +697,7 @@ def createXMLpayload(template, values, institution):
     return payload
 
 
-def DWC2CSPACE(action, xmlTemplate, input_dataDict, config):
+def DWC2CSPACE(action, xmlTemplate, input_dataDict, config, uri):
     try:
         realm = config.get('connect', 'realm')
         hostname = config.get('connect', 'hostname')
@@ -711,41 +711,38 @@ def DWC2CSPACE(action, xmlTemplate, input_dataDict, config):
         # print "can't continue, exiting..."
         raise
 
-    # objectCSID = getCSID('objectnumber', cspaceElements['objectnumber'], config)
     messages = []
     try:
-        objectNumber = input_dataDict['objectNumber']
+        itemNumber = input_dataDict['key']
     except:
-        messages.append('could not find an object number')
+        messages.append('could not find an item key')
         return ['', '', messages]
-
-    uri = 'collectionobjects'
 
     if action == 'add':
         messages.append("POSTing (add) to cspace REST API...")
         payload = createXMLpayload(xmlTemplate, input_dataDict, INSTITUTION)
     elif action == 'update':
         messages.append("PUTting (update) to cspace REST API...")
-        objectCSID = input_dataDict['csid']
-        url = '%s/cspace-services/%s/%s' % (http_parms.server, 'collectionobjects', objectCSID)
+        itemCSID = input_dataDict['csid']
+        url = '%s/cspace-services/%s/%s' % (http_parms.server, uri, itemCSID)
         try:
             response = requests.get(url, auth=HTTPBasicAuth(http_parms.username, http_parms.password))
             payload = response.content
             if response.status_code != 200:
                 messages.append("HTTP %s" % response.status_code)
             else:
-                (url, data, dummyCSID, elapsedtime) = postxml('PUT', '%s/%s' % (uri, objectCSID), realm, protocol, hostname, port, username, password, payload)
+                (url, data, dummyCSID, elapsedtime) = postxml('PUT', '%s/%s' % (uri, itemCSID), realm, protocol, hostname, port, username, password, payload)
                 pass
         except:
-            objectCSID = ''
+            itemCSID = ''
             messages.append("cspace REST API put failed...")
         #payload = createXMLpayload(xmlTemplate, input_dataDict, INSTITUTION)
     try:
-        (url, data, objectCSID, elapsedtime) = postxml('POST', uri, realm, protocol, hostname, port, username, password, payload)
-        messages.append('got cspacecsid %s elapsedtime %s ' % (objectCSID, elapsedtime))
+        (url, data, itemCSID, elapsedtime) = postxml('POST', uri, realm, protocol, hostname, port, username, password, payload)
+        messages.append('got cspacecsid %s elapsedtime %s ' % (itemCSID, elapsedtime))
         messages.append("cspace REST API post succeeded...")
     except:
-        objectCSID = ''
+        itemCSID = ''
         messages.append("cspace REST API post failed...")
 
-    return [objectNumber, objectCSID, messages]
+    return [itemNumber, itemCSID, messages]
