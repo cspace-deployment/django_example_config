@@ -3,7 +3,74 @@
 {% load staticfiles %}
 
 {% block extrastyle %}
-<link rel="stylesheet" type="text/css" href="{% static 'cspace_django_site/css/jquery-ui-1.8.22.custom.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'cspace_django_site/css/jquery-ui-1.8.22.custom.css' %}"/>
+{% endblock %}
+
+{% block extrascript %}
+    <script>
+        function getFormData(formId) {
+            //create requestObj from search form
+            var searchForm = $(formId).find(':input').not($('button'));
+            var formData = {};
+            $.each(searchForm, function (formData) {
+                return function (index, inputItem) {
+                    switch ($(inputItem).attr('type')) {
+                        case 'checkbox':
+                            if ($(inputItem).is(':checked')) {
+                                formData[$(inputItem).attr('name')] = $(inputItem).val();
+                            }
+                            break;
+
+                        case 'radio':
+                            if ($(inputItem).is(':checked')) {
+                                formData[$(inputItem).attr('name')] = $(inputItem).val();
+                            }
+                            break;
+
+                        default:
+                            if ($(inputItem).val()) {
+                                formData[$(inputItem).attr('name')] = $(inputItem).val();
+                            }
+                    }
+                }
+            }(formData));
+
+            return formData;
+        }
+
+        $(document).ready(function () {
+            $('#search-group, #search-location, #search-objects').click(function () {
+                var formData = getFormData('#search');
+                formData['searchtype'] = $(this).attr('name');
+                $('#waitingImage').css({
+                    display: "inline"
+                });
+
+                $.post("locationhistory/results", formData).done(function (data) {
+                    $('#resultsPanel').html(data);
+
+                    $('#resultsListing').tablesorter({
+                        theme: 'blue',
+                        headers: {
+                            1: {sorter: 'sortkey'}
+                        }
+                    });
+
+                    $('[id^=Facet]').map(function () {
+                        $(this).tablesorter({theme: 'blue'});
+                    });
+
+                    $('#tabs').tabs({active: 0});
+
+                    xga('send', 'pageview', undefined, trackingid);
+
+                    $('#waitingImage').css({
+                        display: "none"
+                    });
+                });
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -11,38 +78,84 @@
     {% if error %}
         <p style="color: red;">Please submit a search term.</p>
     {% endif %}
-    <form action="" method="POST">
+    <form class="searchForm" id="search">
         {% csrf_token %}
-        <table>
-            <tr>
-                <td><label for="text-input">Group Title</label></td>
-                <td><input source="postgres" type="text" name="gr.group" size="63" id="group"
-                           value="{{ group }}"></td>
-            </tr>
-            <tr>
-                <td colspan="2"><input class="prettyBtn" type="submit" name="submit" value="Find objects and their location history" style="margin: 10px;"></td>
-            </tr>
-        </table>
-        {% for field in form.hidden_fields %}
-            <div style="display:none;">{{ field }}</div>
-        {% endfor %}
-
-        <div>
-            {% if messages %}
-                <hr/>
-                {% for m in messages %}
-                    <span style="color: red">{{ m }}</span><br/>
-                {% endfor %}
-            {% endif %}
-            {% if count > 0 %}
-                <hr/>
-                {{ count }} items found.
-                {% if time %}
-                    (in {{ time }} seconds.)
-                {% endif %}
-                <hr/>
-                {% include "results.html" %}
-            {% endif %}
+        <div id="tabs">
+            <ul>
+                <li><a href="#tab_group">By group</a></li>
+                <li><a href="#tab_location">By location</a></li>
+                <li><a href="#tab_objects">By museum numbers</a></li>
+            </ul>
+            <div id="tab_group">
+                <table border="1">
+                    <tr>
+                        <td style="width: 160px;"><label for="text-input">Group Title</label></td>
+                        <td>
+                            <input source="postgres" type="text" name="gr.group" size="63" id="group"
+                                   value="{{ gr.group }}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <button type="button" id="search-group" name="search-group" class="prettyBtn">Find objects
+                                in this group and their location history
+                            </button>
+                        </td>
+                    </tr>
+                    <!-- tr>
+                        <td colspan="2"><input class="prettyBtn" type="submit" name="group"
+                                               value="Find objects in this group and their location history"
+                                               style="margin: 10px;"></td -->
+                    </tr>
+                </table>
+            </div>
+            <div id="tab_location">
+                <table>
+                    <tr>
+                        <td style="width: 160px;"><label for="text-input">Location</label></td>
+                        <td>
+                            <input source="postgres" type="text" name="lo.location" size="63" id="location"
+                                   value="{{ lo.location }}"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <button type="button" id="search-location" name="search-location" class="prettyBtn">Find
+                                objects that have ever been in this location and their location history
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="tab_objects">
+                <table>
+                    <tr>
+                        <td style="width: 160px;"><label for="text-input">List of Object Numbers</label></td>
+                        <td>
+                            <textarea name="ob.objects" rows="3" cols="60" id="ob.objects"
+                                      value="{{ ob.objects }}"></textarea></td>
+                        <td>Separated by blanks, or on multiple lines.<br>No commas allowed, except those in museum
+                            number, of course
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <button type="button" id="search-objects" name="search-objects" class="prettyBtn">Find
+                                objects and their location history
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            {% for field in form.hidden_fields %}
+                <div style="display:none;">{{ field }}</div>
+            {% endfor %}
+            <!-- input type="hidden" name="acceptterms" value="checked" -->
+            <div id="waitingImage" style="display: none">
+                <h1><img style="vertical-align: middle"
+                         src="{% static "cspace_django_site/images/timer-animated.gif" %}"
+                         alt="Searching..."/> Searching...</h1>
+            </div>
+            {% include 'location_results_panel.html' %}
         </div>
     </form>
 {% endblock %}
