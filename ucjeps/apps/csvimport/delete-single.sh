@@ -14,7 +14,7 @@ if [ $# -ne 2 ]; then
     exit
 fi
 
-echo "curl -X DELETE $CSPACEURL/$SERVICE/$CSID -u \"$CSPACEUSER\" -H \"$CONTENT_TYPE\""
+echo "curl -4 -X DELETE $CSPACEURL/$SERVICE/$CSID -u \"$CSPACEUSER\" -H \"$CONTENT_TYPE\""
 # exit on error (so we don't print the "deleted" message)
 set -e
 curl -4 -X DELETE $CSPACEURL/$SERVICE/$CSID -u "$CSPACEUSER" -H "$CONTENT_TYPE"

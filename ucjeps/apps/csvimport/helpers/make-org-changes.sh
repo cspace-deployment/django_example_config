@@ -1,9 +1,9 @@
-head -1 Algae_Feb-20-2019.csv | perl -pe 's/\t/\n/g' | nl
+head -1 $1 | perl -pe 's/\t/\n/g' | nl
 
-cut -f27 Algae_Feb-20-2019.csv | sort | uniq -c > recordedBy_before.txt
-cut -f28 Algae_Feb-20-2019.csv | sort | uniq -c > associatedCollectors_before.txt
+cut -f27 $1 | sort | uniq -c > recordedBy_before.txt
+cut -f28 $1 | sort | uniq -c > associatedCollectors_before.txt
 
-perl recodeColumns.pl collectors.csv     Algae_Feb-20-2019.csv A1.csv 27
+perl recodeColumns.pl collectors.csv     $1 A1.csv 27
 perl recodeColumns.pl determination.csv  A1.csv                A2.csv 28
 
 cut -f27 A2.csv | sort | uniq -c > recordedBy_after.txt

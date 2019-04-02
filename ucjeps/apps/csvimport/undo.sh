@@ -1,12 +1,14 @@
 #!/bin/bash
 cd $( dirname "${BASH_SOURCE[0]}" )
-touch $1.inprogress.log
+touch $2.inprogress.log
 source set-config-ucjeps-dev.sh
-if [ -e $1.add.csv ]; then
+if [ -e $2.add-audit.csv ]; then
     # create a list of csids, then use the delete script to delete them
-    cut -f2 $1.add.csv > csids.txt
-    ./delete-multiple.sh collectionobjects csids.txt 
+    cut -f2 $2.add-audit.csv > csids.txt
+    ./delete-multiple.sh $1 csids.txt 
+else
+    echo $2.add-audit.csv not found.
 fi
-rm $1.inprogress.log
+rm $2.inprogress.log
 rm csids.txt
 
