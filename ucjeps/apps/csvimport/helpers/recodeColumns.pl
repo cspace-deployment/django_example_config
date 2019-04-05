@@ -1,48 +1,49 @@
+use strict;
+
 if (scalar @ARGV != 4) {
-  print "\n";
-  print "need 4 arguments:\n";
-  print "before-&-after_file.csv input_file.csv output_file.csv column_to_change\n";
-  print "\n";
-  print "3 filenames and an integer (counting from 1)\n";
-  print "\n";
-  exit(1);
+    print "\n";
+    print "need 4 arguments:\n";
+    print "before-&-after_file.csv input_file.csv output_file.csv column_to_change\n";
+    print "\n";
+    print "3 filenames and an integer (counting from 1)\n";
+    print "\n";
+    exit(1);
 }
 
 my ($change, $input, $output, $column_to_change) = @ARGV;
-
-$column_to_change--;
 
 print "\n";
 print 'change:      ' . $change . "\n";
 print 'input:       ' . $input . "\n";
 print 'output:      ' . $output . "\n";
-print 'change col:  ' . ($column_to_change + 1) . "\n";
+print 'change col:  ' . $column_to_change . "\n";
 print "\n";
 
-open(IN, $change) || die 'could not read '.  $change;
+$column_to_change--;
+
+open(IN, $change) || die 'could not read ' . $change;
 
 my $rewritein = 0;
 my $harmless = 0;
 my %REWRITE;
 my %TARGET_VALUES;
 
-while(<IN>){
-	chomp;
+while (<IN>) {
+    chomp;
     next if (m/^#/);
     $rewritein++;
-	my ($rewrite, $replacewith)=split(/\t/);
+    my ($rewrite, $replacewith) = split(/\t/);
     if ($rewrite eq $replacewith) {
-       $harmless++;
-       next;
+        $harmless++;
+        next;
     }
-	#($replacewith, $rewrite)=split(/\t/);
-	$REWRITE{$rewrite}=$replacewith;
-	$TARGET_VALUES{$replacewith} = $rewrite;
-      }
+    $REWRITE{$rewrite} = $replacewith;
+    $TARGET_VALUES{$replacewith} = $rewrite;
+}
 close(IN);
 
 open(OUT, ">$output") || die 'could not write to ' . $output;
-open(IN,$input) || die 'could not read ' . $input;
+open(IN, $input) || die 'could not read ' . $input;
 
 my $linesin = 0;
 my $linesout = 0;
@@ -50,29 +51,29 @@ my $changed = 0;
 my $unchanged = 0;
 my $changes_made = 0;
 
-while(<IN>){
-	chomp;
-	next if (m/^#/);
-        $linesin++;
-	my @cells = split /\t/,$_,-1;
-	$source_column = @cells[$column_to_change];
+while (<IN>) {
+    chomp;
+    next if (m/^#/);
+    $linesin++;
+    my @cells = split /\t/, $_, -1;
+    $source_column = @cells[$column_to_change];
 
     my $ischanged = 0;
-	if($REWRITE{@cells[$column_to_change]}){
-	    $ischanged++;
-		@cells[$column_to_change] = $REWRITE{@cells[$column_to_change]};
-	      }
+    if ($REWRITE{$source_column}) {
+        $ischanged++;
+        @cells[$column_to_change] = $REWRITE{$source_column};
+    }
 
     if ($ischanged > 0) {
         $changed++;
-        }
-     else {
+    }
+    else {
         $unchanged++;
-     }
+    }
 
-	print OUT join("\t",@cells) . "\n";
-        $linesout++;
-      }
+    print OUT join("\t", @cells) . "\n";
+    $linesout++;
+}
 
 print 'rewrite pairs read:    ' . $rewritein . "\n";
 print 'vacuous pairs skipped: ' . $harmless . "\n";
