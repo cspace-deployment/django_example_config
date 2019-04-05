@@ -206,7 +206,7 @@ def nextstep(request, step, filename):
         file_is_OK = True
         if file_is_OK:
             script = path.join(CODEPATH, '%s.sh' % step)
-            p_object = subprocess.Popen([script, JOBDIR % filename])
+            p_object = subprocess.Popen([script, JOBDIR % filename, 'collectionobjects'])
             if p_object._child_created:
                 pid = p_object.pid
                 loginfo('process', filename + ": Child returned %s" % p_object.returncode, request)
