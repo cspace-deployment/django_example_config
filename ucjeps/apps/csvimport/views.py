@@ -20,11 +20,7 @@ from utils import check_columns, count_columns, validate_items, get_recordtypes,
 from extrautils import SERVERLABEL, SERVERLABELCOLOR, CODEPATH, INSTITUTION, FIELDS2WRITE, JOBDIR, BATCHPARAMETERS
 from extrautils import getJobfile, getJoblist, reformat, writeCsv
 
-#from specialhandling import specialhandling
-
 RECORDTYPES = get_recordtypes()
-
-from grouper.grouputils import getfromCSpace
 
 try:
     from xml.etree.ElementTree import tostring, parse, Element, fromstring
@@ -48,8 +44,9 @@ CHECKBOXES = {
     'use_header': 'Header option'
 }
 
-STATUSES = 'input count valid invalid terms add update'.split(' ')
-LOGS = 'counted validated added updated both'.split(' ')
+# STATUSES = 'input count valid invalid terms add update'.split(' ')
+STATUSES = 'input count invalid add update both terms'.split(' ')
+LOGS = 'counted validated added updated'.split(' ')
 
 # Get an instance of a logger, log some startup info
 logger = logging.getLogger(__name__)
@@ -59,7 +56,7 @@ logger.info('%s :: %s :: %s' % ('csvimport startup', '-', '-'))
 def setContext(context, elapsedtime):
     # context['status'] = 'up'
     #context['additionalInfo'] = additionalInfo
-    context['specimenserver'] = prmz.IMAGESERVER
+    context['imageserver'] = prmz.IMAGESERVER
     context['cspaceserver'] = prmz.CSPACESERVER
     context['institution'] = prmz.INSTITUTION
     # context['csrecordtype'] = prmz.CSRECORDTYPE
@@ -89,7 +86,6 @@ def prepareFiles(request, context):
 
         except:
             sys.stderr.write("error! file=%s %s" % (afile.name, traceback.format_exc()))
-
             specimens.append({'name': afile.name, 'size': afile.size, 'error': 'problem uploading file or extracting image metadata, not processed'})
 
     return jobinfo, specimens
@@ -125,6 +121,7 @@ def upload_file(request):
     context['jobinfo'] = jobinfo
     #context['rows'] = rows
     context['count'] = len(rows)
+    context['fileview'] = 'none'
 
     return showqueue(request)
 
@@ -149,9 +146,10 @@ def showresults(request, filename):
     #context['filecontent'] = reformat(filecontent)
     elapsedtime = time.time() - elapsedtime
     context = setContext(context, elapsedtime)
+    context['fileview'] = 'inline'
 
     return render(request, 'uploadimport.html', context)
-
+                              
 
 #@login_required()
 def deletejob(request, jobname):
@@ -183,6 +181,7 @@ def showqueue(request):
     context['errorcount'] = errorcount
     elapsedtime = time.time() - elapsedtime
     context = setContext(context, elapsedtime)
+    context['fileview'] = 'none'
 
     return render(request, 'uploadimport.html', context)
 

@@ -49,17 +49,16 @@ my $linesin = 0;
 my $linesout = 0;
 my $changed = 0;
 my $unchanged = 0;
-my $changes_made = 0;
 
 while (<IN>) {
     chomp;
     next if (m/^#/);
     $linesin++;
     my @cells = split /\t/, $_, -1;
-    $source_column = @cells[$column_to_change];
+    my $source_column = @cells[$column_to_change];
 
     my $ischanged = 0;
-    if ($REWRITE{$source_column}) {
+    if ($source_column) {
         $ischanged++;
         @cells[$column_to_change] = $REWRITE{$source_column};
     }
@@ -81,6 +80,3 @@ print 'lines read:            ' . $linesin . "\n";
 print 'lines output:          ' . $linesout . "\n";
 print 'changed lines:         ' . $changed . "\n";
 print 'unchanged lines:       ' . $unchanged . "\n";
-
-
-
