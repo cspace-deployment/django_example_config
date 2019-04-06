@@ -23,9 +23,9 @@ FIELDS2WRITE = 'job filename handling status'.split(' ')
 BATCHPARAMETERS = 'None'
 
 if isdir(QUEUEDIR):
-    print "Using %s as working directory for csvimport files" % QUEUEDIR
+    IMPORTDIR_MSG = "Using %s as working directory for csvimport files" % QUEUEDIR
 else:
-    print "%s is not an existing directory, using /tmp instead for csvimport files" % QUEUEDIR
+    IMPORTDIR_MSG = "%s is not an existing directory, using /tmp instead for csvimport files" % QUEUEDIR
     QUEUEDIR = '/tmp'
     # raise Exception("csvImport working directory %s does not exist. this webapp will not work without it!" % QUEUEDIR)
 
@@ -38,37 +38,50 @@ logger = logging.getLogger(__name__)
 def getJobfile(jobnumber):
     return JOBDIR % jobnumber
 
-priority =   'input counted validated added updated undo'.split(' ')
-next_steps = 'count validate update undo undo'.split(' ')
+priority =   'input counted validated added updated undo inprogress'.split(' ')
+adjustments = {'input': 1, 'count': 1, 'validate': 2, 'valid': 1, 'invalid': 1, 'add': 2, 'update': 2, 'both': 2, 'undo': 1, 'terms': 0}
+next_steps = 'count,validate,import,undo,undo,none,in progress'.split(',')
 
 def jobsummary(jobstats):
     results = [0, 0, 0, '', 'completed']
     first_date = ''
     new_order = 0
     update_type = ''
-    for jobfile, status, count, lines, date_uploaded in jobstats:
+    import_type = ''
+    for i,(jobfile, status, count, lines, date_uploaded) in enumerate(jobstats):
         if date_uploaded > first_date:
             first_date = date_uploaded
-        if status in ['add', 'update']:
-            update_type = status
-        elif status == 'inprogress':
-            update_type = 'in progress'
+
+        # adjust counts for csv to account for headers, if any (some files have 2!)
         if '.csv' in jobfile:
+            try:
+                revised_count = count - adjustments[status]
+                if revised_count < 0: revised_count = 0
+                jobstats[i][2] = revised_count
+            except:
+                pass
+
+            if status in 'add update both'.split(' '):
+                import_type = status
+
             continue
+
         if status in priority:
             order = priority.index(status)
             if order > new_order:
                 new_order = order
+
     try:
         next = next_steps[new_order]
     except:
         next = 'unknown'
 
-    if update_type == 'in progress' or next == 'update':
+    if update_type == 'in progress':
         next = update_type
+    if import_type != '':
+        next = import_type
 
     results[3] = first_date
-    results[0] = count - 1
     results[4] = next
     if results[2] > 0 and results[4] == 'completed':
         results[4] = 'problem'
@@ -87,8 +100,7 @@ def getJoblist(request):
     filelist = [f for f in listdir(jobpath) if isfile(join(jobpath, f))]
     jobdict = {}
     errors = []
-    filelist = sorted(filelist, reverse=True)
-    for f in sorted(filelist, reverse=True):
+    for f in sorted(filelist):
         if len(jobdict.keys()) > num2display:
             pass
             records = []
@@ -103,7 +115,7 @@ def getJoblist(request):
         jobkey = parts[0]
         if not jobkey in jobdict: jobdict[jobkey] = []
         jobdict[jobkey].append([f, file_type, linecount, records, date_uploaded])
-    joblist = [[jobkey, jobdict[jobkey], jobsummary(jobdict[jobkey])] for jobkey in sorted(jobdict.keys(), reverse=True) if jobkey != '']
+    joblist = [[jobkey, jobdict[jobkey], jobsummary(jobdict[jobkey])] for jobkey in sorted(jobdict.keys()) if jobkey != '']
     num_jobs = len(joblist)
     return joblist[0:num2display], errors, num_jobs, len(errors)
 

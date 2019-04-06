@@ -55,13 +55,14 @@ SERVERINFO = {
 
 IMPORTDIR = config.get('files', 'directory')
 if isdir(IMPORTDIR):
-    print "Using %s as working directory for csvimport files" % IMPORTDIR
+    IMPORTDIR_MSG = "Using %s as working directory for csvimport files" % IMPORTDIR
 else:
-    print "%s is not an existing directory, using /tmp instead for csvimport files" % IMPORTDIR
+    IMPORTDIR_MSG =  "%s is not an existing directory, using /tmp instead for csvimport files" % IMPORTDIR
     QUEUEDIR = '/tmp'
     # raise Exception("csvImport working directory %s does not exist. this webapp will not work without it!" % QUEUEDIR)
 
 
+MAPPING_FILE = []
 
 
 class http_parms:
@@ -90,9 +91,7 @@ except:
     sys.exit(1)
 
 def dump_row(row, error_type, message):
-    print '%5s %-30s %-30s %-10s' % tuple(row[i] for i in [0, 1, 2, 4]),
-    print '%-10s %s' % (error_type, message)
-
+    MAPPING_FILE.append('%5s %-30s %-30s %-10s' % tuple(row[i] for i in [0, 1, 2, 4]) + '%-10s %s' % (error_type, message))
 
 def load_mapping_file(mapping_file):
     mapping_file = path.join(path.join(settings.BASE_PARENT_DIR, 'config'), mapping_file)
@@ -100,7 +99,6 @@ def load_mapping_file(mapping_file):
     cspace_mapping = {}
     constants = []
     dump_row('Row InputField CSpaceField X DataType X X'.split(' '), 'Status', 'Message')
-    print
     with open(mapping_file, 'r') as f1:
         reader = UnicodeReader(f1, delimiter=delim, quoting=csv.QUOTE_NONE, quotechar=chr(255))
         errors = 0
@@ -221,7 +219,10 @@ def handle_uploaded_file(f):
         for chunk in f.chunks():
             destination.write(chunk)
     destination.close()
-    return getRecords(f)
+    try:
+        return getRecords(f)
+    except:
+        return None
 
 
 def count_columns(matrix, header):
@@ -358,7 +359,7 @@ def map_items(input_data, file_header):
     return data_dict
 
 
-def validate_items(CSPACE_MAPPING, constants, input_data, file_header, action):
+def validate_items(CSPACE_MAPPING, constants, input_data, file_header, uri, action):
     stats = validate_columns(CSPACE_MAPPING, input_data, file_header)
 
     keyrow = -1
@@ -385,7 +386,7 @@ def validate_items(CSPACE_MAPPING, constants, input_data, file_header, action):
             validated_items.append(output_row)
         else:
             nonvalidating_items.append(row)
-    number_check = check_key(stats[0][keyrow][7], action)
+    number_check = check_key(stats[0][keyrow][7], action, uri)
     return validated_items, nonvalidating_items, stats, number_check, keyrow
 
 
@@ -405,9 +406,9 @@ def extract_constants(constants, row, file_header):
         constant_field_values.append(constant_field_value)
     return constant_field_values
 
-def check_key(key_dict, action):
+def check_key(key_dict, action, uri):
     for k in key_dict:
-        refname = rest_query(k, 'collectionobjects')
+        refname = rest_query(k, uri)
         if refname[0] != 'ZeroResults':
             key_dict[k] = refname[1]
         else:
@@ -518,7 +519,9 @@ def count_stats(stats, mapping):
     ok_count = 0
     bad_count = 0
     bad_values = 0
+    print
     print '%-35s %10s %10s  %-10s %10s' % tuple(stats[1][:5])
+    print
     for s in stats[0]:
         if s[3] == 'OK':
             ok_count += 1
@@ -573,11 +576,8 @@ def write_intermediate_files(stats, validated_data, nonvalidating_items, constan
             successes += 1
         except:
             outputfh.writerow([''] + input_data)
-            try:
-                print 'could not write: ', number_check[input_data[keyrow]]
-            except:
-                pass
-
+            recordsprocessed += 1
+            successes += 1
 
     nonvalidfh.writerow(['csid'] + file_header)
     for input_data in nonvalidating_items:
@@ -587,10 +587,12 @@ def write_intermediate_files(stats, validated_data, nonvalidating_items, constan
             failures += 1
         except:
             outputfh.writerow([''] + input_data)
-            try:
-                print 'could not write: ', number_check[input_data[keyrow]]
-            except:
-                pass
+            recordsprocessed += 1
+            failures += 1
+            # try:
+            #    print 'could not write: ', number_check[input_data[keyrow]]
+            # except:
+            #    pass
 
     return recordsprocessed, successes, failures
 

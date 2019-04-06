@@ -1,18 +1,20 @@
-<h1>
-    Check on uploads
-</h1>
-<form action="{% url 'csvimport:showqueue' %}" method="post">
-    {% csrf_token %}
-    {% if display == 'showerrors' %}
-        {% include "csvimport_showerrors.html" %}
-    {% elif display == 'checkjobs' %}
-        {% include "csvimport_showqueue.html" %}
-    {% endif %}
-    <input class="prettyBtn" type="submit" name="checkjobs" value="Refesh">
-    (display the most recent
-    <select id="num2display" name="num2display">
-        <option value="50">50</option>
-        <option value="100">100</option>
-        <option value="500">500</option>
-    </select> jobs.)
-</form>
+<div id="check">
+    <h2>
+        Check on or advance recent uploads
+    </h2>
+    <form action="{% url 'csvimport:showqueue' %}" method="post">
+        {% csrf_token %}
+        {% if display == 'showerrors' %}
+            {% include "csvimport_showerrors.html" %}
+        {% elif display == 'checkjobs' %}
+            {% include "csvimport_showqueue.html" %}
+        {% endif %}
+        <input class="prettyBtn" type="submit" name="checkjobs" value="Refesh">
+        (display the most recent
+        <select id="num2display" name="num2display">
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="500">500</option>
+        </select> files.)
+    </form>
+</div>
