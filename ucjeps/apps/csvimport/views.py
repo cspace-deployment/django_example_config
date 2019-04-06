@@ -148,7 +148,7 @@ def showresults(request, filename):
     context = setContext(context, elapsedtime)
     context['fileview'] = 'inline'
 
-    return render(request, 'uploadimport.html', context)
+    return render(request, 'csvimport.html', context)
                               
 
 #@login_required()
@@ -183,7 +183,7 @@ def showqueue(request):
     context = setContext(context, elapsedtime)
     context['fileview'] = 'none'
 
-    return render(request, 'uploadimport.html', context)
+    return render(request, 'csvimport.html', context)
 
 
 #@login_required()
@@ -252,7 +252,7 @@ def show_csv_config(request):
     rtypes = [[RECORDTYPES[r][0], r] for r in RECORDTYPES.keys()]
     elapsedtime = time.time() - elapsedtime
 
-    return render(request, 'uploadimport.html',
+    return render(request, 'csvimport.html',
                   {'apptitle': TITLE, 'serverinfo': SERVERINFO, 'import_upload_files': None,
                    'count': 0, 'version': prmz.VERSION, 'matrix': matrix, 'labels': labels,
                    'keyrow': 0, 'columnhandling': columnhandling, 'recordtypes': rtypes,
