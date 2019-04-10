@@ -58,7 +58,7 @@ while (<IN>) {
     my $source_column = @cells[$column_to_change];
 
     my $ischanged = 0;
-    if ($source_column) {
+    if (exists $REWRITE{$source_column}) {
         $ischanged++;
         @cells[$column_to_change] = $REWRITE{$source_column};
     }

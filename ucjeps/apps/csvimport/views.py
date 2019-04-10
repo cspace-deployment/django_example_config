@@ -190,7 +190,6 @@ def showqueue(request):
 def nextstep(request, step, filename):
     elapsedtime = time.time()
     context = setConstants(request)
-    #jobs, errors, jobcount, errorcount = getJoblist(request)
     context['display'] = 'checkjobs'
     context = setContext(context, elapsedtime)
     messages = []
@@ -218,8 +217,7 @@ def nextstep(request, step, filename):
     loginfo('finish', getJobfile(filename), request)
 
     context['messages'] = messages
-
-    elapsedtime = time.time() - elapsedtime
+    context['elapsedtime'] = time.time() - elapsedtime
 
     return showqueue(request)
 

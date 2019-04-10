@@ -43,7 +43,8 @@
                             <option value="update">validate - update</option>
                         </select -->
                     {% elif jobsummary.4 == 'add' or jobsummary.4 == 'update' or jobsummary.4 == 'both' %}
-                        {{ jobsummary.4 }} (disabled for now)
+                        <a style="color: green" href="nextstep/{{ jobsummary.4 }}/{{ jobno }}">{{ jobsummary.4 }}</a>
+                        <!-- {{ jobsummary.4 }} (disabled for now) -->
                     {% else %}
                         <a style="color: green" href="nextstep/{{ jobsummary.4 }}/{{ jobno }}">{{ jobsummary.4 }}</a>
                     {% endif %}

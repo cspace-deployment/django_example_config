@@ -168,7 +168,7 @@ def getRecords(rawFile):
         rawFile.seek(0)
         csvfile = UnicodeReader(rawFile, dialect)
     except IOError, e:
-        print "DWC2CSPACE: %s " % e
+        print "item%s " % e
         sys.exit(1)
     except:
         # nope, can't sniff: try a brute force approach, look for tabs, then commas...
@@ -196,7 +196,7 @@ def getRecords(rawFile):
                 cell_values[col_name][row[col_number]] += 1
         return cell_values, rows, rowNumber, header
     except IOError, e:
-        print "DWC2CSPACE: %s " % e
+        print "item%s " % e
         sys.exit(1)
     except:
         raise
@@ -483,7 +483,7 @@ def extract_refname(xml, term):
 
 
 def rest_query(term, authority):
-    querystring = {'kw': term.encode('utf-8').replace('-',' '), 'wf_deleted': 'false', 'pgSz': 300}
+    querystring = {'pt': term.encode('utf-8').replace('-',' ').replace("'",''), 'wf_deleted': 'false', 'pgSz': 300}
     querystring = urllib.urlencode(querystring)
     # print querystring
     url = '%s/cspace-services/%s?%s' % (http_parms.server, authority, querystring)
@@ -608,7 +608,7 @@ def send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh, uri
             cspaceElements = DWC2CSPACE(action, xmlTemplate, input_dict, config, uri)
             del cspaceElements[2]
             cspaceElements.append('%8.2f' % (time.time() - elapsedtimetotal))
-            print "DWC2CSPACE: item: %s, csid: %s %s" % tuple(cspaceElements)
+            print "itemitem: %s, csid: %s %s" % tuple(cspaceElements)
             if cspaceElements[1] != '':
                 successes += 1
             outputfh.writerow(cspaceElements)
@@ -616,7 +616,7 @@ def send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh, uri
             outputfh.flush()
             sys.stdout.flush()
         except:
-            print "DWC2CSPACE: create failed for objectnumber %s, %8.2f" % (
+            print "item create failed for objectnumber %s, %8.2f" % (
             cspaceElements, (time.time() - elapsedtimetotal))
             raise
         recordsprocessed += 1
@@ -717,8 +717,9 @@ def DWC2CSPACE(action, xmlTemplate, input_dataDict, config, uri):
     try:
         itemNumber = input_dataDict['key']
     except:
+        itemNumber = ''
         messages.append('could not find an item key')
-        return ['', '', messages]
+        #return ['', '', messages]
 
     if action == 'add':
         messages.append("POSTing (add) to cspace REST API...")
