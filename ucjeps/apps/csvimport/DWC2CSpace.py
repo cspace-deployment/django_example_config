@@ -2,6 +2,7 @@
 import csv
 import sys
 import time
+import re
 
 # this "standalone" app nevertheless needs access to django bits in utils and common; add a path to help
 sys.path.append("../../ucjeps")
@@ -83,7 +84,10 @@ def main():
                 if lines == -1:
                     print 'Error! %s' % inputRecords
                     parameters_ok = False
-            except:
+            except Exception as inst:
+                print inst
+                raise
+                print
                 print "could not get CSV records to load"
                 parameters_ok = False
     except:
@@ -129,16 +133,26 @@ def main():
         print "could not open terms file for write %s" % sys.argv[5]
         parameters_ok = False
 
+    try:
+        in_progress_file = re.sub(r'\..*?.csv','.inprogress.log', sys.argv[1])
+        in_progress_file = re.sub(r'\.csv','.inprogress.log', in_progress_file)
+        in_progress = open(in_progress_file, 'wb')
+        in_progress.write("started at %s\n" % time.strftime("%b %d %Y %H:%M:%S", time.localtime()))
+        in_progress.flush()
+    except:
+        print "could open a progress log"
+        parameters_ok = False
+
     if not parameters_ok:
         print "bailed at:       %s" % time.strftime("%b %d %Y %H:%M:%S", time.localtime())
         sys.exit(1)
 
+    recordsprocessed = 0
     successes = 0
     failures = 0
 
     if action == 'count':
         stats = count_columns(inputRecords, file_header)
-        # print header
         print
         print 'counts of types and tokens, with an indication of whether the field can be mapped into cspace'
         print
@@ -154,13 +168,24 @@ def main():
             else:
                 print
         print
-        recordsprocessed = len(inputRecords)
-        successes = len(inputRecords)
+
+        # create a copy of the input file, for further processing...
+        outputfh.writerow(file_header)
+        for i, input_data in enumerate(inputRecords):
+            try:
+                outputfh.writerow(input_data)
+                recordsprocessed += 1
+                successes += 1
+            except:
+                print 'failed to write row %s of input data' % i
+                recordsprocessed += 1
+                failures += 1
+
 
     elif 'validate' in action:
         validated_data, nonvalidating_items, stats, number_check, keyrow = validate_items(mapping, constants,
                                                                                           inputRecords, file_header, uri,
-                                                                                          action)
+                                                                                          in_progress, action)
 
         ok_count, bad_count, bad_values = count_stats(stats, mapping)
 
@@ -183,11 +208,15 @@ def main():
 
     elif action in 'add update both'.split(' '):
 
-        recordsprocessed, successes = send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh, uri)
+        recordsprocessed, successes = send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh, uri, in_progress)
 
-    print "'%s records': %s processed, %s successful, %s failures" % (action, recordsprocessed, successes, failures)
+    print "FINISHED %s records: %s processed, %s successful, %s failures" % (action, recordsprocessed, successes, failures)
     print
     print "end time:        %s" % time.strftime("%b %d %Y %H:%M:%S", time.localtime())
+
+    in_progress.write("ended at %s\n" % time.strftime("%b %d %Y %H:%M:%S", time.localtime()))
+    in_progress.close()
+
     # print header
 
 
