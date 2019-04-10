@@ -76,9 +76,7 @@ def jobsummary(jobstats):
     except:
         next = 'unknown'
 
-    if update_type == 'in progress':
-        next = update_type
-    if import_type != '':
+    if import_type != '' and next != 'undo' and next != 'in progress':
         next = import_type
 
     results[3] = first_date
