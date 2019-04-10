@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import csv
 import sys
+import re
 import json
 import logging
 import requests
@@ -109,7 +110,6 @@ def load_mapping_file(mapping_file):
                     dump_row(row, 'Error', 'not enough columns in this row')
                     errors += 1
                     continue
-                # id * FIMS field name * Cspace collectionobject tag * context tag * data type * check exists? * authority * csid
                 row_id, input_field, cspace_field, additional_info, data_type, check_exists, authority, remarks = row[:8]
                 if input_field == '' or cspace_field == '':
                     #dump_row(row, 'Warning', 'need both an input field name and a cspace field name')
@@ -332,7 +332,7 @@ def map2cspace(CSPACE_MAPPING, cell, j, stats, header):
     return OK, result
 
 
-def validate_columns(CSPACE_MAPPING, matrix, header):
+def validate_columns(CSPACE_MAPPING, matrix, header, in_progress):
     types = {}
     for col in header:
         types[col] = Counter()
@@ -344,6 +344,8 @@ def validate_columns(CSPACE_MAPPING, matrix, header):
 
     stats = []
     for key in header:
+        in_progress.write("column %s (%s values) validation started at %s\n" % (key, len(types[key]), time.strftime("%b %d %Y %H:%M:%S", time.localtime())))
+        in_progress.flush()
         valid_label, num_problems, message, validated_values = validate_cell(CSPACE_MAPPING, key, types[key])
         stats.append([key, len(types[key]), sum(types[key].values()), valid_label, num_problems, message, types[key], validated_values])
 
@@ -359,8 +361,8 @@ def map_items(input_data, file_header):
     return data_dict
 
 
-def validate_items(CSPACE_MAPPING, constants, input_data, file_header, uri, action):
-    stats = validate_columns(CSPACE_MAPPING, input_data, file_header)
+def validate_items(CSPACE_MAPPING, constants, input_data, file_header, uri, in_progress, action):
+    stats = validate_columns(CSPACE_MAPPING, input_data, file_header, in_progress)
 
     keyrow = -1
     try:
@@ -386,7 +388,7 @@ def validate_items(CSPACE_MAPPING, constants, input_data, file_header, uri, acti
             validated_items.append(output_row)
         else:
             nonvalidating_items.append(row)
-    number_check = check_key(stats[0][keyrow][7], action, uri)
+    number_check = check_key(stats[0][keyrow][7], action, uri, in_progress)
     return validated_items, nonvalidating_items, stats, number_check, keyrow
 
 
@@ -406,9 +408,12 @@ def extract_constants(constants, row, file_header):
         constant_field_values.append(constant_field_value)
     return constant_field_values
 
-def check_key(key_dict, action, uri):
-    for k in key_dict:
+def check_key(key_dict, action, uri, in_progress):
+    for recordsprocessed, k in enumerate(key_dict):
         refname = rest_query(k, uri)
+        if recordsprocessed % 1000 == 0:
+            in_progress.write("%s keys checked of %s, %s\n" % (recordsprocessed, len(key_dict.keys()), time.strftime("%b %d %Y %H:%M:%S", time.localtime())))
+            in_progress.flush()
         if refname[0] != 'ZeroResults':
             key_dict[k] = refname[1]
         else:
@@ -447,14 +452,16 @@ def extract_tag(xml, tag):
     element = xml.find('.//%s' % tag)
     return element.text
 
+def normalize(term):
+    return re.sub(r"[\&\.\-')(/, ]+",' ', term).replace(' and ',' ').strip().upper()
 
-def extract_refname(xml, term):
 
+def extract_refname(xml, term, pgSz):
     try:
         cspaceXML = fromstring(xml)
         totalItems = int(cspaceXML.find('.//totalItems').text)
         if totalItems == 0:
-            return 'ZeroResults X X X X'.split(' ')
+            return 'ZeroResults X X X X'.split(' '), totalItems
         items = cspaceXML.findall('.//list-item')
         for i in items:
             csid = i.find('.//csid')
@@ -468,38 +475,55 @@ def extract_refname(xml, term):
                     try:
                         termDisplayName = extract_tag(i, 'displayName')
                     except:
-                        return ['NoDisplayName', csid, '', refName, updated_at]
+                        return ['NoDisplayName', csid, '', refName, updated_at], totalItems
             except:
                 print 'could not get termDisplayName or refName or updatedAt from %s' % csid
-                return 'Failed X X X X'.split(' ')
-            if term.encode('utf-8').lower() == termDisplayName.encode('utf-8').lower():
-                return ['OK', csid, unicode(termDisplayName), refName, updated_at]
-        if totalItems > 300:
-            return 'MaybeMissed X X X X'.split(' ')
-        return 'NoMatch X X X X'.split(' ')
+                return 'Failed X X X X'.split(' '), totalItems
+            if normalize(term.encode('utf-8')) == normalize(termDisplayName.encode('utf-8')):
+                return ['OK', csid, unicode(termDisplayName), refName, updated_at], totalItems
+        if totalItems > pgSz:
+            return 'MaybeMissed X X X X'.split(' '), totalItems
+        return 'NoMatch X X X X'.split(' '), totalItems
     except:
         raise
-        return 'Failed X X X X'.split(' ')
+        return 'Failed X X X X'.split(' '), totalItems
 
 
-def rest_query(term, authority):
-    querystring = {'pt': term.encode('utf-8').replace('-',' ').replace("'",''), 'wf_deleted': 'false', 'pgSz': 300}
-    querystring = urllib.urlencode(querystring)
-    # print querystring
-    url = '%s/cspace-services/%s?%s' % (http_parms.server, authority, querystring)
-    response = requests.get(url, auth=HTTPBasicAuth(http_parms.username, http_parms.password))
+def rest_query(term, record_type):
+    pgSz = 100
+    search_term = normalize(term.encode('utf-8'))
+    response = do_query('kw', search_term, record_type, pgSz)
     if response.status_code != 200:
-        #print "search failed!"
-        #print "response: %s" % response.status_code
-        #print response.content
         error_msg = "HTTP%s X X X X" % response.status_code
         return error_msg.split(' ')
+    refname_result, totalitems = extract_refname(response.content, term, pgSz)
+    if totalitems > pgSz:
+        print '%s term %s (=%s) returned %s for kw search, only %s examined. status is %s.' % (record_type, term.encode('utf-8'), search_term, totalitems, pgSz, refname_result[0])
+    # hail mary: do a pt search if kw fails
+    if refname_result[0] != 'OK' and refname_result[0] != 'ZeroResults':
+        print 'fallback: %s term (=%s) %s trying pt search.' % (record_type, term.encode('utf-8'), search_term)
+        response = do_query('pt', term, record_type, pgSz)
+        refname_result, totalitems = extract_refname(response.content, term, pgSz)
+        if totalitems > pgSz:
+            print '% term %s returned %s for pt search, only %s examined. status is %s.' % (record_type, term, totalitems, pgSz, refname_result[0])
+        if response.status_code != 200:
+            error_msg = "HTTP%s X X X X" % response.status_code
+            return error_msg.split(' ')
+        if refname_result[0] != 'OK':
+            print 'fallback for %s worked!' % term
+    return refname_result
+
+
+def do_query(index, search_term, record_type, pgSz):
+    querystring = {index: search_term, 'wf_deleted': 'false', 'pgSz': pgSz}
+    querystring = urllib.urlencode(querystring)
+    # print querystring
+    url = '%s/cspace-services/%s?%s' % (http_parms.server, record_type, querystring)
+    response = requests.get(url, auth=HTTPBasicAuth(http_parms.username, http_parms.password))
     # response.raise_for_status()
 
     response.encoding = 'utf-8'
-    refname_result = extract_refname(response.content, term)
-    return refname_result
-    #return extract_refname(response)
+    return response
 
 
 def count_numbers(number_check):
@@ -596,10 +620,14 @@ def write_intermediate_files(stats, validated_data, nonvalidating_items, constan
 
     return recordsprocessed, successes, failures
 
-def send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh, uri):
+def send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh, uri, in_progress):
     recordsprocessed = 0
     successes = 0
     for input_data in inputRecords:
+
+        if recordsprocessed % 1000 == 0:
+            in_progress.write("%s records of %s output %s\n" % (recordsprocessed, len(inputRecords), time.strftime("%b %d %Y %H:%M:%S", time.localtime())))
+            in_progress.flush()
 
         cspaceElements = ['', '']
         elapsedtimetotal = time.time()
