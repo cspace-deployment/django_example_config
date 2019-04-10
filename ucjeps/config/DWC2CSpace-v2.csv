@@ -100,7 +100,7 @@
 72	individualCount						unused	0	0				
 73	samplingProtocol						unused	0	0				
 74	samplingEffort						unused	0	0				
-75	identifiedBy	identBy		refname		orgauthorities/225e44ef-7f3d-4660-a4d6							
+75	identifiedBy	identBy		refname		orgauthorities/751023ec-d953-45f9-a0a8							
 75	preparations						unused	0	0				
 76	country	fieldLocCountry		refname		vocabularies/fee054ee-0aa8-48f9-8ed9		13	22	146	79194		
 77	stateProvince	fieldLocState		refname		vocabularies/78897c57-f82b-436d-b293		16	20	140	71145		
@@ -110,7 +110,7 @@
 81	locality	fieldLocVerbatim		literal				18	22	90	130	jason will double check	 and combine
 82	locationRemarks						unused	0	0				
 83	localitySecurity							1	14				
-84	associatedCollectors												
+84	associatedCollectors	fieldCollector		refname		orgauthorities/6d89bda7-867a-4b97-b22f							
 84	localitySecurityReason						unused	0	0				
 85	decimalLatitude	decimalLatitude		float				17	21	3041	55428		
 86	decimalLongitude	decimalLongitude		float				17	21	3080	55421		
@@ -192,7 +192,7 @@
 188	Datum	datum		literal									
 189	ID_Qualifier												
 190	#################################################################												
-191	# A couple left over fields...												
+191	# A few left over fields...												
 192	#################################################################												
 195	det_date	dateLatestDay	identDateGroup	integer			needswork						
 196	# tbd												
@@ -419,3 +419,8 @@
 526		updatedBy					core						
 527		uri					core						
 528		workflowState					core						
+529	#################################################################												
+530	# special cases, to handle various complicated requirements												
+531	#################################################################												
+532	vdecimalLatitude	vLatitude		literal									
+533	vdecimalLongitude	vLongitude		literal									
