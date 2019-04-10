@@ -3,10 +3,68 @@ CHANGELOG for the cspace_django_webapps
 OK, it is not a *real* change log, but a list of changes resulting from git log
 with some human annotation after the fact.
 
-This is version djconfig_5.0-5
-Fri Jan 18 16:29:16 PST 2019
+This is version 5.1.0-rc1
+Wed Apr 10 14:57:05 PDT 2019
 
-f758522 (HEAD -> master, origin/master, origin/HEAD) UJ-93: handle some special cases: insertion of constants, etc.
+d341d73 (HEAD -> master, origin/master, origin/HEAD) CC-444: add 'in progress' tracking; use both pt and kw searches for improved recall and performance
+b576799 CC-444: keep csvImport logs for all steps
+96b8d5d (upstream/master) Merge pull request #26 from jblowe/master
+50dcce7 CSW-30: clarify reporting done by csvImport batch program (DWC2CSpace), etc.
+ecdf1e3 CC-444: assorted corrections to csvImport configuration file
+3b76516 CC-444: revised csvImport shell scripts so that several task can run simultaneously
+51aa67f CC-444: incremental improvements to microalgae 'helpers'
+3c7624d Merge pull request #25 from jblowe/master
+2fc9b65 CC-448: include correct version of csvImport view
+51373df Merge pull request #24 from jblowe/master
+925fa95 CC-448: refactor webapp to be a single page; minor backend refactoring to support that.
+cabf170 CC-444: revise recodeColumns.pl to handle null target values
+87b3406 Merge pull request #23 from jblowe/master
+a90438f CC-448: in csvImport, distinguish handling authorities and collectionobjects
+cdb4041 CC-444: various 'before-and-after' files supporting microalgae cleanjup
+382d89c CC-444: revisions to helper scripts supporting csvImport
+b951a35 Merge pull request #22 from jblowe/master
+a6017b6 Merge branch 'master' of https://github.com/cspace-deployment/django_example_config
+0aa7326 CC-444: better version of this helper script
+ad92c4e Merge pull request #21 from jblowe/master
+0fe1791 CC-444: support 9th argument in DWC2CSpace for authority term uploads
+5c1e6be Merge pull request #20 from jblowe/master
+f89e8f5 Merge branch 'master' of https://github.com/cspace-deployment/django_example_config
+41dc639 CC-17: point to the correct media dir for BMU in example config files
+a603657 CC-444: initial speculative version of a shell script to replace all the existing csvImport shell scripts
+058521c CC-444: 'change files' for collectors, determiners, and 'top 30' counties and countries
+3a6c4eb CC-444: shell scripts to add authority records
+1b63332 CC-444: revised csvImport scripts to support add/update of authority records
+88da536 CC-444: use curl -4 for performance in the delete shell script
+2b12b2c CC-444: helper scripts to 'recode' columns in microalgae file
+b3d6212 Merge pull request #19 from jblowe/master
+4ca6503 CC-361: next iteration of csvImport config: points to production vocabs
+9c6ebad Merge pull request #18 from jblowe/master
+3c30e8c PAHMA-433: further mods to legacy django location history webapp
+878f54b CC-359: refactoring to support 'update' and other functionality
+62db086 CC-359: revised templates (supporting 'batch functionality')
+607cbee CC-359: revised templates (supporting 'batch functionality')
+f3c00cf CC-361: updated parameter and configuration files
+513a964 CC-361: helper scripts to clean up microalgae file
+0f3847a CC-359: shell scripts to run the various csvImport functions
+03f25b9 CC-376: fix typo in .gitignore
+fc417ce CC-361: remove old config file, in wrong place
+0f7a651 Merge pull request #17 from jblowe/master
+91799cd CC-361: additional bulletproofing against bad/incomplete data
+adcb44d CC-361: updates to .gitignore
+814cd91 CC-361: additional test files and a new test script
+7a4eed4 CC-360: simplify 'exception list' extra-lists.json
+88afc1c Merge branch 'master' of https://github.com/cspace-deployment/django_example_config
+16fc35b PAHMA-433: legacy django location history webapp
+0ab4166 Merge pull request #16 from jblowe/master
+4ce2c7c CC-360: script used by reset.sh to set env vars
+739e6e2 CC-361: ongoing revisions to csvImport configuration
+4af592c CC-360: refactor test scripts in support of valid/nonvalid partitioning
+5f57874 CC-360: initial scaffolding for partitioning output into 'validated' and 'unvalidated'
+6f0c34c CC-361: test file for 'frequently occurring authority terms'
+3273392 CC-17: update BMU config to point to NFS share for temp space
+2d4d4c8 CC-325: 'webapp listing' app now produces rudimentary HTML
+af335fa (tag: djconfig_5.0-5) revise change log and VERSION file for version djconfig_5.0-5
+f758522 UJ-93: handle some special cases: insertion of constants, etc.
 355613c UJ-93: handle some special cases: insertion of constants, etc.
 2415b82 UJ-57: handle import of various 'other numbers'
 69be3a2 UJ-63: improve csvimport and ucb webapp documentation
@@ -28,7 +86,7 @@ b0f78bb UJ-62: helper script that may come in handy
 088d1af UJ-57: further revisions to csv import configuration
 537259e UJ-77: initial implement of 'id checking' functionality
 d72efaa UJ-59: a list of data exceptions to be handled during validation
-3a1c148 (jblowe/master) DJAN-75: remove unneeded django scaffolding
+3a1c148 DJAN-75: remove unneeded django scaffolding
 75e5f1d (tag: djconfig_5.0-3) revise change log and VERSION file for version djconfig_5.0-3
 37a39d3 UJ-56: improved versions of mapping config files
 bc0d6e8 UJ-54: refactoring to allow online and command line versions of import to play nice
