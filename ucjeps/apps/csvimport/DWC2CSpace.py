@@ -57,7 +57,7 @@ def main():
 
     try:
         action = sys.argv[8]
-        actions = 'count validate add update both'
+        actions = 'count validate validate-add validate-update validate-both add update both'
         if not action in actions.split(' '):
             print 'Error! not a valid action: %s' % action
             parameters_ok = False
@@ -79,7 +79,7 @@ def main():
         with open(sys.argv[1], 'rb') as f:
             try:
                 dataDict, inputRecords, lines, file_header = getRecords(f)
-                print '%s lines and %s records found in file %s' % (lines, len(inputRecords), sys.argv[1])
+                print '%s lines found in file %s' % (lines, sys.argv[1])
                 # print header
                 if lines == -1:
                     print 'Error! %s' % inputRecords
@@ -115,13 +115,15 @@ def main():
         parameters_ok = False
 
     try:
-        outputfh = UnicodeWriter(open(sys.argv[5], 'wb'), delimiter="\t", quoting=csv.QUOTE_NONE, quotechar=chr(255))
+        outputfh = UnicodeWriter(open(sys.argv[5], 'wb'), delimiter="\t", quoting=csv.QUOTE_NONE, quotechar=chr(255),
+                                escapechar='\\')
     except:
         print "could not open validated file for write %s" % sys.argv[5]
         parameters_ok = False
 
     try:
-        nonvalidfh = UnicodeWriter(open(sys.argv[6], 'wb'), delimiter="\t", quoting=csv.QUOTE_NONE, quotechar=chr(255))
+        nonvalidfh = UnicodeWriter(open(sys.argv[6], 'wb'), delimiter="\t", quoting=csv.QUOTE_NONE, quotechar=chr(255),
+                                escapechar='\\')
     except:
         print "could not open nonvalidated file for write %s" % sys.argv[6]
         parameters_ok = False
@@ -176,8 +178,10 @@ def main():
                 outputfh.writerow(input_data)
                 recordsprocessed += 1
                 successes += 1
-            except:
+            except Exception as inst:
                 print 'failed to write row %s of input data' % i
+                print inst
+                print ('|').join(input_data)
                 recordsprocessed += 1
                 failures += 1
 
@@ -208,7 +212,7 @@ def main():
 
     elif action in 'add update both'.split(' '):
 
-        recordsprocessed, successes = send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh, uri, in_progress)
+        recordsprocessed, successes, failures = send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh, uri, in_progress)
 
     print "FINISHED %s records: %s processed, %s successful, %s failures" % (action, recordsprocessed, successes, failures)
     print

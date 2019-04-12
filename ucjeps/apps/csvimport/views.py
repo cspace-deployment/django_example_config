@@ -13,12 +13,12 @@ import glob
 import logging
 import time, datetime
 
-from utils import SERVERINFO, TITLE, handle_uploaded_file, get_import_file, loginfo
-from utils import check_columns, count_columns, validate_items, get_recordtypes, handle_uploaded_file
+from utils import SERVERINFO, TITLE, loginfo
+from utils import check_columns, get_recordtypes, handle_uploaded_file
 
 
-from extrautils import SERVERLABEL, SERVERLABELCOLOR, CODEPATH, INSTITUTION, FIELDS2WRITE, JOBDIR, BATCHPARAMETERS
-from extrautils import getJobfile, getJoblist, reformat, writeCsv
+from extrautils import SERVERLABEL, SERVERLABELCOLOR, CODEPATH, INSTITUTION, JOBDIR
+from extrautils import getJobfile, getJoblist
 
 RECORDTYPES = get_recordtypes()
 
@@ -72,9 +72,6 @@ def setContext(context, elapsedtime):
 
 def prepareFiles(request, context):
 
-    validateonly = 'validateonly' in request.POST
-
-    jobnumber = context['jobnumber']
     jobinfo = {}
     specimens = []
     for lineno, afile in enumerate(request.FILES.getlist('importfile')):
@@ -218,6 +215,8 @@ def nextstep(request, step, filename):
 
     context['messages'] = messages
     context['elapsedtime'] = time.time() - elapsedtime
+
+    time.sleep(1)
 
     return showqueue(request)
 

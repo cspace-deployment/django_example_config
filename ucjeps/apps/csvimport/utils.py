@@ -13,7 +13,7 @@ import ConfigParser
 from copy import deepcopy
 from xml.sax.saxutils import escape
 
-from common.unicode_hack import UnicodeReader, UnicodeWriter
+from common.utils import deURN
 
 import time
 import urllib2
@@ -269,7 +269,6 @@ def check_cell_in_cspace(mapping_key, key, value):
                 return 1, "'%s' not found in 'extra' static list '%s'" % (value, mapping_key[5]), ['NotFoundExtra', value, '', '']
         else:
             return 1, "'%s' not found in static list '%s'" % (value, mapping_key[5]), ['NotFoundStatic', value, '', '']
-        #return 1, 'static vocab terms not validated yet', 'NotValidated X X X X'.split(' ')
     elif mapping_key[2] == 'integer':
         try:
             int(value)
@@ -295,11 +294,14 @@ def validate_cell(CSPACE_MAPPING, key, values):
         for v in values:
             try:
                 isaproblem, message, validated_value = check_cell_in_cspace(CSPACE_MAPPING[key], key, v)
-            except:
+            except Exception as inst:
+                print inst
                 print "problem key", key
                 print "problem value", v
                 print "mapping", CSPACE_MAPPING[key]
                 isaproblem, message, validated_value = 1, 'exception', v
+                raise
+
             validated_values[v] = validated_value
             num_problems += isaproblem
             if isaproblem != 0:
@@ -376,6 +378,10 @@ def validate_items(CSPACE_MAPPING, constants, input_data, file_header, uri, in_p
 
     validated_items = []
     nonvalidating_items = []
+
+    # first, check the key field to see if records with these keys exist in cspace
+    key_checks = check_key(stats[0][keyrow][7], action, uri, in_progress)
+
     for i,row in enumerate(input_data):
         output_row = []
         validated = 0
@@ -384,12 +390,44 @@ def validate_items(CSPACE_MAPPING, constants, input_data, file_header, uri, in_p
             validated += validation_status
             output_row.append(mapped_row)
         output_row += extract_constants(constants, row, file_header)
+        if not record_existence_check(key_checks[row[keyrow]], action):
+            validated += 1
         if validated == 0:
             validated_items.append(output_row)
         else:
             nonvalidating_items.append(row)
-    number_check = check_key(stats[0][keyrow][7], action, uri, in_progress)
-    return validated_items, nonvalidating_items, stats, number_check, keyrow
+    return validated_items, nonvalidating_items, stats, key_checks, keyrow
+
+
+def check_key(key_checks, action, uri, in_progress):
+    result_keys = {}
+    for recordsprocessed, k in enumerate(key_checks):
+        refname = rest_query(k, uri)
+        if recordsprocessed % 1000 == 0:
+            in_progress.write("%s keys checked of %s, %s\n" % (recordsprocessed, len(key_checks.keys()), time.strftime("%b %d %Y %H:%M:%S", time.localtime())))
+            in_progress.flush()
+        if refname[0] != 'ZeroResults':
+            result_keys[k] = refname[1]
+        else:
+            result_keys[k] = ''
+    return result_keys
+
+
+def record_existence_check(key, action):
+    if key == '':
+        if 'add' in action:
+            # ok: no record with this key in cspace
+            return True
+        elif 'update' in action:
+            # key not found; this is an error
+            return False
+    else:
+        if 'add' in action:
+            # key found; this is an error
+            return False
+        elif 'update' in action:
+            # ok: a record with this key exists in cspace
+            return True
 
 
 def extract_constants(constants, row, file_header):
@@ -407,18 +445,6 @@ def extract_constants(constants, row, file_header):
                     constant_field_value = constant_value
         constant_field_values.append(constant_field_value)
     return constant_field_values
-
-def check_key(key_dict, action, uri, in_progress):
-    for recordsprocessed, k in enumerate(key_dict):
-        refname = rest_query(k, uri)
-        if recordsprocessed % 1000 == 0:
-            in_progress.write("%s keys checked of %s, %s\n" % (recordsprocessed, len(key_dict.keys()), time.strftime("%b %d %Y %H:%M:%S", time.localtime())))
-            in_progress.flush()
-        if refname[0] != 'ZeroResults':
-            key_dict[k] = refname[1]
-        else:
-            key_dict[k] = ''
-    return key_dict
 
 def check_columns(labels, header, field_map):
     RECORDTYPES = get_recordtypes()
@@ -456,7 +482,7 @@ def normalize(term):
     return re.sub(r"[\&\.\-')(/, ]+",' ', term).replace(' and ',' ').strip().upper()
 
 
-def extract_refname(xml, term, pgSz):
+def extract_refname(xml, term, pgSz, record_type):
     try:
         cspaceXML = fromstring(xml)
         totalItems = int(cspaceXML.find('.//totalItems').text)
@@ -469,13 +495,19 @@ def extract_refname(xml, term, pgSz):
             try:
                 refName = extract_tag(i, 'refName')
                 updated_at = extract_tag(i, 'updatedAt')
-                try:
-                    termDisplayName = extract_tag(i, 'termDisplayName')
-                except:
+                if record_type == 'collectionobjects':
                     try:
-                        termDisplayName = extract_tag(i, 'displayName')
+                        termDisplayName = deURN(refName)
                     except:
-                        return ['NoDisplayName', csid, '', refName, updated_at], totalItems
+                        raise
+                else:
+                    try:
+                        termDisplayName = extract_tag(i, 'termDisplayName')
+                    except:
+                        try:
+                            termDisplayName = extract_tag(i, 'displayName')
+                        except:
+                            raise
             except:
                 print 'could not get termDisplayName or refName or updatedAt from %s' % csid
                 return 'Failed X X X X'.split(' '), totalItems
@@ -485,8 +517,7 @@ def extract_refname(xml, term, pgSz):
             return 'MaybeMissed X X X X'.split(' '), totalItems
         return 'NoMatch X X X X'.split(' '), totalItems
     except:
-        raise
-        return 'Failed X X X X'.split(' '), totalItems
+        return 'xmlParseFailed X X X X'.split(' '), totalItems
 
 
 def rest_query(term, record_type):
@@ -496,21 +527,24 @@ def rest_query(term, record_type):
     if response.status_code != 200:
         error_msg = "HTTP%s X X X X" % response.status_code
         return error_msg.split(' ')
-    refname_result, totalitems = extract_refname(response.content, term, pgSz)
-    if totalitems > pgSz:
+    refname_result, totalitems = extract_refname(response.content, term, pgSz, record_type)
+    if totalitems > pgSz and refname_result[0] != 'OK':
         print '%s term %s (=%s) returned %s for kw search, only %s examined. status is %s.' % (record_type, term.encode('utf-8'), search_term, totalitems, pgSz, refname_result[0])
-    # hail mary: do a pt search if kw fails
-    if refname_result[0] != 'OK' and refname_result[0] != 'ZeroResults':
-        print 'fallback: %s term (=%s) %s trying pt search.' % (record_type, term.encode('utf-8'), search_term)
-        response = do_query('pt', term, record_type, pgSz)
-        refname_result, totalitems = extract_refname(response.content, term, pgSz)
-        if totalitems > pgSz:
-            print '% term %s returned %s for pt search, only %s examined. status is %s.' % (record_type, term, totalitems, pgSz, refname_result[0])
+    # hail mary: do a pt search if kw fails (but not in vocabularies -- doesn't work)
+    if refname_result[0] != 'OK' and refname_result[0] != 'ZeroResults' and 'vocabularies' not in record_type:
+        print 'fallback: %s term %s (=%s) trying pt search.' % (record_type, term.encode('utf-8'), search_term)
+        # TODO: seems any authority search will only bring back 100...
+        response = do_query('pt', term, record_type, 100)
+        refname_result, totalitems = extract_refname(response.content, term, pgSz, record_type)
+        if totalitems > 100:
+            print '%s term %s returned %s for pt search, only %s examined. status is %s.' % (record_type, term, totalitems, pgSz, refname_result[0])
         if response.status_code != 200:
             error_msg = "HTTP%s X X X X" % response.status_code
             return error_msg.split(' ')
-        if refname_result[0] != 'OK':
+        if refname_result[0] == 'OK':
             print 'fallback for %s worked!' % term
+        else:
+            print 'fallback for %s failed: %s' % (term, refname_result[0])
     return refname_result
 
 
@@ -610,19 +644,28 @@ def write_intermediate_files(stats, validated_data, nonvalidating_items, constan
             recordsprocessed += 1
             failures += 1
         except:
-            outputfh.writerow([''] + input_data)
-            recordsprocessed += 1
-            failures += 1
-            # try:
-            #    print 'could not write: ', number_check[input_data[keyrow]]
-            # except:
-            #    pass
+            try:
+                outputfh.writerow([''] + input_data)
+                recordsprocessed += 1
+                failures += 1
+            except Exception as inst:
+                print 'failed to write row %s of input data' % i
+                print inst
+                print ('|').join(input_data)
+                recordsprocessed += 1
+                failures += 1
+                # try:
+                #    print 'could not write: ', number_check[input_data[keyrow]]
+                # except:
+                #    pass
 
     return recordsprocessed, successes, failures
 
 def send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh, uri, in_progress):
     recordsprocessed = 0
     successes = 0
+    failures = 0
+
     for input_data in inputRecords:
 
         if recordsprocessed % 1000 == 0:
@@ -636,7 +679,7 @@ def send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh, uri
             cspaceElements = DWC2CSPACE(action, xmlTemplate, input_dict, config, uri)
             del cspaceElements[2]
             cspaceElements.append('%8.2f' % (time.time() - elapsedtimetotal))
-            print "itemitem: %s, csid: %s %s" % tuple(cspaceElements)
+            # print "item created: %s, csid: %s %s" % tuple(cspaceElements)
             if cspaceElements[1] != '':
                 successes += 1
             outputfh.writerow(cspaceElements)
@@ -646,9 +689,10 @@ def send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh, uri
         except:
             print "item create failed for objectnumber %s, %8.2f" % (
             cspaceElements, (time.time() - elapsedtimetotal))
+            failures += 1
             raise
         recordsprocessed += 1
-    return recordsprocessed, successes
+    return recordsprocessed, successes, failures
 
 
 def getConfig(fileName):
@@ -691,19 +735,21 @@ def postxml(requestType, uri, realm, protocol, hostname, port, username, passwor
             csid = ''
     except urllib2.HTTPError, e:
         sys.stderr.write('URL: ' + url + '\n')
-        sys.stderr.write('PUT failed, HTTP code: ' + str(e.code) + '\n')
-        #print payload
+        sys.stderr.write('PUT/POST failed.\n')
+        if hasattr(e, 'reason'):
+            sys.stderr.write('Reason: ' + str(e.reason) + '\n')
+        if hasattr(e, 'code'):
+            sys.stderr.write('Error code: ' + str(e.code) + '\n')
+        print payload
         #print data
         if info: print info
-        sys.stderr.write('Data: ' + data + '\n')
+        if data: sys.stderr.write('Data: ' + data + '\n')
         raise
     except urllib2.URLError, e:
         sys.stderr.write('URL: ' + url + '\n')
         if hasattr(e, 'reason'):
-            sys.stderr.write('We failed to reach a server.\n')
             sys.stderr.write('Reason: ' + str(e.reason) + '\n')
         if hasattr(e, 'code'):
-            sys.stderr.write('The server couldn\'t fulfill the request.\n')
             sys.stderr.write('Error code: ' + str(e.code) + '\n')
         if True:
             # print 'Error in POSTing!'
@@ -752,6 +798,15 @@ def DWC2CSPACE(action, xmlTemplate, input_dataDict, config, uri):
     if action == 'add':
         messages.append("POSTing (add) to cspace REST API...")
         payload = createXMLpayload(xmlTemplate, input_dataDict, INSTITUTION)
+        try:
+            (url, data, itemCSID, elapsedtime) = postxml('POST', uri, realm, protocol, hostname, port, username,
+                                                         password, payload)
+            messages.append('got cspacecsid %s elapsedtime %s ' % (itemCSID, elapsedtime))
+            messages.append("cspace REST API post succeeded...")
+        except:
+            itemCSID = ''
+            messages.append("cspace REST API post failed...")
+
     elif action == 'update':
         messages.append("PUTting (update) to cspace REST API...")
         itemCSID = input_dataDict['csid']
@@ -768,12 +823,5 @@ def DWC2CSPACE(action, xmlTemplate, input_dataDict, config, uri):
             itemCSID = ''
             messages.append("cspace REST API put failed...")
         #payload = createXMLpayload(xmlTemplate, input_dataDict, INSTITUTION)
-    try:
-        (url, data, itemCSID, elapsedtime) = postxml('POST', uri, realm, protocol, hostname, port, username, password, payload)
-        messages.append('got cspacecsid %s elapsedtime %s ' % (itemCSID, elapsedtime))
-        messages.append("cspace REST API post succeeded...")
-    except:
-        itemCSID = ''
-        messages.append("cspace REST API post failed...")
 
     return [itemNumber, itemCSID, messages]
