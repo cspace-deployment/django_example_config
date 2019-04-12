@@ -15,4 +15,4 @@ mv $1.runlog.out $1.undone.log; rm $1.runlog.out
 cat $1.inprogress.log >> $1.runstatistics.log ; rm $1.inprogress.log
 mv $1.added.log $1.archive.log
 mv $1.updated.log $1.archive.log
-grep deleted refnames.undone.log > $1.deleted.log
+grep deleted $1.undone.log > $1.deleted.log
