@@ -37,10 +37,10 @@
                     {% elif jobsummary.4 == 'in progress' %}
                         <span style="color: orangered"><a href="showresults/{{ jobno }}.inprogress.log">{{ jobsummary.4 }}</a></span>
                     {% elif jobsummary.4 == 'validate' %}
-                        validate:<br/>
+                        validate:
                         <a style="color: green" href="nextstep/validate-add/{{ jobno }}">add</a>
                         <a style="color: green" href="nextstep/validate-update/{{ jobno }}">update</a>
-                        <a style="color: green" href="nextstep/validate-both/{{ jobno }}">both</a>
+                        <!-- a style="color: green" href="nextstep/validate-both/{{ jobno }}">both</a -->
                         <!-- select id="validate" name="validate">
                             <option value="">Select an option</option>
                             <option value="add">validate - add</option>
