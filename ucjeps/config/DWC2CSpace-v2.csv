@@ -21,7 +21,7 @@
 19	# identifying details												
 20	barcodenumber	objectNumber		literal									
 20	collectionCode							0	0	2	79328		
-21		numberValue	otherNumber	literal									
+21	# 	numberValue	otherNumber	literal									
 22	basisOfRecord							1	24	1	79328		
 23	occurrenceID	occurrenceID		literal				24	24	79328	79328	symbiota GUID	othernumber??
 23	scientificName	taxon		refname		taxonomyauthority/87036424-e55f-4e39-bd12		16	22	3102	79328		
@@ -69,7 +69,7 @@
 48	recordedByID						unused	0	0				
 49	allCollectors	fieldCollector		refname		orgauthorities/6d89bda7-867a-4b97-b22f		1	1				
 50	recordNumber	fieldCollectionNumber		literal				13	22	21888	58160		
-51	eventDate	fieldCollectionDateScalar		date									
+51	eventDate			date									
 51	# determination info	##################################											
 52	determinedby	identBy		refname		orgauthorities/751023ec-d953-45f9-a0a8	urn:cspace:ucjeps.cspace.berkeley.edu:orgauthorities:name(determination)'Determination Organization Authority'						
 52	year						redundant	15	20				
@@ -81,7 +81,7 @@
 56	# 	dateDisplayDate	identDateGroup	literal									
 56	endDayOfYear						unused	0	0				
 57	verbatimEventDate	fieldCollectionDateVerbatim		literal				1	1	21505	74477		
-57	ownerInstitutionCode	objectNumber		literal			checkonupdate						
+57	ownerInstitutionCode						checkonupdate						
 58	occurrenceRemarks	briefDescription		literal				1	2	864	1358	Jason will double check	
 59	institutionCode												
 60	substrate							1	1				
@@ -306,7 +306,7 @@
 413		donorDateScalar					cspace field only						
 414		donorDateVerbatim					cspace field only						
 415		fieldColEventName					cspace field only						
-416		fieldCollectionDateScalar					cspace field only						
+													
 417		fieldCollectionMethod					cspace field only						
 418		fieldCollectionNumber					cspace field only						
 419		fieldCollectionNumberAssignor					cspace field only						
