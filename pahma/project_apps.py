@@ -33,7 +33,7 @@ INSTALLED_APPS = (
     'internal',
     'ireports',
     'landing',
-    #'locationhistory',
+    'locationhistory',
     'osteology',
     'permalinks',
     'search',
