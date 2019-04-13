@@ -61,7 +61,7 @@ perl recodeColumns.pl states.csv             A1.csv A2.csv 54; mv A2.csv A1.csv
 perl recodeColumns.pl country.csv            A1.csv A2.csv 53; mv A2.csv A1.csv
 
 # this zaps the 1,200+ missing county values
-#perl recodeColumns.pl county.csv             A1.csv A2.csv 55; mv A2.csv A1.csv
+perl recodeColumns.pl county.csv             A1.csv A2.csv 55; mv A2.csv A1.csv
 
 perl recodeColumns.pl sex.csv                A1.csv A2.csv 48; mv A2.csv A1.csv
 #perl recodeColumns.pl 4-counties-to-fix.csv A1.csv A2.csv 55; mv A2.csv A1.csv
@@ -71,7 +71,7 @@ cut -f60,61 A1.csv > latlongs.csv
 perl -i -pe 's/decimal/vdecimal/g' latlongs.csv
 paste A1.csv latlongs.csv > $FILE
 
-rm A?.csv latlongs.csv
+rm A?.csv
 
 echo "$FILE is the revised file"
 
