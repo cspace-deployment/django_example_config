@@ -1,0 +1,15 @@
+1	#################################################################						
+2	# DWC to Cspace field name mapping						
+3	# Collector name authority field mapping						
+4	# Columns						
+5	# 	A	sequence number. Only facultative.				
+6	# 	B	DWC field name				
+7	# 	C	Cspace fieldname				
+8	# 	D	context tag (currently unused)				
+9	# 	E	datatype of the element				
+10	# 	F	type of check to peform				
+11	# 	G	Cspace authority name (including CSID)				
+12	# 	H	Remarks (ignored by the program)				
+13	# Input (csv file) column	Cspace collectionobject tag	context tag	data type	type of check	authority	remarks
+14	termDisplayname	termDisplayname		literal			collector name
+15	key	key		key			
