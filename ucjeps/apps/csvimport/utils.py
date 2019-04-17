@@ -181,11 +181,16 @@ def getRecords(rawFile):
     try:
         rows = []
         cell_values = {}
+
+        bad_rows = ['rows have different number of cells', 0, []]
         for rowNumber, row in enumerate(csvfile):
             if rowNumber == 0:
                 header = row
                 continue
             rows.append(row)
+            if len(row) != len(header):
+                bad_rows[1] += 1
+                bad_rows[2].append(rowNumber + 1)
             for col_number, cell in enumerate(row):
                 if cell == "#": continue  # skip comments
                 col_name = header[col_number]
@@ -194,7 +199,7 @@ def getRecords(rawFile):
                     cell_values[col_name][row[col_number]] = 0
                     #cell_values[col_name]['bcid'] = row[0]
                 cell_values[col_name][row[col_number]] += 1
-        return cell_values, rows, rowNumber, header
+        return cell_values, rows, rowNumber, header, bad_rows
     except IOError, e:
         print "item%s " % e
         sys.exit(1)
@@ -213,23 +218,18 @@ def check_file(file_handle):
 def handle_uploaded_file(f):
     name_parts = f.name.split('.')
     extension = name_parts[-1]
-    input_filename = f.name.replace('.%s' % extension, '.input.%s' % extension)
-    destination = open(path.join(IMPORTDIR, '%s') % input_filename, 'wb+')
+    copied_filename = f.name.replace('.%s' % extension, '.input.csv')
+    destination = open(path.join(IMPORTDIR, '%s') % copied_filename, 'wb+')
     with destination:
         for chunk in f.chunks():
             destination.write(chunk)
     destination.close()
-    try:
-        return getRecords(f)
-    except:
-        return None
 
 
 def count_columns(matrix, header):
     types = {}
     for col in header:
         types[col] = Counter()
-    column_count = len(header)
     for lineno, row in enumerate(matrix):
         for i, cell in enumerate(row):
             if cell != '':
@@ -338,46 +338,59 @@ def validate_columns(CSPACE_MAPPING, matrix, header, in_progress):
     types = {}
     for col in header:
         types[col] = Counter()
-    column_count = len(header)
     for lineno, row in enumerate(matrix):
         for i, cell in enumerate(row):
             if cell != '':
                 types[header[i]][cell] += 1
 
     stats = []
-    for key in header:
-        in_progress.write("column %s (%s values) validation started at %s\n" % (key, len(types[key]), time.strftime("%b %d %Y %H:%M:%S", time.localtime())))
+    for column_name in header:
+        in_progress.write("column %s (%s values) validation started at %s\n" % (column_name, len(types[column_name]), time.strftime("%b %d %Y %H:%M:%S", time.localtime())))
         in_progress.flush()
-        valid_label, num_problems, message, validated_values = validate_cell(CSPACE_MAPPING, key, types[key])
-        stats.append([key, len(types[key]), sum(types[key].values()), valid_label, num_problems, message, types[key], validated_values])
+        valid_label, num_problems, message, validated_values = validate_cell(CSPACE_MAPPING, column_name, types[column_name])
+        stats.append([column_name, len(types[column_name]), sum(types[column_name].values()), valid_label, num_problems, message, types[column_name], validated_values])
 
     # filter out columns that have no data.
     #stats = [s for s in stats if s[1] > 0]
     return stats, 'column types tokens status problems messages types valid_values'.split(' ')
 
 
-def map_items(input_data, file_header):
-    data_dict = {}
+def map_items(input_data, file_header, keyrow):
+    data_dict = {'key': input_data[keyrow]}
     for i,cell in enumerate(input_data):
         data_dict[file_header[i]] = cell
     return data_dict
 
 
-def validate_items(CSPACE_MAPPING, constants, input_data, file_header, uri, in_progress, action):
-    stats = validate_columns(CSPACE_MAPPING, input_data, file_header, in_progress)
+def find_keyfield(CSPACE_MAPPING, file_header):
 
     keyrow = -1
     try:
         for field in CSPACE_MAPPING:
             if CSPACE_MAPPING[field][2] == 'key':
-                keyfield = field
-                keyrow = file_header.index(keyfield)
+                keyfield = CSPACE_MAPPING[field][0]
+                try:
+                    keyrow = file_header.index(keyfield)
+                except:
+                    try:
+                        keyfield = field
+                        keyrow = file_header.index(keyfield)
+                    except:
+                        pass
                 break
     except:
-        pass
+        raise
+
+    return keyfield, keyrow
+
+
+def validate_items(CSPACE_MAPPING, constants, input_data, file_header, uri, in_progress, action, keyrow):
+
+    stats = validate_columns(CSPACE_MAPPING, input_data, file_header, in_progress)
 
     validated_items = []
     nonvalidating_items = []
+
 
     # first, check the key field to see if records with these keys exist in cspace
     key_checks = check_key(stats[0][keyrow][7], action, uri, in_progress)
@@ -396,7 +409,7 @@ def validate_items(CSPACE_MAPPING, constants, input_data, file_header, uri, in_p
             validated_items.append(output_row)
         else:
             nonvalidating_items.append(row)
-    return validated_items, nonvalidating_items, stats, key_checks, keyrow
+    return validated_items, nonvalidating_items, stats, key_checks
 
 
 def check_key(key_checks, action, uri, in_progress):
@@ -414,20 +427,15 @@ def check_key(key_checks, action, uri, in_progress):
 
 
 def record_existence_check(key, action):
-    if key == '':
-        if 'add' in action:
-            # ok: no record with this key in cspace
-            return True
-        elif 'update' in action:
-            # key not found; this is an error
-            return False
-    else:
-        if 'add' in action:
-            # key found; this is an error
-            return False
-        elif 'update' in action:
-            # ok: a record with this key exists in cspace
-            return True
+    record_check = True
+    if key == '' and 'update' in action:
+        # key not found; this is an error
+        record_check = False
+    elif 'add' in action:
+        # key found; this is an error
+        record_check = False
+
+    return record_check
 
 
 def extract_constants(constants, row, file_header):
@@ -445,6 +453,7 @@ def extract_constants(constants, row, file_header):
                     constant_field_value = constant_value
         constant_field_values.append(constant_field_value)
     return constant_field_values
+
 
 def check_columns(labels, header, field_map):
     RECORDTYPES = get_recordtypes()
@@ -661,7 +670,7 @@ def write_intermediate_files(stats, validated_data, nonvalidating_items, constan
 
     return recordsprocessed, successes, failures
 
-def send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh, uri, in_progress):
+def send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh, uri, in_progress, keyrow):
     recordsprocessed = 0
     successes = 0
     failures = 0
@@ -675,22 +684,22 @@ def send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh, uri
         cspaceElements = ['', '']
         elapsedtimetotal = time.time()
         try:
-            input_dict = map_items(input_data, file_header)
+            input_dict = map_items(input_data, file_header, keyrow)
             cspaceElements = DWC2CSPACE(action, xmlTemplate, input_dict, config, uri)
             del cspaceElements[2]
             cspaceElements.append('%8.2f' % (time.time() - elapsedtimetotal))
             # print "item created: %s, csid: %s %s" % tuple(cspaceElements)
             if cspaceElements[1] != '':
                 successes += 1
+            else:
+                raise
             outputfh.writerow(cspaceElements)
             # flush output buffers so we get a much data as possible if there is a failure
             outputfh.flush()
             sys.stdout.flush()
         except:
-            print "item create failed for objectnumber %s, %8.2f" % (
-            cspaceElements, (time.time() - elapsedtimetotal))
+            print "item create/update failed for object number '%s', %8.2f" % (cspaceElements[0], (time.time() - elapsedtimetotal))
             failures += 1
-            raise
         recordsprocessed += 1
     return recordsprocessed, successes, failures
 
@@ -788,12 +797,9 @@ def DWC2CSPACE(action, xmlTemplate, input_dataDict, config, uri):
         raise
 
     messages = []
-    try:
-        itemNumber = input_dataDict['key']
-    except:
-        itemNumber = ''
-        messages.append('could not find an item key')
-        #return ['', '', messages]
+
+    # this field is guaranteed to be here by map_items
+    itemNumber = input_dataDict['key']
 
     if action == 'add':
         messages.append("POSTing (add) to cspace REST API...")
@@ -810,18 +816,44 @@ def DWC2CSPACE(action, xmlTemplate, input_dataDict, config, uri):
     elif action == 'update':
         messages.append("PUTting (update) to cspace REST API...")
         itemCSID = input_dataDict['csid']
-        url = '%s/cspace-services/%s/%s' % (http_parms.server, uri, itemCSID)
-        try:
-            response = requests.get(url, auth=HTTPBasicAuth(http_parms.username, http_parms.password))
-            payload = response.content
-            if response.status_code != 200:
-                messages.append("HTTP %s" % response.status_code)
-            else:
-                (url, data, dummyCSID, elapsedtime) = postxml('PUT', '%s/%s' % (uri, itemCSID), realm, protocol, hostname, port, username, password, payload)
-                pass
-        except:
-            itemCSID = ''
-            messages.append("cspace REST API put failed...")
-        #payload = createXMLpayload(xmlTemplate, input_dataDict, INSTITUTION)
+        if itemCSID == '':
+            messages.append("no CSID for %s" % itemCSID)
+        else:
+            url = '%s/cspace-services/%s/%s' % (http_parms.server, uri, itemCSID)
+            try:
+                response = requests.get(url, auth=HTTPBasicAuth(http_parms.username, http_parms.password))
+                payload = response.content
+                if response.status_code != 200:
+                    messages.append("HTTP %s" % response.status_code)
+                    # zapping itemCSID indicates this was a failure..
+                    itemCSID = ''
+                else:
+                    # update the xml...
+                    payload = update_xml(payload, input_dataDict, INSTITUTION, action)
+                    (url, data, dummyCSID, elapsedtime) = postxml('PUT', '%s/%s' % (uri, itemCSID), realm, protocol, hostname, port, username, password, payload)
+                    pass
+            except:
+                raise
+                itemCSID = ''
+                messages.append("cspace REST API put failed...")
 
     return [itemNumber, itemCSID, messages]
+
+def update_xml(payload, input_dataDict, INSTITUTION, action):
+    xml = fromstring(payload)
+    for tag in input_dataDict:
+        # skip unwanted fields...
+        if tag in 'key csid unmapped'.split(' '): continue
+        element = xml.find('.//%s' % tag)
+        value = input_dataDict[tag]
+        if element is None:
+            if value == '':
+                pass
+            else:
+                print 'tag %s not found, no update made' % tag
+                print 'wanted to insert: %s' % value
+        else:
+            if value != '':
+                element.text = value
+    payload = tostring(xml)
+    return payload

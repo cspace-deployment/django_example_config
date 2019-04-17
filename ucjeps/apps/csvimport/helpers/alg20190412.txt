@@ -1,0 +1,246 @@
+++ FILE=temp_file.csv
+++ HELPERS_DIR=/Users/jblowe/PycharmProjects/django_example_config/ucjeps/apps/csvimport/helpers
+++ cp Algae_20190411_revised.txt temp_file.csv
+++ perl -i -pe 's/recordedBy, associatedCollectors/associatedCollectors/' temp_file.csv
+++ perl -i -pe 's/habitat; substrate; associatedTaxa/habitat/' temp_file.csv
+++ perl -ne 'print if /\tQ\t/' temp_file.csv
+577781	UC			PreservedSpecimen	ead77ce0-1d1a-4f82-9629-cd7182acccec	UC1840397	AHFH 43210	Chromista	Heterokontophyta	Phaeophyceae	Fucales	Sargassaceae	Sargassum sinicola	Setchell & N.L.Gardner	Sargassum	sinicola										Remple	Remple	s.n.	1937-03-25	1937	3	25	84		1937-03-25	Hancock Expedition Station 723-37	Sublittoral, rocky.															Mexico	Sonora		West side of Isla San Jorge				31.010529	-113.253675	Q	1187		ale_7979 (2016-05-18 13:12:47)		georef batch tool 2016-05-18; GeoLocate	reviewed - high confidence										ClareLoughran	2016-05-18 16:12:47		8	urn:uuid:ead77ce0-1d1a-4f82-9629-cd7182acccec	http://macroalgae.org/portal/collections/individual/index.php?occid=577781
+++ perl -i -pe 's/\tQ\t/\t\t/' temp_file.csv
+++ perl -i -pe 'if (/UC790294/) { s/\t10\tGeo/\t\tGeo/ } ' temp_file.csv
+++ perl -i -p weird_names.pl temp_file.csv
+++ perl -ne 'print if /\tWSG/' temp_file.csv
+++ wc -l
+       8
+++ perl -ne 'print if /\tWGS84\t/' temp_file.csv
+++ wc -l
+   38403
+++ perl -i -pe 's/\tWSG *84\t/\tWGS84\t/' temp_file.csv
+++ perl -i -pe 's/\tWGS *84\t/\tWGS84\t/' temp_file.csv
+++ perl -ne 'print if /\tWGS84\t/' temp_file.csv
+++ wc -l
+   38419
+++ perl -ne 'print if /\tWSG84\t/' temp_file.csv
+++ wc -l
+       0
+++ /Users/jblowe/PycharmProjects/django_example_config/ucjeps/apps/csvimport/helpers/make-geolocate-changes.sh temp_file.csv
+++ head -1 temp_file.csv
+++ perl -pe 's/\t/\n/g'
+++ nl
+     1	id
+     2	institutionCode
+     3	collectionCode
+     4	ownerInstitutionCode
+     5	basisOfRecord
+     6	occurrenceID
+     7	catalogNumber
+     8	otherCatalogNumbers
+     9	kingdom
+    10	phylum
+    11	class
+    12	order
+    13	family
+    14	scientificName
+    15	scientificNameAuthorship
+    16	genus
+    17	specificEpithet
+    18	taxonRank
+    19	infraspecificEpithet
+    20	identifiedBy
+    21	dateIdentified
+    22	identificationReferences
+    23	identificationRemarks
+    24	taxonRemarks
+    25	identificationQualifier
+    26	typeStatus
+    27	recordedBy
+    28	associatedCollectors
+    29	recordNumber
+    30	eventDate
+    31	year
+    32	month
+    33	day
+    34	startDayOfYear
+    35	endDayOfYear
+    36	verbatimEventDate
+    37	occurrenceRemarks
+    38	habitat
+    39	verbatimAttributes
+    40	fieldNumber
+    41	informationWithheld
+    42	dataGeneralizations
+    43	dynamicProperties
+    44	reproductiveCondition
+    45	establishmentMeans
+    46	cultivationStatus
+    47	lifeStage
+    48	sex
+    49	individualCount
+    50	samplingProtocol
+    51	samplingEffort
+    52	preparations
+    53	country
+    54	stateProvince
+    55	county
+    56	locality
+    57	locationRemarks
+    58	localitySecurity
+    59	localitySecurityReason
+    60	decimalLatitude
+    61	decimalLongitude
+    62	geodeticDatum
+    63	coordinateUncertaintyInMeters
+    64	verbatimCoordinates
+    65	georeferencedBy
+    66	georeferenceProtocol
+    67	georeferenceSources
+    68	georeferenceVerificationStatus
+    69	georeferenceRemarks
+    70	minimumElevationInMeters
+    71	maximumElevationInMeters
+    72	minimumDepthInMeters
+    73	maximumDepthInMeters
+    74	verbatimDepth
+    75	verbatimElevation
+    76	disposition
+    77	language
+    78	recordEnteredBy
+    79	modified
+    80	sourcePrimaryKey-dbpk
+    81	collId
+    82	recordId
+    83	references
+++ echo
+
+++ cp temp_file.csv A1.csv
+++ perl recodeColumns.pl determination.csv A1.csv A2.csv 20
+
+change:      determination.csv
+input:       A1.csv
+output:      A2.csv
+change col:  20
+
+rewrite pairs read:    45
+vacuous pairs skipped: 25
+lines read:            80098
+lines output:          80098
+changed lines:         31
+unchanged lines:       80067
+++ mv A2.csv A1.csv
+++ perl recodeColumns.pl collectors.csv A1.csv A2.csv 27
+
+change:      collectors.csv
+input:       A1.csv
+output:      A2.csv
+change col:  27
+
+rewrite pairs read:    5554
+vacuous pairs skipped: 4133
+lines read:            80098
+lines output:          80098
+changed lines:         5386
+unchanged lines:       74712
+++ mv A2.csv A1.csv
+++ perl recodeColumns.pl collectors.csv A1.csv A2.csv 28
+
+change:      collectors.csv
+input:       A1.csv
+output:      A2.csv
+change col:  28
+
+rewrite pairs read:    5554
+vacuous pairs skipped: 4133
+lines read:            80098
+lines output:          80098
+changed lines:         5985
+unchanged lines:       74113
+++ mv A2.csv A1.csv
+++ perl recodeColumns.pl associatedCollectors.csv A1.csv A2.csv 28
+
+change:      associatedCollectors.csv
+input:       A1.csv
+output:      A2.csv
+change col:  28
+
+rewrite pairs read:    691
+vacuous pairs skipped: 0
+lines read:            80098
+lines output:          80098
+changed lines:         1193
+unchanged lines:       78905
+++ mv A2.csv A1.csv
+++ perl recodeColumns.pl taxa.csv A1.csv A2.csv 14
+
+change:      taxa.csv
+input:       A1.csv
+output:      A2.csv
+change col:  14
+
+rewrite pairs read:    23
+vacuous pairs skipped: 1
+lines read:            80098
+lines output:          80098
+changed lines:         467
+unchanged lines:       79631
+++ mv A2.csv A1.csv
+++ perl recodeColumns.pl states.csv A1.csv A2.csv 54
+
+change:      states.csv
+input:       A1.csv
+output:      A2.csv
+change col:  54
+
+rewrite pairs read:    27
+vacuous pairs skipped: 7
+lines read:            80098
+lines output:          80098
+changed lines:         52
+unchanged lines:       80046
+++ mv A2.csv A1.csv
+++ perl recodeColumns.pl country.csv A1.csv A2.csv 53
+
+change:      country.csv
+input:       A1.csv
+output:      A2.csv
+change col:  53
+
+rewrite pairs read:    4
+vacuous pairs skipped: 0
+lines read:            80098
+lines output:          80098
+changed lines:         1
+unchanged lines:       80097
+++ mv A2.csv A1.csv
+++ perl recodeColumns.pl county.csv A1.csv A2.csv 55
+
+change:      county.csv
+input:       A1.csv
+output:      A2.csv
+change col:  55
+
+rewrite pairs read:    1279
+vacuous pairs skipped: 0
+lines read:            80098
+lines output:          80098
+changed lines:         7765
+unchanged lines:       72333
+++ mv A2.csv A1.csv
+++ perl recodeColumns.pl sex.csv A1.csv A2.csv 48
+
+change:      sex.csv
+input:       A1.csv
+output:      A2.csv
+change col:  48
+
+rewrite pairs read:    12
+vacuous pairs skipped: 0
+lines read:            80098
+lines output:          80098
+changed lines:         127
+unchanged lines:       79971
+++ mv A2.csv A1.csv
+++ cut -f60,61 A1.csv
+++ perl -i -pe s/decimal/vdecimal/g latlongs.csv
+++ paste A1.csv latlongs.csv
+++ rm A1.csv
+++ echo 'temp_file.csv is the revised file'
+temp_file.csv is the revised file

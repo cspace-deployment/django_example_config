@@ -48,7 +48,9 @@ def jobsummary(jobstats):
     new_order = 0
     update_type = ''
     import_type = ''
+    archived = False
     for i,(jobfile, status, count, lines, date_uploaded) in enumerate(jobstats):
+
         if date_uploaded > first_date:
             first_date = date_uploaded
 
@@ -71,6 +73,11 @@ def jobsummary(jobstats):
             if order > new_order:
                 new_order = order
 
+        # if the job is archived...
+        if status == 'archived':
+            archived = True
+            continue
+
     try:
         next = next_steps[new_order]
     except:
@@ -83,6 +90,9 @@ def jobsummary(jobstats):
     results[4] = next
     if results[2] > 0 and results[4] == 'completed':
         results[4] = 'problem'
+    if archived:
+        results[4] = 'archive'
+        pass
     return results
 
 

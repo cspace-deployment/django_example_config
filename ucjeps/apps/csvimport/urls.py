@@ -7,7 +7,6 @@ urlpatterns = [
 
     url(r'^$', views.upload_file),
     url(r'uploadfile', views.upload_file, name='uploadfile'),
-    # url(r'checkimagefilenames', views.checkimagefilenames, name='checkimagefilenames'),
     url(r'showqueue', views.showqueue, name='showqueue'),
     url(r'downloadresults/(?P<filename>[\w\-\.]+)$', views.downloadresults, name='downloadresults'),
     url(r'showresults/(?P<filename>[\w\-\.]+)$', views.showresults, name='showresults'),
