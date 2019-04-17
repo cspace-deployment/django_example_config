@@ -9,8 +9,7 @@
         <tr>
             <th>Job number</th>
             <th>Date last updated</th>
-            <th>Delete?</th>
-            <th>Reset?</th>
+            <th style="width: 160px">Delete / Reset / Archive ?</th>
             <th>Next step</th>
             {% for log in logs %}
                 <th style="width: 40px;">{{ log }}</th>
@@ -25,34 +24,40 @@
             <tr>
                 <td>{{ jobno }}</td>
                 <td>{{ jobsummary.3 }}</td>
-                <td>
-                    <a class="button" href="deletejob/{{ jobno }}"><span style="color: crimson">delete</span></a>
-                </td>
-                <td>
-                    <a class="button" href="nextstep/reset/{{ jobno }}"><span style="color: orange">reset</span></a>
-                </td>
-                <td>
-                    {% if jobsummary.4 == 'problem' %}
-                        <span style="color: red; font-weight: bold">{{ jobsummary.4 }}</span>
-                    {% elif jobsummary.4 == 'in progress' %}
-                        <span style="color: orangered"><a href="showresults/{{ jobno }}.inprogress.log">{{ jobsummary.4 }}</a></span>
-                    {% elif jobsummary.4 == 'validate' %}
-                        validate:
-                        <a style="color: green" href="nextstep/validate-add/{{ jobno }}">add</a>
-                        <a style="color: green" href="nextstep/validate-update/{{ jobno }}">update</a>
-                        <!-- a style="color: green" href="nextstep/validate-both/{{ jobno }}">both</a -->
-                        <!-- select id="validate" name="validate">
-                            <option value="">Select an option</option>
-                            <option value="add">validate - add</option>
-                            <option value="update">validate - update</option>
-                        </select -->
-                    {% elif jobsummary.4 == 'add' or jobsummary.4 == 'update' or jobsummary.4 == 'both' %}
-                        <a style="color: green" href="nextstep/{{ jobsummary.4 }}/{{ jobno }}">{{ jobsummary.4 }}</a>
-                        <!-- {{ jobsummary.4 }} (disabled for now) -->
-                    {% else %}
-                        <a style="color: green" href="nextstep/{{ jobsummary.4 }}/{{ jobno }}">{{ jobsummary.4 }}</a>
-                    {% endif %}
-                </td>
+                {% if jobsummary.4 == 'archive' %}
+                    <td>
+                        <a class="button" href="nextstep/unarchive/{{ jobno }}"><span style="color: crimson">unarchive</span></a>
+                    </td>
+                    <td/>
+                {% else %}
+                    <td>
+                        <a class="button" href="deletejob/{{ jobno }}"><span style="color: crimson">delete</span></a>
+                        | <a class="button" href="nextstep/reset/{{ jobno }}"><span style="color: orange">reset</span></a>
+                        | <a style="color: green" href="nextstep/archive/{{ jobno }}">archive</a>
+                    </td>
+                    <td>
+                        {% if jobsummary.4 == 'problem' %}
+                            <span style="color: red; font-weight: bold">{{ jobsummary.4 }}</span>
+                        {% elif jobsummary.4 == 'in progress' %}
+                            <span style="color: orangered"><a href="showresults/{{ jobno }}.inprogress.log">{{ jobsummary.4 }}</a></span>
+                        {% elif jobsummary.4 == 'validate' %}
+                            validate:
+                            <a style="color: green" href="nextstep/validate-add/{{ jobno }}">add</a>
+                            <a style="color: green" href="nextstep/validate-update/{{ jobno }}">update</a>
+                            <!-- a style="color: green" href="nextstep/validate-both/{{ jobno }}">both</a -->
+                            <!-- select id="validate" name="validate">
+                                <option value="">Select an option</option>
+                                <option value="add">validate - add</option>
+                                <option value="update">validate - update</option>
+                            </select -->
+                        {% elif jobsummary.4 == 'add' or jobsummary.4 == 'update' or jobsummary.4 == 'both' %}
+                            <a style="color: green" href="nextstep/{{ jobsummary.4 }}/{{ jobno }}">{{ jobsummary.4 }}</a>
+                            <!-- {{ jobsummary.4 }} (disabled for now) -->
+                        {% else %}
+                            <a style="color: green" href="nextstep/{{ jobsummary.4 }}/{{ jobno }}">{{ jobsummary.4 }}</a>
+                        {% endif %}
+                    </td>
+                {% endif %}
                 {% for log in logs %}
                     <td>
                         {% for j in jobinfo %}

@@ -10,7 +10,7 @@ sys.path.append("../../ucjeps")
 from common.unicode_hack import UnicodeReader, UnicodeWriter
 
 from utils import load_mapping_file, validate_items, count_columns, getRecords, write_intermediate_files
-from utils import send_to_cspace, count_stats, count_numbers, getConfig
+from utils import send_to_cspace, count_stats, count_numbers, getConfig, find_keyfield
 
 CONFIGDIRECTORY = ''
 
@@ -78,27 +78,33 @@ def main():
     try:
         with open(sys.argv[1], 'rb') as f:
             try:
-                dataDict, inputRecords, lines, file_header = getRecords(f)
-                print '%s lines found in file %s' % (lines, sys.argv[1])
-                # print header
-                if lines == -1:
-                    print 'Error! %s' % inputRecords
-                    parameters_ok = False
+                dataDict, inputRecords, lines, file_header, bad_rows = getRecords(f)
             except Exception as inst:
                 print inst
-                raise
                 print
                 print "could not get CSV records to load"
                 parameters_ok = False
+        if bad_rows[1] > 0:
+            print 'Error! %s %s' % (bad_rows[1], bad_rows[0])
+            print 'rows: ',
+            print ','.join([str(b) for b in bad_rows[2]])
+            raise
+        print '%s lines found in file %s' % (lines, sys.argv[1])
     except:
-        print "could not open %s" % sys.argv[1]
+        print "could not open or process %s" % sys.argv[1]
         parameters_ok = False
 
     try:
         # print "loading mapping file %s\n" % sys.argv[3]
         mapping, errors, constants = load_mapping_file(sys.argv[3])
-        print '%s valid records found in mapping file %s' % (len(mapping), sys.argv[3])
-        # print header
+        print '%s rows found in mapping file %s' % (len(mapping), sys.argv[3])
+
+        keyfield, keyrow = find_keyfield(mapping, file_header)
+
+        if keyrow == -1:
+            errors += 1
+            print 'no key column indicated in mapping file %s' % sys.argv[3]
+
         if errors != 0:
             print "terminating due to %s errors detected in mapping configuration" % errors
             parameters_ok = False
@@ -187,9 +193,10 @@ def main():
 
 
     elif 'validate' in action:
-        validated_data, nonvalidating_items, stats, number_check, keyrow = validate_items(mapping, constants,
+
+        validated_data, nonvalidating_items, stats, number_check= validate_items(mapping, constants,
                                                                                           inputRecords, file_header, uri,
-                                                                                          in_progress, action)
+                                                                                          in_progress, action, keyrow)
 
         ok_count, bad_count, bad_values = count_stats(stats, mapping)
 
@@ -212,7 +219,8 @@ def main():
 
     elif action in 'add update both'.split(' '):
 
-        recordsprocessed, successes, failures = send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh, uri, in_progress)
+        keyfield, keyrow = find_keyfield(mapping, file_header)
+        recordsprocessed, successes, failures = send_to_cspace(action, inputRecords, file_header, xmlTemplate, outputfh, uri, in_progress, keyrow)
 
     print "FINISHED %s records: %s processed, %s successful, %s failures" % (action, recordsprocessed, successes, failures)
     print
