@@ -3,12 +3,31 @@ CHANGELOG for the cspace_django_webapps
 OK, it is not a *real* change log, but a list of changes resulting from git log
 with some human annotation after the fact.
 
-This is version 5.1.0-rc1
-Wed Apr 10 14:57:05 PDT 2019
+This is version 5.1.0-rc2
+Wed Apr 17 17:10:09 PDT 2019
 
-d341d73 (HEAD -> master, origin/master, origin/HEAD) CC-444: add 'in progress' tracking; use both pt and kw searches for improved recall and performance
+dd1bda8 (HEAD -> master, origin/master, origin/HEAD) CC-444: remove extraneous code from a csvImport shell script
+54855ba CC-444: support an 'archive/unarchive' step; improve handling of record keys
+9361345 CC-325: 'webapp listing' app now produces much better HTML
+955e78a Merge branch 'master' of https://github.com/cspace-deployment/django_example_config
+98e7489 PAHMA-433: locationhistory now deploy by default
+4df8ad9 CC-444: csvImport helpers for adding Collector names
+299cec7 CC-444: 'both' is no longer an import option for csvImport, etc.
+d1540de CC-444: sample: output of latest 'run' to update  microalgae file correx
+96f1a7c CC-444: latest updates to 'helpers' for microalgae file correx
+777f316 (upstream/master) Merge pull request #29 from jblowe/master
+500d5ef Merge branch 'master' of https://github.com/cspace-deployment/django_example_config
+be0eba2 CC-444: tweaks to csvImport configuration; and an XML template for orgauthorities
+a543347 CC-444: revised and reduced 'county list', reflecting changes to microalgae input file
+ca7801e CC-444: sort county.csv
+d7093d1 Merge pull request #28 from jblowe/master
+bdbeb31 CC-444: batch component needs to respect different validation types
+670713c CC-444: validation now invalidates 'adds' if record already exists
+901c386 (tag: 5.1.0-rc1) revise change log and VERSION file for version 5.1.0-rc1
+102f9c2 Merge pull request #27 from jblowe/master
+d341d73 CC-444: add 'in progress' tracking; use both pt and kw searches for improved recall and performance
 b576799 CC-444: keep csvImport logs for all steps
-96b8d5d (upstream/master) Merge pull request #26 from jblowe/master
+96b8d5d Merge pull request #26 from jblowe/master
 50dcce7 CSW-30: clarify reporting done by csvImport batch program (DWC2CSpace), etc.
 ecdf1e3 CC-444: assorted corrections to csvImport configuration file
 3b76516 CC-444: revised csvImport shell scripts so that several task can run simultaneously
