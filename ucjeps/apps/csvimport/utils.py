@@ -428,12 +428,14 @@ def check_key(key_checks, action, uri, in_progress):
 
 def record_existence_check(key, action):
     record_check = True
-    if key == '' and 'update' in action:
-        # key not found; this is an error
-        record_check = False
-    elif 'add' in action:
-        # key found; this is an error
-        record_check = False
+    if key == '':
+        if 'update' in action:
+            # key not found; this is an error
+            record_check = False
+    else:
+        if 'add' in action:
+            # key found; this is an error
+            record_check = False
 
     return record_check
 
