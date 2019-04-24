@@ -12,6 +12,7 @@ from os import path, remove
 import glob
 import logging
 import time, datetime
+from copy import deepcopy
 
 from utils import SERVERINFO, TITLE, loginfo
 from utils import check_columns, get_recordtypes, handle_uploaded_file
@@ -45,7 +46,7 @@ CHECKBOXES = {
 }
 
 # STATUSES = 'input count valid invalid terms add update'.split(' ')
-STATUSES = 'input count invalid add update both terms'.split(' ')
+STATUSES = 'input count invalid add update terms add-audit'.split(' ')
 LOGS = 'counted validated added updated'.split(' ')
 
 # Get an instance of a logger, log some startup info
@@ -99,7 +100,7 @@ def setConstants(request):
     return context
 
 
-#@login_required()
+@login_required()
 def upload_file(request):
     elapsedtime = time.time()
     context = setConstants(request)
@@ -123,7 +124,7 @@ def upload_file(request):
     return showqueue(request)
 
 
-#@login_required()
+@login_required()
 def downloadresults(request, filename):
     f = open(getJobfile(filename), "rb")
     response = HttpResponse(FileWrapper(f), content_type='text/csv')
@@ -131,7 +132,7 @@ def downloadresults(request, filename):
     return response
 
 
-#@login_required()
+@login_required()
 def showresults(request, filename):
     elapsedtime = 0.0
     context = setConstants(request)
@@ -148,7 +149,7 @@ def showresults(request, filename):
     return render(request, 'csvimport.html', context)
                               
 
-#@login_required()
+@login_required()
 def deletejob(request, jobname):
     try:
         filelist = glob.glob(JOBDIR % jobname + ".*")
@@ -161,7 +162,7 @@ def deletejob(request, jobname):
     return showqueue(request)
 
 
-#@login_required()
+@login_required()
 def showqueue(request):
     elapsedtime = time.time()
     context = setConstants(request)
@@ -180,19 +181,23 @@ def showqueue(request):
     context = setContext(context, elapsedtime)
     context['fileview'] = 'none'
 
+    labels, matrix, message, rtypes = show_csv_config(request)
+
+    context['labels'] = labels
+    context['matrix'] = matrix
+    context['message'] = message
+    context['rtypes'] = rtypes
+
     return render(request, 'csvimport.html', context)
 
 
-#@login_required()
+@login_required()
 def nextstep(request, step, filename):
     elapsedtime = time.time()
     context = setConstants(request)
     context['display'] = 'checkjobs'
     context = setContext(context, elapsedtime)
     messages = []
-
-    # TODO: handle this routing correctly
-    #step = step.replace('-add','').replace('-update','').replace('-both','')
 
     messages.append('estimated time = %8.1f seconds' % (len([]) * 10 / 60.0))
 
@@ -221,40 +226,21 @@ def nextstep(request, step, filename):
     return showqueue(request)
 
 
-# #@login_required()
+@login_required()
 def show_csv_config(request):
 
-    elapsedtime = time.time()
-    status = 'up'
-    errors = []
-    message = ''
-    constants = {}
-    update_type = True
-    timestamp = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
-    #cspaceaction = 'x'
-    cspaceaction = ''
-    use_header = ''
-    #recordtype = request.POST['recordtype']
     recordtype = 'collectionobjects'
-    action = None
-    numProblems = 0
 
-    matrix = RECORDTYPES[recordtype][2][0]
+    matrix = deepcopy(RECORDTYPES[recordtype][2][0])
     # convert from dict of tuples to list of tuples
-    matrix = [[m,] + matrix[m] for m in matrix]
-    matrix = sorted(matrix, key=lambda x: x[5])
-    labels = 'input_column,cspace_field,context_tag,data_type,check_exists,row_id (from config)'.split(',')
+    matrix = [[m, ] + matrix[m] for m in matrix]
+    matrix = [[m[i] for i in (0, 1, 3, 6, 5)] for m in matrix]
+    matrix = sorted(matrix, key=lambda x: x[4])
+    #labels = 'input_column,cspace_field,context_tag,data_type,check_exists,row_id,authority or vocabulary'.split(',')
+    labels = 'input column,cspace field,data type,authority or vocabulary,row id'.split(',')
     columnhandling = check_columns(labels, 'none', recordtype)
-    message = "%s 'actionable' fields configured in config file." % len(matrix)
+    #message = "%s 'actionable' fields configured in config file." % len(matrix)
+    message = "'Mappable' fields for %s" % recordtype
     rtypes = [[RECORDTYPES[r][0], r] for r in RECORDTYPES.keys()]
-    elapsedtime = time.time() - elapsedtime
 
-    return render(request, 'csvimport.html',
-                  {'apptitle': TITLE, 'serverinfo': SERVERINFO, 'import_upload_files': None,
-                   'count': 0, 'version': prmz.VERSION, 'matrix': matrix, 'labels': labels,
-                   'keyrow': 0, 'columnhandling': columnhandling, 'recordtypes': rtypes,
-                   'cspaceaction': cspaceaction, 'message': message, 'errors': errors,
-                   'constants': constants, 'filename': '',
-                   'use_header': use_header, 'recordtype': recordtype, 'action': action, 'update_type': update_type,
-                   'status': status, 'timestamp': timestamp, 'directory': 'input', 'numProblems': numProblems,
-                   'elapsedtime': '%8.2f' % elapsedtime})
+    return labels, matrix, message, rtypes
