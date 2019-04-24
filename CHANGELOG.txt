@@ -3,11 +3,15 @@ CHANGELOG for the cspace_django_webapps
 OK, it is not a *real* change log, but a list of changes resulting from git log
 with some human annotation after the fact.
 
-This is version 5.1.0-rc3
-Thu Apr 18 10:43:01 PDT 2019
+This is version 5.1.0-rc4
+Wed Apr 24 14:23:03 PDT 2019
 
-744c6ba (HEAD -> master, origin/master, origin/HEAD) CSW-35: key existence check needed fixing
+207f78e (HEAD -> master, origin/master, origin/HEAD) CSW-34: improve rendering of mapping file in csvImport webapp
+fcc08a8 (upstream/master) Merge pull request #31 from jblowe/master
+6e90872 (tag: 5.1.0-rc3) revise change log and VERSION file for version 5.1.0-rc3
+744c6ba CSW-35: key existence check needed fixing
 26cb5d4 (tag: 5.1.0-rc2) revise change log and VERSION file for version 5.1.0-rc2
+6d26180 Merge pull request #30 from jblowe/master
 dd1bda8 CC-444: remove extraneous code from a csvImport shell script
 54855ba CC-444: support an 'archive/unarchive' step; improve handling of record keys
 9361345 CC-325: 'webapp listing' app now produces much better HTML
@@ -17,7 +21,7 @@ dd1bda8 CC-444: remove extraneous code from a csvImport shell script
 299cec7 CC-444: 'both' is no longer an import option for csvImport, etc.
 d1540de CC-444: sample: output of latest 'run' to update  microalgae file correx
 96f1a7c CC-444: latest updates to 'helpers' for microalgae file correx
-777f316 (upstream/master) Merge pull request #29 from jblowe/master
+777f316 Merge pull request #29 from jblowe/master
 500d5ef Merge branch 'master' of https://github.com/cspace-deployment/django_example_config
 be0eba2 CC-444: tweaks to csvImport configuration; and an XML template for orgauthorities
 a543347 CC-444: revised and reduced 'county list', reflecting changes to microalgae input file
