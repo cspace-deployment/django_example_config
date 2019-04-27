@@ -3,10 +3,16 @@ CHANGELOG for the cspace_django_webapps
 OK, it is not a *real* change log, but a list of changes resulting from git log
 with some human annotation after the fact.
 
-This is version 5.1.0-rc4
-Wed Apr 24 14:23:03 PDT 2019
+This is version 5.1.0-rc5
+Fri Apr 26 17:31:41 PDT 2019
 
-207f78e (HEAD -> master, origin/master, origin/HEAD) CSW-34: improve rendering of mapping file in csvImport webapp
+5c8cce5 (HEAD -> master, origin/master, origin/HEAD) Merge branch 'master' of https://github.com/jblowe/django_example_config
+551e73e CSW-47: allow keyword searching on UCJEPS accession field in portals
+f111553 CSW-1: gitignore VERSION file
+743c9fd Merge pull request #1 from cspace-deployment/master
+b682d43 Merge pull request #32 from jblowe/master
+6eab7d6 (tag: 5.1.0-rc4) revise change log and VERSION file for version 5.1.0-rc4
+207f78e CSW-34: improve rendering of mapping file in csvImport webapp
 fcc08a8 (upstream/master) Merge pull request #31 from jblowe/master
 6e90872 (tag: 5.1.0-rc3) revise change log and VERSION file for version 5.1.0-rc3
 744c6ba CSW-35: key existence check needed fixing
