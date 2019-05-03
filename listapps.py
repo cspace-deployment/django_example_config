@@ -190,7 +190,11 @@ except:
     output_type = 'text'
 
 tenants = 'bampfa botgarden cinefiles pahma ucjeps'.split(' ')
-dont_show = 'hello service suggest suggestsolr suggestpostgres'.split(' ')
+
+if output_type == 'html':
+    dont_show = 'common hello service suggest suggestsolr suggestpostgres'.split(' ')
+else:
+    dont_show = 'common hello service suggestsolr suggestpostgres'.split(' ')
 
 config = ConfigParser.RawConfigParser()
 
@@ -234,6 +238,45 @@ if output_type == 'text':
             else:
                 print '%-15s' % ' ',
         print
+
+elif output_type == 'table':
+
+    print '\t'.join(['apps'] + tenants)
+
+    n = 0
+    for app in sorted(all_apps.keys()):
+        print '%s\t' % app,
+        for tenant in tenants:
+            if tenant in all_apps[app]:
+                print '%s\t' % all_apps[app][tenant],
+                n += 1
+            else:
+                print '%s\t' % ' ',
+        print
+
+    print
+    print 'number of apps\t%s' % n
+
+
+elif output_type == 'table-html':
+
+    html = '<html>\n<table><tr><td>'
+    html += '<td>'.join(['apps'] + tenants)
+
+    n = 0
+    for app in sorted(all_apps.keys()):
+        html += '<tr><td>%s</td>' % app
+        for tenant in tenants:
+            if tenant in all_apps[app]:
+                app_name = APPS[app] if app in APPS else app
+                html += wrap('td',app_anchor(app, tenant, app, 'DEPLOYMENT'))
+            else:
+                html += wrap('td',' ')
+        html += '</tr>'
+    html += '</table>'
+
+    print html.replace('DEPLOYMENT','-dev')
+
 else:
     html = '<table>'
     html += '<tr><th>%s' % ''
