@@ -3,17 +3,23 @@ CHANGELOG for the cspace_django_webapps
 OK, it is not a *real* change log, but a list of changes resulting from git log
 with some human annotation after the fact.
 
-This is version 5.1.0-rc5
-Fri Apr 26 17:31:41 PDT 2019
+This is version 5.1.0-rc6
+Thu May  2 19:37:48 PDT 2019
 
-5c8cce5 (HEAD -> master, origin/master, origin/HEAD) Merge branch 'master' of https://github.com/jblowe/django_example_config
+254d49d (HEAD -> master) CC-61: need to use the python 2.6 style of .encode parameters
+273c81c CC-325: listapps.py now has another html mode: 'table-html'
+abf6974 (upstream/master, origin/master, origin/HEAD) Merge branch 'master' of https://github.com/cspace-deployment/django_example_config
+e5ae36c CSW-47: backout UCJEPS accession keyword searching for now. needs more work.
+3de0a9d Merge pull request #33 from jblowe/master
+edd0226 (tag: 5.1.0-rc5) revise change log and VERSION file for version 5.1.0-rc5
+5c8cce5 Merge branch 'master' of https://github.com/jblowe/django_example_config
 551e73e CSW-47: allow keyword searching on UCJEPS accession field in portals
 f111553 CSW-1: gitignore VERSION file
 743c9fd Merge pull request #1 from cspace-deployment/master
 b682d43 Merge pull request #32 from jblowe/master
 6eab7d6 (tag: 5.1.0-rc4) revise change log and VERSION file for version 5.1.0-rc4
 207f78e CSW-34: improve rendering of mapping file in csvImport webapp
-fcc08a8 (upstream/master) Merge pull request #31 from jblowe/master
+fcc08a8 Merge pull request #31 from jblowe/master
 6e90872 (tag: 5.1.0-rc3) revise change log and VERSION file for version 5.1.0-rc3
 744c6ba CSW-35: key existence check needed fixing
 26cb5d4 (tag: 5.1.0-rc2) revise change log and VERSION file for version 5.1.0-rc2
