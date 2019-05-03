@@ -191,7 +191,9 @@ def load_payload(payload, request, cspace_fields):
     for field in cspace_fields:
         cspace_name = field[0]
         if cspace_name in request.POST.keys():
-            payload = payload.replace('{%s}' % cspace_name, escape(request.POST[cspace_name]).encode(encoding="ascii",errors="xmlcharrefreplace"))
+            # TODO: sort out this encode issue, when we have a new version of python
+            payload = payload.replace('{%s}' % cspace_name, escape(request.POST[cspace_name]).encode("ascii","xmlcharrefreplace"))
+            #payload = payload.replace('{%s}' % cspace_name, escape(request.POST[cspace_name]).encode(encoding="ascii",errors="xmlcharrefreplace"))
 
     # get rid of any unsubstituted items in the template
     payload = re.sub(r'\{.*?\}', '', payload)
@@ -204,9 +206,8 @@ def create_taxon(request):
 
     payload = load_payload(taxon_template,request,taxonfields)
     uri = 'cspace-services/%s/%s/items' % ('taxonomyauthority', taxon_authority_csid)
-    #uri = 'cspace-services/%s' % 'taxonomyauthority'
 
-    elapsedtimetotal = time.time()
+    elapsedtimetotal = 0.0
     messages = {}
     # messages.append("posting to %s REST API..." % uri)
     # print payload
@@ -215,16 +216,15 @@ def create_taxon(request):
     connection = cspace.connection.create_connection(config, request.user)
     try:
         (url, data, taxonCSID, elapsedtime) = connection.postxml(uri=uri, payload=payload, requesttype='POST')
-        #(url, data, statusCode) = connection.postxml('cspace-services/%s/%s' % (service,item_csid))
-        #(url, data, taxonCSID, elapsedtime) = postxml('POST', uri, http_parms.realm, http_parms.hostname, http_parms.username, http_parms.password, payload)
-    # elapsedtimetotal += elapsedtime
+        messages['item'] = request.POST['item']
+        messages['csid'] = taxonCSID
+        messages['elapsedtime'] = elapsedtime
     except:
         messages['error'] = '%s REST API post failed...please report to cspace-support!' % uri
+
 
     if data == None:
         messages['error'] = "got HTTP response %s; don't think it worked. " % taxonCSID
 
-    messages['item'] = request.POST['item']
-    messages['csid'] = taxonCSID
     messages['elapsedtime'] = elapsedtime
     return render(request, 'taxon_save_result.html', messages)
