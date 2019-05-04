@@ -212,6 +212,7 @@ def getHandlers(form, institution):
             ('Lisa Calden', 'LC'),
             ('Stephanie Cannizzo', 'SC'),
             ('Laura Hansen', 'LH'),
+            ('Jenny Heffernon', 'JH'),
             ('Tracy Jones', 'TJ'),
             ('Michael Meyers', 'MM'),
             ('Scott Orloff', 'SO'),
