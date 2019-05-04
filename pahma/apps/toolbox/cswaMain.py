@@ -74,7 +74,6 @@ def main(request, updateType, form, webappconfig):
                 elif updateType == 'advsearch':    html += doAdvancedSearch(form,webappconfig)
                 elif updateType == 'governmentholdings': html += doListGovHoldings(form, webappconfig)
                 #elif updateType == 'editrel':      html += doRelationsEdit(form,config)
-                elif updateType == 'hierarchyviewer': html += doHierarchyView(form,webappconfig)
                 elif updateType == 'makegroup':    makeGroup(form,webappconfig)
                 elif update_action_label == "Recent Activity":
                     viewLog(form,webappconfig)
@@ -113,6 +112,8 @@ def main(request, updateType, form, webappconfig):
                 #elif updateType == 'editrel':      html += doRelationsSearch(form,config)
                 elif updateType == 'makegroup':    html += doComplexSearch(form,webappconfig,'select')
 
+            elif update_action_label == "View Hierarchy":
+                html += doHierarchyView(form,webappconfig)
             elif update_action_label == "View Holdings":
                 html += doListGovHoldings(form,webappconfig)
             elif update_action_label in ['<<', '>>']:
