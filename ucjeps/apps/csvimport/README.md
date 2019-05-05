@@ -2,7 +2,50 @@
 
 A tool to import delimited files (commas, tabs) into CSpace
 
-How to deploy the command line interface (CLI)
+
+How to deploy
+
+1. Set up the webapp the usual way (i.e. follow the instructions for
+deploying Django webapps)
+1. Make the following directories to how the various job files:
+
+```
+cd
+mkdir -p csvimport/ucjeps
+mkdir -p csvimport/pahma
+chcon -R -t httpd_sys_content_t csvimport/
+```
+
+3. The "static vocabularies" need to be made available. This is done by
+fetching the JSON configuration file using the CSpace UI and placing it
+in the config directory:
+
+Download the UI configuration from https://ucjeps.cspace.berkeley.edu/config.
+(Click the 'Save configuration as JSON" link to download.)
+
+Then you'll have to get it up to the server somehow:
+
+```
+scp cspace-ui-config.json cspace-prod-01.ist.berkeley.edu:/tmp/cspace-ui-config-ucjeps.json
+```
+
+Note the filename; it is hardcoded in the csvImport program right now!
+
+```
+cp /tmp/cspace-ui-config-ucjeps.json ~/ucjeps/config
+```
+
+#### The command line interface (CLI)
+
+You can also run csvImport from the command line, without using the
+webapp. There's not a good motivation for doing that that I can think of
+but for long jobs or many batches of files it might be useful.
+
+Here's how to set up and run the code. Note that if csvImport is already installed
+you may consider simply running it where it is installed.
+
+Otherwise:
+
 
 1. Clone the two repos you'll need.
 
