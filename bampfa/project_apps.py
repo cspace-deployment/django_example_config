@@ -35,6 +35,6 @@ INSTALLED_APPS = (
     'search',
     'toolbox',
     #'simplesearch',
-    'uploadmedia',
+    # 'uploadmedia',
 )
 

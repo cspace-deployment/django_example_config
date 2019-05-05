@@ -52,7 +52,7 @@ urlpatterns = patterns('',
                        # url(r'^taxonomyeditor/', include('taxonomyeditor.urls', namespace='taxonomyeditor')),
                        url(r'^toolbox/', include('toolbox.urls', namespace='toolbox')),
                        # url(r'^cswa/', include('cswa.urls', namespace='cswa')),
-                       url(r'^uploadmedia/', include('uploadmedia.urls', namespace='uploadmedia')),
+                       # url(r'^uploadmedia/', include('uploadmedia.urls', namespace='uploadmedia')),
 
                        # these two paths are special: they are used to create permalinks for objects and media
                        url(r'^(media)/', include('permalinks.urls', namespace='permalinks')),
