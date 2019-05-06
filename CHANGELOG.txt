@@ -3,11 +3,15 @@ CHANGELOG for the cspace_django_webapps
 OK, it is not a *real* change log, but a list of changes resulting from git log
 with some human annotation after the fact.
 
-This is version 5.1.0-rc8
-Sat May  4 13:13:04 PDT 2019
+This is version 5.1.0-rc9
+Mon May  6 08:42:21 PDT 2019
 
-203362e (HEAD -> master) CSW-56: BAMPFA does not need Maps tab in Portals
-eb789cb (tag: 5.1.0-rc7, upstream/master, origin/master, origin/HEAD) revise change log and VERSION file for version 5.1.0-rc7
+7fa8c79 (HEAD -> master) CSW-50: improve README for csvImport
+94f406b CSW-65: disable the BMU for BAMPFA
+db06d89 CSW-41: numerous small consistency changes to example webapp config files
+0d672c4 (tag: 5.1.0-rc8, upstream/master, origin/master, origin/HEAD) revise change log and VERSION file for version 5.1.0-rc8
+203362e CSW-56: BAMPFA does not need Maps tab in Portals
+eb789cb (tag: 5.1.0-rc7) revise change log and VERSION file for version 5.1.0-rc7
 688416d CSW-60: PAHMA was not using the latest version of the Toolbox
 0589659 CSW-54: add handler to BAMPFA move apps
 dbc8a10 CSW-1: add toolbox to cinefiles: this tenant does not use the toolbox, but some of other apps share some code
