@@ -1,0 +1,37 @@
+#	Parameters for CineFiles Public Collections Browser															x
+#																x
+date		06/14/2019														x
+revision		1.0														x
+#																x
+title	CineFiles															x
+#																x
+#																x
+server	http://localhost:8983/solr															x
+core	cinefiles-public															x
+#																x
+#		Fields						row,column								x
+#																x
+header		Name	Label	SolrField	SearchTarget	Suggestions	Role	Search	Facet	bMapper	fullDisplay	listDisplay	gridDisplay	mapDisplay	inCSV	placeholder
+field	1	id	ID	id			id,csid									x
+field	2	objectnumber	Object number	objectnumber_s			objectno,accession,string	1,1			1	1	1		1	x
+field	3	docdisplayname	Title	docdisplayname_s			keyword	1,2			2	2	2		2	x
+field	4	doctitle	Sort Title	doctitle_s			keyword	1,3	2							x
+field	5	source	Source	source_s			keyword	2,1	1		3	3	3		3	x
+field	6	doctype	Doctype	doctype_s			dropdown	2,2	3		4				4	x
+field	7	source_refname	source_refname	source_refname_s			string	2,3								x
+field	8	doctype_refname	doctype_refname	doctype_refname_s			string	3,1								x
+field	9	collection	Collection	collection_s			keyword	3,2	4		5				5	x
+field	10	collection_refname	collection_refname	collection_refname_s			keyword	3,3								x
+field	11	hasillust	Has illustrations	hasillust_s			dropdown	4,1	5		6				6	x
+field	12	hasprodco	Has production co	hasprodco_s			dropdown	4,2	6		7				7	x
+field	13	hasfilmog	Has filmography	hasfilmog_s			dropdown	4,3	7		8				8	x
+field	14	hascastcr	Has cast credits	hascastcr_s			dropdown	5,1	8		9				9	x
+field	15	hascostinfo	Has cost info	hascostinfo_s			dropdown	5,2	9		10				10	x
+field	16	hastechcr	Has tech credits	hastechcr_s			dropdown	5,3	10		11				11	x
+field	17	hasboxinfo	Has box info	hasboxinfo_s			dropdown	6,1	11		12				12	x
+field	18	hasbiblio	Has bibliography	hasbiblio_s			dropdown	6,2	12		13				13	x
+field	19	recordstatus	Record status	recordstatus_s			dropdown	6,3	13		14	4	4		14	x
+field	20	numberofobjects	Number of objects	numberofobjects_s			dropdown	7,1	14		15	5	5		15	x
+field	21	doc_id	Doc ID	doc_id_s			string	7,2			16	6	6		16	x
+field	22	latlong	LatLong	latlong_p			location									x
+field	23	hasimage	Show only items with images	blob_ss			present	7,3								x
