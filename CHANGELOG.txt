@@ -3,10 +3,11 @@ CHANGELOG for the cspace_django_webapps
 OK, it is not a *real* change log, but a list of changes resulting from git log
 with some human annotation after the fact.
 
-This is version 5.1.1-rc
-Thu Jul 18 12:56:49 PDT 2019
+This is version 5.1.1
+Thu Jul 18 13:10:49 PDT 2019
 
-216d516 (HEAD -> master, origin/master, origin/HEAD) CSW-80, CSW-79: add 'provenance type' to portal configuration (i.e. in search and display fields)
+5d10369 (HEAD -> master, tag: 5.1.1-rc, origin/master, origin/HEAD) revise change log and VERSION file for version 5.1.1-rc
+216d516 CSW-80, CSW-79: add 'provenance type' to portal configuration (i.e. in search and display fields)
 8d7d4c4 (tag: 5.2.0-rc1) revise change log and VERSION file for version 5.2.0-rc1
 40c6eb4 Merge pull request #34 from jblowe/master
 9f636f0 CSW-68: initial version of portal config for CineFiles
