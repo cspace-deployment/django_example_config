@@ -144,9 +144,9 @@
 116	references							24	24				
 117	# fields in collectionobject record												
 119	georeferencedBy	geoRefencedBy		literal									
-120	georeferenceProtocol	geoRefProtocol		static		geoRefProtocols	unused	0	0				
+120	georeferenceProtocol	geoRefProtocol		static		geoRefProtocols							
 122	georeferenceVerificationStatus	geoRefVerificationStatus		literal				1	1				
-123	georeferenceRemarks	geoRefRemarks		literal			unused	0	0	0	0		
+123	geoRefRemarks	geoRefRemarks		literal									
 135	collId												
 138	# 												
 139	# FIMS to Cspace field name mapping												
