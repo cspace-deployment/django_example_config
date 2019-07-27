@@ -1,6 +1,6 @@
 #!/bin/bash
 cd $( dirname "${BASH_SOURCE[0]}" )
-PYTHON=python2.7
+PYTHON=/var/www/venv/bin/python
 DATE=$(date +%Y-%m-%d-%H-%M-%S)
 set -x
 touch $1.inprogress.log

@@ -1,6 +1,6 @@
 #!/bin/bash
 cd $( dirname "${BASH_SOURCE[0]}" )
-PYTHON=python2.7
+PYTHON=/var/www/venv/bin/python
 set -x
 rm -f $1.$2.$3.out
 touch $1.inprogress.log
